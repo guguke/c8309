@@ -1,0 +1,71 @@
+diff -ruN scps.1.1.144/source/ip.c scps.ping.1.1.144/source/ip.c
+--- scps.1.1.144/source/ip.c	2008-11-15 05:18:07.000000000 +0800
++++ scps.ping.1.1.144/source/ip.c	2013-01-26 15:40:19.000000000 +0800
+@@ -588,12 +588,12 @@
+ 	}
+ 
+ #ifdef GATEWAY 
+-#define IP_RF		0x0080
+-#define IP_DF		0x0040
+-#define IP_MF		0x0020
+-#define IP_OFFMASK	0xff1f
++#define IP_RF		0x8000
++#define IP_DF		0x4000
++#define IP_MF		0x2000
++#define IP_OFFMASK	0x1fff
+ 
+-	ip_frag = ip->nl_head.ipv4.frag;
++	ip_frag = ntohs(ip->nl_head.ipv4.frag);
+ 
+       if ((ip_frag & IP_DF) == IP_DF) {
+ 
+@@ -603,7 +603,7 @@
+ 
+       if (ip_frag & (IP_MF | IP_OFFMASK))  {
+ 	syslog (LOG_ERR,"Gateway: Got a fragment\n");
+-	printf ("Gateway: Got a fragment\n");
++	printf ("Gateway: Got a fragment %4x\n",ip_frag);
+ 	free_ll_queue_element (rqts->interface, in_data);
+   	return (-1);
+       }
+diff -ruN scps.1.1.144/source/rs_config.c scps.ping.1.1.144/source/rs_config.c
+--- scps.1.1.144/source/rs_config.c	2009-07-23 22:39:28.000000000 +0800
++++ scps.ping.1.1.144/source/rs_config.c	2013-01-26 15:55:30.000000000 +0800
+@@ -229,6 +229,7 @@
+   int i = 0, comment = 0, readOK = 1;
+   short cnt_aif_addrs = 0, cnt_bif_addrs = 0;
+   short cnt_aif_masks = 0, cnt_bif_masks = 0;
++  int nerror=0;
+ 
+   gw_ifs.aif_buf = gw_ifs.aif_rate = gw_ifs.aif_cc = gw_ifs.aif_mtu = 0x0;
+   gw_ifs.aif_min_rate = gw_ifs.bif_min_rate = 0;
+@@ -316,8 +317,9 @@
+   if (fp != NULL)
+     {
+       temp_sd = socket (PF_INET, SOCK_DGRAM, 0);
+-
+-      while ((c = getc (fp)) != EOF)
++      
++      nerror=0;
++      while ((c = getc (fp)) != EOF && nerror<2)
+ 	{
+ 	  /* if blank line, can't be comment anymore */
+ 	  if (c == '\n')
+@@ -859,7 +861,7 @@
+ 
+                   else if (!strcmp (parname, "C_TAP_REMOTE_ACCESS"))
+                     gw_ifs.c_tap_remote_access = atoi (pardata);
+-	  	  else
++	  	  else {
+ 
+ /*
+ 		      SET_ERR(E???);
+@@ -867,6 +869,8 @@
+ 		    printf
+ 		      ("\n ERROR in reading %s: undefined parameter %s.",
+ 		       rsc_file, parname);
++                    nerror+=1;
++                  }
+ 		}		/* if !EOF     */
+ 	    }			/* if !comment */
+ 	}			/* end while   */

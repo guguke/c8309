@@ -6,3 +6,7 @@ indent mpc8309....dts -o oi.dts
 indent mpc....-v1......dts -o mi.dts
 diff -u oi.dts mi.dts > d.txt
 
+after indent, mi.dts and oi.dts format error:
+can0@1a00 ==> can 0 @ 1 a000
+can1@1c00 ==> can 1 @ 1 c000
+

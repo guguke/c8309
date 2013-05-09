@@ -1,0 +1,109 @@
+#ifndef __MPC83XX_H__
+#define __MPC83XX_H__
+
+#include <linux/init.h>
+#include <linux/device.h>
+#include <asm/pci-bridge.h>
+
+/* System Clock Control Register */
+#define MPC83XX_SCCR_OFFS          0xA08
+#define MPC83XX_SCCR_USB_MASK      0x00f00000
+#define MPC83XX_SCCR_USB_MPHCM_11  0x00c00000
+#define MPC83XX_SCCR_USB_MPHCM_01  0x00400000
+#define MPC83XX_SCCR_USB_MPHCM_10  0x00800000
+#define MPC83XX_SCCR_USB_DRCM_11   0x00300000
+#define MPC83XX_SCCR_USB_DRCM_01   0x00100000
+#define MPC83XX_SCCR_USB_DRCM_10   0x00200000
+#define MPC8315_SCCR_USB_MASK      0x00c00000
+#define MPC8315_SCCR_USB_DRCM_11   0x00c00000
+#define MPC8315_SCCR_USB_DRCM_01   0x00400000
+#define MPC837X_SCCR_USB_DRCM_11   0x00c00000
+
+/* system i/o configuration register low */
+#define MPC83XX_SICRL_OFFS         0x114
+#define MPC834X_SICRL_USB_MASK     0x60000000
+#define MPC834X_SICRL_USB0         0x20000000
+#define MPC834X_SICRL_USB1         0x40000000
+#define MPC831X_SICRL_USB_MASK     0x00000c00
+#define MPC831X_SICRL_USB_ULPI     0x00000800
+#define MPC8315_SICRL_USB_MASK     0x000000fc
+#define MPC8315_SICRL_USB_ULPI     0x00000054
+#define MPC837X_SICRL_USB_MASK     0xf0000000
+#define MPC837X_SICRL_USB_ULPI     0x50000000
+#define MPC837X_SICRL_USBB_MASK    0x30000000
+#define MPC837X_SICRL_SD           0x20000000
+#define MPC8309_SICRL_USB_MASK     0x000003f0
+#define MPC8309_SICRL_USB_ULPI     0x00000000
+#define MPC8309_SICRL_I2C2_MASK    0x0c000000
+#define MPC8309_SICRL_I2C2         0x00000000
+#define MPC8309_SICRL_CAN1_MASK    0x00030000
+#define MPC8309_SICRL_CAN1         0x00010000
+
+/* system i/o configuration register high */
+#define MPC83XX_SICRH_OFFS         0x118
+#define MPC834X_SICRH_USB_UTMI     0x00020000
+#define MPC831X_SICRH_USB_MASK     0x000000e0
+#define MPC831X_SICRH_USB_ULPI     0x000000a0
+#define MPC8315_SICRH_USB_MASK     0x0000ff00
+#define MPC8315_SICRH_USB_ULPI     0x00000000
+#define MPC837X_SICRH_SPI_MASK     0x00000003
+#define MPC837X_SICRH_SD           0x00000001
+#define MPC8309_SICRH_USB_MASK     0x000c0000
+#define MPC8309_SICRH_USB_ULPI     0x00000000
+#define MPC8309_SICRH_TDM1_MASK    0x3000f000
+#define MPC8309_SICRH_TDM1         0x2000e000
+#define MPC8309_SICRH_TDM2_MASK    0x00c00f00
+#define MPC8309_SICRH_TDM2         0x00800e00
+
+/* USB Control Register */
+#define FSL_USB2_CONTROL_OFFS      0x500
+#define CONTROL_UTMI_PHY_EN        0x00000200
+#define CONTROL_REFSEL_24MHZ       0x00000040
+#define CONTROL_REFSEL_48MHZ       0x00000080
+#define CONTROL_PHY_CLK_SEL_ULPI   0x00000400
+#define CONTROL_OTG_PORT           0x00000020
+
+/* CAN Access Control Register */
+#define MPC830X_CAN_CTRL_OFFS      0x148
+#define MPC830X_CAN1_CTRL_MASK     0xc0000000
+#define MPC830X_CAN1_DEBUG_MODE    0x80000000
+#define MPC830X_CAN1_SUPV_MODE     0x40000000
+#define MPC830X_CAN2_CTRL_MASK     0x00c00000
+#define MPC830X_CAN2_DEBUG_MODE    0x00800000
+#define MPC830X_CAN2_SUPV_MODE     0x00400000
+#define MPC830X_CAN3_CTRL_MASK     0x0000c000
+#define MPC830X_CAN3_DEBUG_MODE    0x00008000
+#define MPC830X_CAN3_SUPV_MODE     0x00004000
+#define MPC830X_CAN4_CTRL_MASK     0x000000c0
+#define MPC830X_CAN4_DEBUG_MODE    0x00000080
+#define MPC830X_CAN4_SUPV_MODE     0x00000040
+
+/* CAN Interrupt Status Register */
+#define MPC830X_CAN_ISTAT_OFFS     0x1C0
+#define MPC830X_CAN1_ISTAT_MASK    0xec000000
+#define MPC830X_CAN1_BOFF_INT      0x80000000
+#define MPC830X_CAN1_ERR_INT       0x40000000
+#define MPC830X_CAN1_MBOR_INT      0x20000000
+#define MPC830X_CAN1_TXWARN_INT    0x08000000
+#define MPC830X_CAN1_RXWARN_INT    0x04000000
+
+/* USB PORTSC Registers */
+#define FSL_USB2_PORTSC1_OFFS      0x184
+#define FSL_USB2_PORTSC2_OFFS      0x188
+#define PORTSCX_PTW_16BIT          0x10000000
+#define PORTSCX_PTS_UTMI           0x00000000
+#define PORTSCX_PTS_ULPI           0x80000000
+
+/*
+ * Declaration for the various functions exported by the
+ * mpc83xx_* files. Mostly for use by mpc83xx_setup
+ */
+
+extern void mpc83xx_restart(char *cmd);
+extern long mpc83xx_time_init(void);
+extern int mpc837x_usb_cfg(void);
+extern int mpc834x_usb_cfg(void);
+extern int mpc831x_usb_cfg(void);
+extern int mpc8309_usb_cfg(void);
+
+#endif				/* __MPC83XX_H__ */

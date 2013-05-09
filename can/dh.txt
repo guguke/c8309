@@ -1,0 +1,15 @@
+--- mpc83xx.h.org	2013-05-09 17:54:47.000000000 -0400
++++ mpc83xx.h	2013-05-09 17:54:47.000000000 -0400
+@@ -38,6 +38,12 @@
+ #define MPC8309_SICRL_I2C2         0x00000000
+ #define MPC8309_SICRL_CAN1_MASK    0x00030000
+ #define MPC8309_SICRL_CAN1         0x00010000
++#define MPC8309_SICRL_CAN2_MASK    0x0000c000
++#define MPC8309_SICRL_CAN2         0x00004000
++#define MPC8309_SICRL_CAN3_MASK    0x00003000
++#define MPC8309_SICRL_CAN3         0x00001000
++#define MPC8309_SICRL_CAN4_MASK    0x00000c00
++#define MPC8309_SICRL_CAN4         0x00000400
+ 
+ /* system i/o configuration register high */
+ #define MPC83XX_SICRH_OFFS         0x118

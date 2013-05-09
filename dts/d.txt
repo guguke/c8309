@@ -1,0 +1,409 @@
+--- oi.dts	2013-05-09 14:07:46.000000000 -0400
++++ mi.dts	2013-05-09 13:53:11.000000000 -0400
+@@ -22,9 +22,18 @@
+     ethernet0 = &enet0;
+     ethernet1 = &enet1;
+     ethernet2 = &enet2;
++
+     serial0 = &serial0;
+     serial1 = &serial1;
++    serial2 = &serial2;
++    serial3 = &serial3;
++    serial4 = &serial4;
++    serial5 = &serial5;
++    serial6 = &serial6;
++    serial7 = &serial7;
++
+     pci0 = &pci0;
++
+   };
+ 
+   cpus
+@@ -49,7 +58,7 @@
+   memory
+   {
+     device_type = "memory";
+-    reg = <0x00000000 0x10000000 >;	// 256MB at 0
++    reg = <0x00000000 0x20000000 >;	// 256MB at 0
+   };
+ 
+   localbus @ e0005000
+@@ -63,42 +72,45 @@
+ 
+     // CS0 and CS1 are swapped when booting from nand,
+     // but the addresses are the same.
+-    ranges = <0x0 0x0 0xfe000000 0x00800000
+-      0x1 0x0 0xfff00000 0x00002000 0x2 0x0 0xf9000000 0x00002000 >;
++    ranges = <0x0 0x0 0xF0000000 0x04000000
++      0x2 0x0 0xF8000000 0x00002000 0x3 0x0 0xD8000000 0x04000000 >;
+ 
+     flash @ 0, 0
+     {
+ #address-cells = <1>;
+ #size-cells = <1>;
+       compatible = "cfi-flash";
+-      reg = <0x0 0x0 0x800000 >;
+-      bank - width = <2 >;
++      reg = <0x0 0x0 0x04000000 >;
++      bank - width = <1 >;
+       device - width = <1 >;
+ 
+-      u - boot @ 0
++      dtb @ 0
+       {
+-	reg = <0x0 0x100000 >;
+-	read - only;
++	reg = <0x03800000 0x100000 >;
+       };
++
+       fs @ 100000
+       {
+-	reg = <0x100000 0x400000 >;
++	reg = <0x03900000 0x400000 >;
+       };
+       kernel @ 500000
+       {
+-	reg = <0x500000 0x200000 >;
++	reg = <0x03D00000 0x200000 >;
+       };
+-      dtb @ 700000
++
++      u - boot @ 0
+       {
+-	reg = <0x700000 0x100000 >;
++	reg = <0x03F00000 0x100000 >;
++	read - only;
+       };
+     };
+-    nand @ 1, 0
++
++    nand @ 2, 0
+     {
+ #address-cells = <1>;
+ #size-cells = <1>;
+       compatible = "fsl,mpc8315-fcm-nand", "fsl,elbc-fcm-nand";
+-      reg = <0x1 0x0 0x2000 >;
++      reg = <0x2 0x0 0x2000 >;
+ 
+       u - boot @ 0
+       {
+@@ -134,15 +146,6 @@
+ 	label = "JFFS2-NAND";
+       };
+     };
+-
+-    // CS2 for T1/E1 framer
+-    framer @ 2, 0
+-    {
+-#address-cells = <1>;
+-#size-cells = <1>;
+-      compatible = "framer";
+-      reg = <0x2 0x0 0x2000 >;
+-    };
+   };
+ 
+   immr @ e0000000
+@@ -162,30 +165,6 @@
+       reg = <0x200 0x100 >;
+     };
+ 
+-    i2c @ 3000
+-    {
+-#address-cells = <1>;
+-#size-cells = <0>;
+-      cell - index = <0 >;
+-      compatible = "fsl-i2c";
+-      reg = <0x3000 0x100 >;
+-      interrupts = <14 0x8 >;
+-      interrupt - parent = <&ipic >;
+-      dfsrr;
+-    };
+-
+-    i2c @ 3100
+-    {
+-#address-cells = <1>;
+-#size-cells = <0>;
+-      cell - index = <1 >;
+-      compatible = "fsl-i2c";
+-      reg = <0x3100 0x100 >;
+-      interrupts = <15 0x8 >;
+-      interrupt - parent = <&ipic >;
+-      dfsrr;
+-    };
+-
+     usb @ 23000
+     {
+       compatible = "fsl-usb2-dr";
+@@ -216,12 +195,6 @@
+       interrupt - parent = <&ipic >;
+     };
+ 
+-  ptp_timer:ptimer @ 24e00
+-    {
+-      compatible = "fsl,gianfar-ptp-timer";
+-      reg = <0x24e00 0xb0 >;
+-    };
+-
+   serial0:serial @ 4500
+     {
+       cell - index = <0 >;
+@@ -243,24 +216,26 @@
+       interrupts = <9 0x8 >;
+       interrupt - parent = <&ipic >;
+     };
+-
+-    gpio @ c00
++   /**/ serial2:serial @ 4900
+     {
+-      device_type = "gpio";
+-      compatible = "fsl,mpc8315-gpio";
+-      reg = <0xc00 0x18 >;
++      cell - index = <2 >;
++      device_type = "serial";
++      compatible = "ns16550";
++      reg = <0x4900 0x100 >;
++      clock - frequency = <133333333 >;
++      interrupts = <9 0x8 >;
+       interrupt - parent = <&ipic >;
+     };
+ 
+-    sdhci @ 2e000
++  serial3:serial @ 4 A00
+     {
+-      compatible = "fsl,esdhc", "fsl,mpc8309-esdhc";
+-      reg = <0x2e000 0x1000 >;
+-      interrupts = <42 0x8 >;
++      cell - index = <3 >;
++      device_type = "serial";
++      compatible = "ns16550";
++      reg = <0x4A00 0x100 >;
++      clock - frequency = <133333333 >;
++      interrupts = <9 0x8 >;
+       interrupt - parent = <&ipic >;
+-      sdhci, clock - enable;
+-      /* Filled in by U-Boot */
+-      clock - frequency = <111111111 >;
+     };
+ 
+     can0 @ 1 c000
+@@ -272,6 +247,33 @@
+       interrupt - parent = <&ipic >;
+     };
+ 
++    can1 @ 1 d000
++    {
++      compatible = "fsl,mpc830x-flexcan";
++      cell - index = <1 >;
++      reg = <0x1d000 0x1000 >;
++      interrupts = <10 0x8 >;
++      interrupt - parent = <&ipic >;
++    };
++
++    can2 @ 29000
++    {
++      compatible = "fsl,mpc830x-flexcan";
++      cell - index = <2 >;
++      reg = <0x29000 0x1000 >;
++      interrupts = <10 0x8 >;
++      interrupt - parent = <&ipic >;
++    };
++
++    can3 @ 2 a000
++    {
++      compatible = "fsl,mpc830x-flexcan";
++      cell - index = <3 >;
++      reg = <0x2a000 0x1000 >;
++      interrupts = <10 0x8 >;
++      interrupt - parent = <&ipic >;
++    };
++
+     /* IPIC
+      * interrupts cell = <intr #, sense>
+      * sense values match linux IORESOURCE_IRQ_* defines:
+@@ -287,40 +289,60 @@
+       reg = <0x700 0x100 >;
+       device_type = "ipic";
+     };
++  };
++
++  // CS3 for T1/E1 framer
++  cpld @ D8000000
++  {
++#address-cells = <1>;
++#size-cells = <1>;
++    compatible = "simple-bus";
++    ranges = <0x0 0xD8000000 0x04000000 >;
++    reg = <0xD8000000 0x04000000 >;
+ 
+-/*		ipic-msi@7c0 {
+-			compatible = "fsl,ipic-msi";
+-			reg = <0x7c0 0x40>;
+-			msi-available-ranges = <0x0 0x100>;
+-			interrupts = < 0x43 0x8
+-					0x4  0x8
+-					0x51 0x8
+-					0x52 0x8
+-					0x56 0x8
+-					0x57 0x8
+-					0x58 0x8
+-					0x59 0x8 >;
+-			interrupt-parent = < &ipic >;
+-		};
+-*/
+-/*		pmc: power@b00 {
+-			compatible = "fsl,mpc8313-pmc", "fsl,mpc8349-pmc";
+-			reg = <0xb00 0x100 0xa00 0x100>;
+-			interrupts = <80 8>;
+-			interrupt-parent = <&ipic>;
+-			fsl,mpc8313-wakeup-timer = <&gtm1>;
+-		};
+-*/
+-/*		gtm1: timer@500 {
+-			compatible = "fsl,mpc8313-gtm", "fsl,gtm";
+-			reg = <0x500 0x100>;
+-			clock-frequency = <133000000>;
+-			interrupts = <90 8 78 8 84 8 72 8>;
+-			interrupt-parent = <&ipic>;
+-		};
+-*/
++  serial4:serial @ 200000
++    {
++      cell - index = <4 >;
++      device_type = "serial";
++      compatible = "ns16550";
++      reg = <0x200000 0x8 >;
++      clock - frequency = <120000000 >;
++      interrupts = <48 0x8 >;
++      interrupt - parent = <&ipic >;
++    };
++  serial5:serial @ 280000
++    {
++      cell - index = <5 >;
++      device_type = "serial";
++      compatible = "ns16550";
++      reg = <0x280000 0x8 >;
++      clock - frequency = <120000000 >;
++      interrupts = <48 0x8 >;
++      interrupt - parent = <&ipic >;
++    };
++  serial6:serial @ 300000
++    {
++      cell - index = <6 >;
++      device_type = "serial";
++      compatible = "ns16550";
++      reg = <0x300000 0x8 >;
++      clock - frequency = <120000000 >;
++      interrupts = <48 0x8 >;	//??
++      interrupt - parent = <&ipic >;	//??
++    };
++  serial7:serial @ 380000
++    {
++      cell - index = <7 >;
++      device_type = "serial";
++      compatible = "ns16550";
++      reg = <0x380000 0x8 >;
++      clock - frequency = <120000000 >;
++      interrupts = <48 0x8 >;	//??
++      interrupt - parent = <&ipic >;	//??
++    };
+   };
+ 
++  //William for the IMMR part ended
+   qe @ e0100000
+   {
+ #address-cells = <1>;
+@@ -374,7 +396,8 @@
+       local - mac - address =[00 00 00 00 00 00];
+       rx - clock - name = "none";
+       tx - clock - name = "none";
+-      fixed - link = <1 1 100 0 0 >;
++      phy - handle = <&phy1 >;
++      phy - connection - type = "mii";
+     };
+ 
+   enet2:ethernet @ 2200
+@@ -388,7 +411,7 @@
+       local - mac - address =[00 00 00 00 00 00];
+       rx - clock - name = "none";
+       tx - clock - name = "none";
+-      phy - handle = <&phy1 >;
++      phy - handle = <&phy2 >;
+       phy - connection - type = "mii";
+     };
+ 
+@@ -403,48 +426,25 @@
+       {
+ 	interrupt - parent = <&ipic >;
+ 	interrupts = <48 0x8 >;
+-	reg = <0x11 >;
++	reg = <0x10 >;
+ 	device_type = "ethernet-phy";
+       };
++
+     phy1:ethernet - phy @ 01
+       {
+ 	interrupt - parent = <&ipic >;
+ 	interrupts = <48 0x8 >;
+-	reg = <0x12 >;
++	reg = <0x11 >;
+ 	device_type = "ethernet-phy";
+       };
+-    };
+ 
+-    ucc @ 2400
+-    {
+-      device_type = "tdm";
+-      compatible = "ucc-tdm-framer";
+-      cell - index = <5 >;
+-      tdm - num = <1 >;
+-      si - num = <1 >;
+-      tdm - rx - clock = "clk3";
+-      tdm - tx - clock = "clk4";
+-      tdm - rx - sync = "RSYNC";
+-      tdm - tx - sync = "TSYNC";
+-      reg = <0x2400 0x200 >;
+-      interrupts = <40 >;
+-      interrupt - parent = <&qeic >;
+-    };
+-
+-    ucc @ 2600
+-    {
+-      device_type = "tdm";
+-      compatible = "ucc-tdm-slic";
+-      cell - index = <7 >;
+-      tdm - num = <2 >;
+-      si - num = <1 >;
+-      tdm - rx - clock = "brg3";
+-      tdm - tx - clock = "brg3";
+-      tdm - rx - sync = "brg9";
+-      tdm - tx - sync = "brg9";
+-      reg = <0x2600 0x200 >;
+-      interrupts = <42 >;
+-      interrupt - parent = <&qeic >;
++    phy2:ethernet - phy @ 02
++      {
++	interrupt - parent = <&ipic >;
++	interrupts = <48 0x8 >;
++	reg = <0x12 >;
++	device_type = "ethernet-phy";
++      };
+     };
+ 
+   qeic:interrupt - controller @ 80
+@@ -466,13 +466,9 @@
+     interrupt - map - mask = <0xf800 0x0 0x0 0x7 >;
+     interrupt - map = <
+       /* IDSEL 0x11 AD17 (Mini1) */
+-      0x8800 0x0 0x0 0x1 & ipic 18 0x8
+-      0x8800 0x0 0x0 0x2 & ipic 18 0x8
+-      0x8800 0x0 0x0 0x3 & ipic 18 0x8 0x8800 0x0 0x0 0x4 & ipic 18 0x8
+-      /* IDSEL 0x12 AD18 (PCI/Mini2) */
+-      0x9000 0x0 0x0 0x1 & ipic 18 0x8
+-      0x9000 0x0 0x0 0x2 & ipic 18 0x8
+-      0x9000 0x0 0x0 0x3 & ipic 18 0x8 0x9000 0x0 0x0 0x4 & ipic 18 0x8 >;
++      0xA000 0x0 0x0 0x1 & ipic 17 0x8
++      0xA000 0x0 0x0 0x2 & ipic 17 0x8
++      0xA000 0x0 0x0 0x3 & ipic 17 0x8 0xA000 0x0 0x0 0x4 & ipic 17 0x8 >;
+ 
+     interrupt - parent = <&ipic >;
+     interrupts = <66 0x8 >;

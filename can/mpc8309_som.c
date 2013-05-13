@@ -55,21 +55,26 @@ static void __init mpc8309_som_setup_arch(void)
 	/* Set I/O configuration for FlexCAN - CAN1 */
 	clrsetbits_be32(immap + MPC83XX_SICRL_OFFS, MPC8309_SICRL_CAN1_MASK,
 			MPC8309_SICRL_CAN1);
+#if 1
 	clrsetbits_be32(immap + MPC83XX_SICRL_OFFS, MPC8309_SICRL_CAN2_MASK,
 			MPC8309_SICRL_CAN2);
 	clrsetbits_be32(immap + MPC83XX_SICRL_OFFS, MPC8309_SICRL_CAN3_MASK,
 			MPC8309_SICRL_CAN3);
 	clrsetbits_be32(immap + MPC83XX_SICRL_OFFS, MPC8309_SICRL_CAN4_MASK,
-			MPC8309_SICRL_CAN4);
+			MPC8309_SICRL_CAN4);   
+#endif
+
 	/* Set CAN access control register for normal supervisor mode */
 	clrsetbits_be32(immap + MPC830X_CAN_CTRL_OFFS, MPC830X_CAN1_CTRL_MASK,
 			MPC830X_CAN1_SUPV_MODE);
+#if 1
 	clrsetbits_be32(immap + MPC830X_CAN_CTRL_OFFS, MPC830X_CAN2_CTRL_MASK,
 			MPC830X_CAN2_SUPV_MODE);
 	clrsetbits_be32(immap + MPC830X_CAN_CTRL_OFFS, MPC830X_CAN3_CTRL_MASK,
 			MPC830X_CAN3_SUPV_MODE);
 	clrsetbits_be32(immap + MPC830X_CAN_CTRL_OFFS, MPC830X_CAN4_CTRL_MASK,
 			MPC830X_CAN4_SUPV_MODE);
+#endif
 #endif
 
 #ifdef CONFIG_QUICC_ENGINE
@@ -175,7 +180,7 @@ define_machine(mpc8309_som) {
 
 static int enable;
 static u8 expander1;
-static u8 gpio_4B_expander = 0xff;
+//static u8 gpio_4B_expander = 0xff;
 
 /* Write to IO expander thru I2C interface */
 int gpio_expander_i2c_write_byte(u8 devaddr, u8 regoffset, u8 value, u8 i2c_id)
@@ -279,6 +284,7 @@ static int ioexpander_enable(void)
 */
 void mpc830x_CAN_control(bool on)
 {
+#if 0
 	u32 status;
 	u8 tmp;
 
@@ -299,6 +305,7 @@ void mpc830x_CAN_control(bool on)
 		printk(KERN_INFO "IO Expander value write error\n");
 		return;
 	}
+#endif
 }
 EXPORT_SYMBOL(mpc830x_CAN_control);
 
@@ -308,6 +315,7 @@ EXPORT_SYMBOL(mpc830x_CAN_control);
  */
 void mpc830x_CAN_mux_enable(void)
 {
+#if 0
 	u32 status;
 	u8 tmp;
 
@@ -322,7 +330,7 @@ void mpc830x_CAN_mux_enable(void)
 	gpio_4B_expander &= 0xfe;
 	status = gpio_expander_i2c_write_byte(GPIO_4B_EXPND_I2C1_ADDR, 0x01,
 					gpio_4B_expander, 0);
-
+#endif
 }
 EXPORT_SYMBOL(mpc830x_CAN_mux_enable);
 

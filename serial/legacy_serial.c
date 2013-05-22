@@ -21,7 +21,7 @@
 #define DBG(fmt...) do { } while(0)
 #endif
 
-#define MAX_LEGACY_SERIAL_PORTS	8
+#define MAX_LEGACY_SERIAL_PORTS	12
 
 static struct plat_serial8250_port
 legacy_serial_ports[MAX_LEGACY_SERIAL_PORTS+1];

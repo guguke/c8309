@@ -1,0 +1,16 @@
+grepI386.txt:source/thread.c:#ifdef I386
+grepMc68000.txt:source/thread.c:#ifdef Mc68000
+grepMc68000.txt:source/thread.c:#endif				/* Mc68000 */
+grepMips.txt:source/thread.c:#ifdef Mips
+grepSparc.txt:source/tp_timers.c:#ifdef Sparc
+grepSparc.txt:source/tp_debug.c:#ifdef Sparc
+grepSparc.txt:source/thread.c:#ifdef Sparc
+grepSparc.txt:source/thread_single.c:#ifdef Sparc
+grepSparc.txt:source/tp_handler.c:#ifdef Sparc
+grepSparc.txt:source/other_proto_handler.c:#ifdef Sparc
+grepSparc.txt:source/tp.c:#ifdef Sparc
+grepSparc.txt:source/scrub_holes.c:#ifdef Sparc
+
+grepI386.txt:source/scpstp.h:#ifdef I386
+grepSparc.txt:source/gmt2local.h:#if defined(Sparc)
+grepSparc.txt:source/thread.h:/* Must be divisible by 8 for a Sparc! */

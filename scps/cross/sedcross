@@ -1,0 +1,16 @@
+grep gcc apps/Makefile
+rm -f apps/m
+mv apps/Makefile apps/m
+sed 's/gcc/arm-angstrom-linux-gnueabi-gcc/g' apps/m >>apps/Makefile
+grep gcc apps/Makefile
+echo "-------------------------------"
+grep gcc source/Makefile
+grep "ar r" source/Makefile
+rm -f source/m
+rm -f source/m1
+mv source/Makefile source/m
+sed 's/gcc/arm-angstrom-linux-gnueabi-gcc/g' source/m >>source/m1
+sed 's/ar r/arm-angstrom-linux-gnueabi-ar r/g' source/m1 >>source/Makefile
+rm -f source/m1
+grep gcc source/Makefile
+grep "ar r" source/Makefile

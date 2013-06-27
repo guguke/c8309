@@ -1,0 +1,5 @@
+cd apps
+./configure
+cd ../source
+./configure --gateway=yes --tap=yes --gateway_single_thread=yes
+cd ..

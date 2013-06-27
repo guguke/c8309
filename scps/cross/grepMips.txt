@@ -1,0 +1,14 @@
+apps/configure:  CPUDEFINE=-DMips
+source/Makefile:# Mips  - Host processor architecture is Mips R3000/R4000
+source/Makefile:#          CPU = -DI386 | -DSparc | -DMips | -DMc68000
+source/thread.c:#ifdef Mips
+source/thread.c:#endif /* Mips */
+source/thread.c:#ifdef Mips
+source/thread.c:#endif /* Mips */
+source/thread.c:#ifdef Mips
+source/thread.c:#endif /* Mips */
+source/thread.c:#ifdef Mips
+source/thread.c:#endif /* Mips */
+source/Makefile.in:# Mips  - Host processor architecture is Mips R3000/R4000
+source/Makefile.in:#          CPU = -DI386 | -DSparc | -DMips | -DMc68000
+source/configure:  CPUDEFINE=-DMips

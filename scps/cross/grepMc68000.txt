@@ -1,0 +1,14 @@
+apps/configure:  CPUDEFINE=-DMc68000
+source/Makefile:# Mc68000 - Host processor architecture is Motorola 68000 family
+source/Makefile:#          CPU = -DI386 | -DSparc | -DMips | -DMc68000
+source/thread.c:#ifdef Mc68000
+source/thread.c:#endif				/* Mc68000 */
+source/thread.c:#ifdef Mc68000
+source/thread.c:#endif /* Mc68000 */
+source/thread.c:#ifdef Mc68000
+source/thread.c:#endif /* Mc68000 */
+source/thread.c:#ifdef Mc68000
+source/thread.c:#endif				/* Mc68000 */
+source/Makefile.in:# Mc68000 - Host processor architecture is Motorola 68000 family
+source/Makefile.in:#          CPU = -DI386 | -DSparc | -DMips | -DMc68000
+source/configure:  CPUDEFINE=-DMc68000

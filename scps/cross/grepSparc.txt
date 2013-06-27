@@ -1,0 +1,38 @@
+apps/configure:  CPUDEFINE=-DSparc
+source/tp_timers.c:#ifdef Sparc
+source/tp_timers.c:#endif /* Sparc */
+source/Makefile:# Sparc - Host processor architecture is Sparc
+source/Makefile:# SOLARIS - Used in conjunction with Sparc for operating over Solaris 2.x
+source/Makefile:#          CPU = -DI386 | -DSparc | -DMips | -DMc68000
+source/tp_debug.c:#ifdef Sparc
+source/tp_debug.c:#endif /* Sparc */
+source/thread.c:#ifdef Sparc
+source/thread.c:#endif				/* Sparc */
+source/thread.c: * architectures done  by Josef Burger (bolo@cs.wisc.edu) Sparc 68000 HP
+source/thread.c:#ifdef Sparc
+source/thread.c:#endif /* Sparc */
+source/thread.c:#ifdef Sparc
+source/thread.c:#endif /* Sparc */
+source/thread.c:#ifdef Sparc
+source/thread.c:#endif /* Sparc */
+source/thread.c:#ifdef Sparc
+source/thread.c:#endif				/* Sparc */
+source/thread_single.c:#ifdef Sparc
+source/thread_single.c:#endif				/* Sparc */
+source/thread_single.c: * architectures done  by Josef Burger (bolo@cs.wisc.edu) Sparc 68000 HP
+source/tp_handler.c:#ifdef Sparc
+source/tp_handler.c:#endif /* Sparc */
+source/Makefile.in:# Sparc - Host processor architecture is Sparc
+source/Makefile.in:# SOLARIS - Used in conjunction with Sparc for operating over Solaris 2.x
+source/Makefile.in:#          CPU = -DI386 | -DSparc | -DMips | -DMc68000
+source/other_proto_handler.c:#ifdef Sparc
+source/other_proto_handler.c:#endif /* Sparc */
+source/tp.c:#ifdef Sparc
+source/tp.c:#endif /* Sparc */
+source/gmt2local.h:#if defined(Sparc)
+source/gmt2local.h:#else /* defined(Sparc) */
+source/gmt2local.h:#endif /* defined(Sparc) */
+source/configure:  CPUDEFINE=-DSparc
+source/scrub_holes.c:#ifdef Sparc
+source/scrub_holes.c:#endif /* Sparc */
+source/thread.h:/* Must be divisible by 8 for a Sparc! */

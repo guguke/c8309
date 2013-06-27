@@ -1,0 +1,15 @@
+apps/configure:  CPUDEFINE=-DI386
+source/Makefile:# I386   - Host processor achitecture is Intel 80386/80486/Pentium
+source/Makefile:#          CPU = -DI386 | -DSparc | -DMips | -DMc68000
+source/thread.c:#ifdef I386
+source/thread.c:#endif /* I386 */
+source/thread.c:#ifdef I386
+source/thread.c:#ifdef I386
+source/thread.c:#endif /* I386 */
+source/Makefile.in:# I386   - Host processor achitecture is Intel 80386/80486/Pentium
+source/Makefile.in:#          CPU = -DI386 | -DSparc | -DMips | -DMc68000
+source/scpstp.h:#ifdef I386
+source/scpstp.h:#endif	/* I386 */
+source/scpstp.h:#ifndef I386
+source/scpstp.h:#endif	/* I386 */
+source/configure:  CPUDEFINE=-DI386

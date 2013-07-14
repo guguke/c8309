@@ -128,6 +128,6 @@ DiskId1 = "Installation Disk #1 (com0com - Null-modem emulator)"
 VF = "Vyacheslav Frolov"
 com0com.BusDesc = "network serial port - bus"
 com0com.SrvDesc = "com0com - emulates the serial ports interconnected via a null-modem cable"
-ClassName = "network serial port"
+ClassName = "Network Serial Port"
 
 ;******************************************************************************

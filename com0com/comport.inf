@@ -1,4 +1,4 @@
-﻿;******************************************************************************
+;******************************************************************************
 ;
 ; comport.inf
 ;
@@ -106,7 +106,7 @@ SERVICE_DEMAND_START   = 3
 SERVICE_ERROR_NORMAL   = 1
 
 VF = "Vyacheslav Frolov"
-com0com.PortDesc = "comport"
+com0com.PortDesc = "network serial port"
 com0com.SrvDesc = "com0com - emulates the serial ports interconnected via a null-modem cable"
 
 ;******************************************************************************

@@ -293,7 +293,7 @@ Name "Null-modem emulator (com0com)"
 OutFile "${OUTPUT_FILE}"
 
 ; The default installation directory
-InstallDir $PROGRAMFILES\com0com
+InstallDir $PROGRAMFILES\NetPort              ; cyx
 
 ; Registry key to check for directory (so if you install again, it will
 ; overwrite the old one automatically)
@@ -465,11 +465,11 @@ SectionEnd
 
 Section "Start Menu Shortcuts" sec_shortcuts
 
-  CreateDirectory "$SMPROGRAMS\com0com"
-  CreateShortCut "$SMPROGRAMS\com0com\Setup Command Prompt.lnk" "$INSTDIR\setupc.exe"
-  CreateShortCut "$SMPROGRAMS\com0com\Setup.lnk" "$INSTDIR\setupg.exe"
-  CreateShortCut "$SMPROGRAMS\com0com\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\com0com\ReadMe.lnk" "$INSTDIR\ReadMe.txt"
+  CreateDirectory "$SMPROGRAMS\NetPort"                      ; cyx
+  CreateShortCut "$SMPROGRAMS\NetPort\Setup Command Prompt.lnk" "$INSTDIR\setupc.exe"
+  CreateShortCut "$SMPROGRAMS\NetPort\Setup.lnk" "$INSTDIR\setupg.exe"
+  CreateShortCut "$SMPROGRAMS\NetPort\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\NetPort\ReadMe.lnk" "$INSTDIR\ReadMe.txt"
 
 SectionEnd
 
@@ -620,10 +620,10 @@ Section "Uninstall"
   Delete $INSTDIR\uninstall.exe
 
   ; Remove shortcuts, if any
-  Delete "$SMPROGRAMS\com0com\*.*"
+  Delete "$SMPROGRAMS\NetPort\*.*"         ;cyx
 
   ; Remove directories used
-  RMDir "$SMPROGRAMS\com0com"
+  RMDir "$SMPROGRAMS\NetPort"            ;cyx
   SetOutPath $TEMP
   RMDir "$INSTDIR"
 

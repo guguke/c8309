@@ -4,6 +4,6 @@ cncport.inf
 com0com.inf
 comport.inf
 NSIS\install.nsi
-
+setup\setup.cpp
 
 

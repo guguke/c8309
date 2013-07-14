@@ -464,7 +464,7 @@ static VOID UpdateFriendlyNameBus(
                                           (LPBYTE)deviceDesc, sizeof(deviceDesc), NULL))
     {
       SNPRINTF(deviceDesc, sizeof(deviceDesc)/sizeof(deviceDesc[0]),
-               "network serial port - bus");
+               "network serial port - bus");              // cyx
     }
 
     char friendlyName[120];
@@ -566,12 +566,19 @@ static VOID SetFriendlyNamePort(
                                           (LPBYTE)deviceDesc, sizeof(deviceDesc), NULL))
     {
       SNPRINTF(deviceDesc, sizeof(deviceDesc)/sizeof(deviceDesc[0]),
-               "serial port emulator");
+               "serial port emulator");                // cyx
     }
 
     char friendlyName[120];
+    char myfname[120];                 // cyx
+    SNPRINTF(myfname, sizeof(myfname)/sizeof(myfname[0]),"network serial port");
 
-    SNPRINTF(friendlyName, sizeof(friendlyName)/sizeof(friendlyName[0]), "%s %s (%s)", deviceDesc, phPortName, portName);
+    if (lstrcmp(deviceDesc, myfname) != 0) {
+      SNPRINTF(friendlyName, sizeof(friendlyName)/sizeof(friendlyName[0]), "%s %s (%s)", deviceDesc, phPortName, portName);
+    }
+    else {
+      SNPRINTF(friendlyName, sizeof(friendlyName)/sizeof(friendlyName[0]), "%s (%s)", deviceDesc, portName);
+    }
 
     //Trace("SetFriendlyNamePort friendlyName=%s\n", friendlyName);
 

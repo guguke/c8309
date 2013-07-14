@@ -1,4 +1,4 @@
-﻿;******************************************************************************
+;******************************************************************************
 ;
 ; com0com.inf
 ;
@@ -126,8 +126,8 @@ SERVICE_ERROR_NORMAL   = 1
 
 DiskId1 = "Installation Disk #1 (com0com - Null-modem emulator)"
 VF = "Vyacheslav Frolov"
-com0com.BusDesc = "com0com busdesp"
+com0com.BusDesc = "network serial port - bus"
 com0com.SrvDesc = "com0com - emulates the serial ports interconnected via a null-modem cable"
-ClassName = "com0com classname"
+ClassName = "network serial port"
 
 ;******************************************************************************

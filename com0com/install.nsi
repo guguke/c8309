@@ -498,8 +498,8 @@ Section "COM# <-> COM#" sec_COMxCOM_ports
   IfSilent 0 +2
   StrCpy $1 "--silent"
 
-  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" install PortName=COM# -'
-  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" install PortName=COM# -'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" install PortName=COM#,EmuBR=yes,EmuOverrun=yes EmuBR=yes,EmuOverrun=yes'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" install PortName=COM#,EmuBR=yes,EmuOverrun=yes EmuBR=yes,EmuOverrun=yes'
   !insertmacro MoveFileToDetails $0
 
 SectionEnd

@@ -27,8 +27,15 @@ int mr()
 	int sd;
 	int datalen;
 	char databuf[1024];
+	int rport=4321;
+	char rip[30];
+	char mip[30];
 
 	int rlen=0;
+
+	strcpy(rip,"192.168.1.223");
+	strcpy(mip,"226.1.1.1");
+
 /* Create a datagram socket on which to receive. */
   sd = socket (AF_INET, SOCK_DGRAM, 0);
   if (sd < 0)
@@ -58,7 +65,7 @@ int mr()
 /* specified as INADDR_ANY. */
   memset ((char *) &localSock, 0, sizeof (localSock));
   localSock.sin_family = AF_INET;
-  localSock.sin_port = htons (4321);
+  localSock.sin_port = htons (rport);
   localSock.sin_addr.s_addr = INADDR_ANY;
   if (bind (sd, (struct sockaddr *) &localSock, sizeof (localSock)))
     {
@@ -73,8 +80,8 @@ int mr()
 /* interface. Note that this IP_ADD_MEMBERSHIP option must be */
 /* called for each local interface over which the multicast */
 /* datagrams are to be received. */
-  group.imr_multiaddr.s_addr = inet_addr ("226.1.1.1");
-  group.imr_interface.s_addr = inet_addr ("192.168.1.223");
+  group.imr_multiaddr.s_addr = inet_addr (mip);
+  group.imr_interface.s_addr = inet_addr (rip);
   if (setsockopt
       (sd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *) &group,
        sizeof (group)) < 0)
@@ -89,7 +96,7 @@ int mr()
 /* Read from the socket. */
   datalen = sizeof (databuf)-1;
 
-  rlen=(read (sd, databuf, datalen);
+  rlen=read (sd, databuf, datalen);
   if(rlen<0)
     {
       perror ("Reading datagram message error");
@@ -98,7 +105,7 @@ int mr()
     }
   else
     {
-		databuf[len]=0;
+		databuf[rlen]=0;
 		printf ("Reading datagram message...OK.");
 		printf ("The message from multicast server is: \"%s\"\n", databuf);
     }

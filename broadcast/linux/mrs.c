@@ -5,19 +5,161 @@
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-//struct sockaddr_in localSock;
-//struct ip_mreq group;
-//int sd;
-//int datalen;
-//char databuf[1024];
-
-
-int main (int argc, char *argv[])
+// ifname:eth0 eth1
+// MAC_str : 001122334455      return val
+// maclong : 00:11:22:33:44:55 reutrn val
+void mac_eth(char *ifname,unsigned char *MAC_str,char *maclong)
 {
-	mr();
-	return 0;
+#define HWADDR_len 6
+    int s,i;
+    struct ifreq ifr;
+    s = socket(AF_INET, SOCK_DGRAM, 0);
+    strcpy(ifr.ifr_name, ifname);
+    ioctl(s, SIOCGIFHWADDR, &ifr);
+    for (i=0; i<HWADDR_len; i++){
+        sprintf(&MAC_str[i*2],"%02X",((unsigned char*)ifr.ifr_hwaddr.sa_data)[i]);
+        sprintf(&maclong[i*3],"%02X:",((unsigned char*)ifr.ifr_hwaddr.sa_data)[i]);
+    }
+    maclong[17]='\0';
+    MAC_str[12]='\0';
 }
+
+
+//int domains[] = { AF_INET, AF_INET6 };
+//domain: AF_INET or AF_INET6
+// pif: "eth0" or "eth2"
+// pip: ip return
+int print_addresses(const int domain,char *pif,char *pip)
+{
+    int s;
+    struct ifconf ifconf;
+    struct ifreq ifr[50];
+    int ifs;
+    int i;
+    int ret=0;// interface not found
+
+    s = socket(domain, SOCK_STREAM, 0);
+    if (s < 0) {
+        perror("socket");
+        return 0;
+    }
+
+    ifconf.ifc_buf = (char *) ifr;
+    ifconf.ifc_len = sizeof ifr;
+
+    if (ioctl(s, SIOCGIFCONF, &ifconf) == -1) {
+        perror("ioctl");
+        return 0;
+    }
+
+    ifs = ifconf.ifc_len / sizeof(ifr[0]);
+    // interfaces number
+    //printf("interfaces = %d:\n", ifs);
+    for (i = 0; i < ifs; i++) {
+        char ip[INET_ADDRSTRLEN];
+        struct sockaddr_in *s_in = (struct sockaddr_in *) &ifr[i].ifr_addr;
+
+        if (!inet_ntop(domain, &s_in->sin_addr, ip, sizeof(ip))) {
+            perror("inet_ntop");
+            return 0;
+        }
+
+        //   printf("%s - %s\n", ifr[i].ifr_name, ip);
+        if (strcmp(pif,ifr[i].ifr_name)==0) strcpy(pip,ip);
+        ret=1;
+    }
+
+    close(s);
+
+    return ret;
+}
+
+
+int ms(){
+    struct in_addr localInterface;
+    struct sockaddr_in groupSock;
+    int sd;
+    char databuf[1024] = "Multicast test message lol!";
+    int datalen = sizeof (databuf);
+    
+    int mport=4321;
+    char mip[30];
+    char localip[30];
+
+    strcpy(mip,"226.1.1.1");
+    strcpy(localip,"192.168.1.224");
+
+    datalen=strlen(databuf);
+    /* Create a datagram socket on which to send. */
+    sd = socket (AF_INET, SOCK_DGRAM, 0);
+    if (sd < 0) {
+        perror ("Opening datagram socket error");
+        exit (1);
+    }
+    else
+        printf ("Opening the datagram socket...OK.\n");
+
+    /* Initialize the group sockaddr structure with a */
+    /* group address of 225.1.1.1 and port 5555. */
+    memset ((char *) &groupSock, 0, sizeof (groupSock));
+    groupSock.sin_family = AF_INET;
+    groupSock.sin_addr.s_addr = inet_addr (mip);
+    groupSock.sin_port = htons (mport);
+
+    // Disable loopback so you do not receive your own datagrams.
+    /*
+    {
+        char loopch = 0;
+        if (setsockopt(sd, IPPROTO_IP, IP_MULTICAST_LOOP, (char *)&loopch, sizeof(loopch)) < 0)
+        {
+            perror("Setting IP_MULTICAST_LOOP error");
+            close(sd);
+            exit(1);
+        }
+        else
+            printf("Disabling the loopback...OK.\n");
+    }
+    */
+
+    /* Set local interface for outbound multicast datagrams. */
+    /* The IP address specified must be associated with a local, */
+    /* multicast capable interface. */
+    localInterface.s_addr = inet_addr (localip);
+    if (setsockopt (sd, IPPROTO_IP, IP_MULTICAST_IF, (char *) &localInterface,
+                    sizeof (localInterface)) < 0) {
+        perror ("Setting local interface error");
+        exit (1);
+    }
+    else
+        printf ("Setting the local interface...OK\n");
+    /* Send a message to the multicast group specified by the*/
+    /* groupSock sockaddr structure. */
+    /*int datalen = 1024;*/
+    if (sendto (sd, databuf, datalen, 0, (struct sockaddr *) &groupSock,
+                sizeof (groupSock)) < 0) {
+        perror ("Sending datagram message error");
+    }
+    else
+        printf ("Sending datagram message...OK\n");
+
+    /* Try the re-read from the socket if the loopback is not disable
+    if(read(sd, databuf, datalen) < 0)
+    {
+    perror("Reading datagram message error\n");
+    close(sd);
+    exit(1);
+    }
+    else
+    {
+    printf("Reading datagram message from client...OK\n");
+    printf("The message is: %s\n", databuf);
+    }
+    */
+    return 0;
+}
+
 
 // multicast rcv
 int mr()
@@ -111,4 +253,14 @@ int mr()
     }
   return 0;
 }
+
+
+
+
+int main (int argc, char *argv[])
+{
+	mr();
+	return 0;
+}
+
 

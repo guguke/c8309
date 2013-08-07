@@ -27,6 +27,8 @@ int mr()
 	int sd;
 	int datalen;
 	char databuf[1024];
+
+	int rlen=0;
 /* Create a datagram socket on which to receive. */
   sd = socket (AF_INET, SOCK_DGRAM, 0);
   if (sd < 0)
@@ -72,7 +74,7 @@ int mr()
 /* called for each local interface over which the multicast */
 /* datagrams are to be received. */
   group.imr_multiaddr.s_addr = inet_addr ("226.1.1.1");
-  group.imr_interface.s_addr = inet_addr ("192.168.1.224");
+  group.imr_interface.s_addr = inet_addr ("192.168.1.223");
   if (setsockopt
       (sd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *) &group,
        sizeof (group)) < 0)
@@ -85,8 +87,10 @@ int mr()
     printf ("Adding multicast group...OK.\n");
 
 /* Read from the socket. */
-  datalen = sizeof (databuf);
-  if (read (sd, databuf, datalen) < 0)
+  datalen = sizeof (databuf)-1;
+
+  rlen=(read (sd, databuf, datalen);
+  if(rlen<0)
     {
       perror ("Reading datagram message error");
       close (sd);
@@ -94,8 +98,9 @@ int mr()
     }
   else
     {
-      printf ("Reading datagram message...OK.\n");
-      printf ("The message from multicast server is: \"%s\"\n", databuf);
+		databuf[len]=0;
+		printf ("Reading datagram message...OK.");
+		printf ("The message from multicast server is: \"%s\"\n", databuf);
     }
   return 0;
 }

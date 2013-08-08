@@ -286,6 +286,10 @@ static const char *html_form =
   "<input type=\"submit\" />"
   "</form></body></html>";
 
+static const char *html_multi_rcv =
+  "<html><body>start multicast rcv"
+  "</body></html>";
+
 static int begin_request_handler(struct mg_connection *conn) {
   const struct mg_request_info *ri = mg_get_request_info(conn);
   char post_data[1024], input1[sizeof(post_data)], input2[sizeof(post_data)];
@@ -315,6 +319,14 @@ static int begin_request_handler(struct mg_connection *conn) {
               "Content-Length: %d\r\n"
               "Content-Type: text/html\r\n\r\n%s",
               (int) strlen(html_form), html_form);
+	return 1;
+  }
+  else if (!strcmp(ri->uri, "/multi_rcv.html")) {
+    // Show HTML form.
+    mg_printf(conn, "HTTP/1.0 200 OK\r\n"
+              "Content-Length: %d\r\n"
+              "Content-Type: text/html\r\n\r\n%s",
+              (int) strlen(html_multi_rcv), html_multi_rcv);
 	return 1;
   }
   else return 0;

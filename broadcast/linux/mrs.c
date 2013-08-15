@@ -163,7 +163,12 @@ int ms(){
 
 
 // multicast rcv
-int mr(char rip,char mip,int rport,char databuf)
+// rip: local ip
+// mip: multicast ip
+// rport: multicast port
+// databuf: rcv buf
+// pnLen: multicast rcv len
+int mr(char rip,char mip,int rport,char *databuf,int *pnLen)
 {
 	struct sockaddr_in localSock;
 	struct ip_mreq group;
@@ -175,6 +180,7 @@ int mr(char rip,char mip,int rport,char databuf)
 	//char mip[30];
 	
 	int rlen=0;
+	*pnLen=0;
 	
 	//strcpy(rip,"192.168.1.223");
 	//strcpy(mip,"226.1.1.1");
@@ -184,7 +190,7 @@ int mr(char rip,char mip,int rport,char databuf)
 	if (sd < 0)
     {
 		perror ("Opening datagram socket error");
-		exit (1);
+		return -1
     }
 	else
 		printf ("Opening datagram socket....OK.\n");
@@ -198,7 +204,7 @@ int mr(char rip,char mip,int rport,char databuf)
 		{
 			perror ("Setting SO_REUSEADDR error");
 			close (sd);
-			exit (1);
+			return -2;
 		}
 		else
 			printf ("Setting SO_REUSEADDR...OK.\n");
@@ -209,12 +215,12 @@ int mr(char rip,char mip,int rport,char databuf)
 	memset ((char *) &localSock, 0, sizeof (localSock));
 	localSock.sin_family = AF_INET;
 	localSock.sin_port = htons (rport);
-	localSock.sin_addr.s_addr = INADDR_ANY;
+	localSock.sin_addr.s_addr = INADDR_ANY;   // rip ??????????????
 	if (bind (sd, (struct sockaddr *) &localSock, sizeof (localSock)))
     {
 		perror ("Binding datagram socket error");
 		close (sd);
-		exit (1);
+		return -3;
     }
 	else
 		printf ("Binding datagram socket...OK.\n");
@@ -231,20 +237,20 @@ int mr(char rip,char mip,int rport,char databuf)
     {
 		perror ("Adding multicast group error");
 		close (sd);
-		exit (1);
+		return -4;
     }
 	else
 		printf ("Adding multicast group...OK.\n");
 	
 	/* Read from the socket. */
-	datalen = sizeof (databuf)-1;
+	datalen = 512;
 	
 	rlen=read (sd, databuf, datalen);
 	if(rlen<0)
     {
 		perror ("Reading datagram message error");
 		close (sd);
-		exit (1);
+		return -5
     }
 	else
     {
@@ -252,6 +258,7 @@ int mr(char rip,char mip,int rport,char databuf)
 		printf ("Reading datagram message...OK.");
 		printf ("The message from multicast server is: \"%s\"\n", databuf);
     }
+	*pnLen=rlen;
 	return 0;
 }
 
@@ -263,10 +270,13 @@ int main (int argc, char *argv[])
 	char localip[30],mrip[30];
 	int mrport=4321;
 	char mrcvbuf[1024];
+	int mrLen=0;
 
 	strcpy(localip,"192.168.1.224");
 	strcpy(mrip,"226.1.1.1");
-	mr(localip,mrip,mrport,mrcvbuf);
+
+	mr(localip,mrip,mrport,mrcvbuf,&mrLen);
+
 	return 0;
 }
 

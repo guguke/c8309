@@ -8,10 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+// get if MAC 
 // ifname:eth0 eth1
 // MAC_str : 001122334455      return val
 // maclong : 00:11:22:33:44:55 reutrn val
-void mac_eth(char *ifname,unsigned char *MAC_str,char *maclong)
+void getMAC(char *ifname,unsigned char *MAC_str,char *maclong)
 {
 #define HWADDR_len 6
     int s,i;
@@ -27,12 +28,12 @@ void mac_eth(char *ifname,unsigned char *MAC_str,char *maclong)
     MAC_str[12]='\0';
 }
 
-
+// get if ip : if="eth0" or "eth2"      
 //int domains[] = { AF_INET, AF_INET6 };
 //domain: AF_INET or AF_INET6
 // pif: "eth0" or "eth2"
 // pip: ip return
-int print_addresses(const int domain,char *pif,char *pip)
+int getIP(const int domain,char *pif,char *pip)
 {
     int s;
     struct ifconf ifconf;
@@ -165,6 +166,48 @@ int ms(char *localip,char *mip,int mport,char *databuf,int nLen){
     return 0;
 }
 
+int ms_ser2net(void)
+{
+	char localip[30];
+	int ret;
+
+	char msip[30];
+	int msport=4322;
+	char msbuf[1024];
+	int sLen;
+
+	int n=0;
+	char header[30];
+	char pip[30];
+	int replayPort=0;
+
+	char ifname[30];
+	char ifip[30];
+	char ifmac[40];
+	char tmp[100];
+
+	strcpy(localip,"192.168.1.224");
+	
+	strcpy(msip,"226.1.1.2");
+	strcpy(ifname,"eth0");
+	getMAC(ifname,tmp,ifmac);
+	getIP(AF_INET,ifname,ifip);
+
+	// 1: rgetip
+	// 2: src ip request
+	// 3: multicast ip
+	// 4. multicast port
+	// 5. ser2net if name: "eth2"
+	// 6. ser2net if ip:
+	// 7. ser2net if MAC: 
+
+	sprintf(msbuf,"rgetip %s %s %d %s %s %s",localip,msip,msport,ifname,ifip,ifmac); 
+	sLen=strlen(msbuf);
+
+	ms(localip,msip,msport,msbuf,sLen);
+
+	return 0;
+}
 
 // multicast rcv
 // rip: local ip
@@ -291,7 +334,15 @@ int main (int argc, char *argv[])
 	strcpy(mrip,"226.1.1.1");
 
 	strcpy(msip,"226.1.1.2");
-	sprintf(msbuf,"rgetip %s %d test",localip,msport); 
+	// 1: rgetip
+	// 2: src ip request
+	// 3: multicast ip
+	// 4. multicast port
+	// 5. ser2net if name: "eth2"
+	// 6. ser2net if ip:
+	// 7. ser2net if MAC: 
+
+	sprintf(msbuf,"rgetip %s %s %d test",localip,msip,msport); 
 	sLen=strlen(msbuf);
 
 	ret = mr(localip,mrip,mrport,mrcvbuf,&mrLen);

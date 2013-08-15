@@ -5,6 +5,9 @@
 #define MC_ADDR     "226.1.1.1"
 #define MC_PORT     4321
 #define MAXLEN      256
+
+// vc6 compile : prj setting add ws2_32.lib
+
 void main(int argc, char **argv)
 {
 	SOCKET          s;

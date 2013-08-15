@@ -271,11 +271,25 @@ int main (int argc, char *argv[])
 	int mrport=4321;
 	char mrcvbuf[1024];
 	int mrLen=0;
+	int ret;
+
+	int n=0;
+	char header[30];
+	char pip[30];
+	int replayPort=0;
 
 	strcpy(localip,"192.168.1.224");
 	strcpy(mrip,"226.1.1.1");
 
-	mr(localip,mrip,mrport,mrcvbuf,&mrLen);
+	ret = mr(localip,mrip,mrport,mrcvbuf,&mrLen);
+	if( ret>=0){
+		n=sscanf(mrcvbuf,"%s%s%d",header,pip,&replayPort);
+		if(n==3){
+			if(0==stricmp(header,"getip")){
+				printf(" header: %s\n",header);
+			}
+		}
+	}
 
 	return 0;
 }

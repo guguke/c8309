@@ -168,7 +168,7 @@ int ms(){
 // rport: multicast port
 // databuf: rcv buf
 // pnLen: multicast rcv len
-int mr(char rip,char mip,int rport,char *databuf,int *pnLen)
+int mr(char *rip,char *mip,int rport,char *databuf,int *pnLen)
 {
 	struct sockaddr_in localSock;
 	struct ip_mreq group;
@@ -190,7 +190,7 @@ int mr(char rip,char mip,int rport,char *databuf,int *pnLen)
 	if (sd < 0)
     {
 		perror ("Opening datagram socket error");
-		return -1
+		return -1;
     }
 	else
 		printf ("Opening datagram socket....OK.\n");
@@ -250,7 +250,7 @@ int mr(char rip,char mip,int rport,char *databuf,int *pnLen)
     {
 		perror ("Reading datagram message error");
 		close (sd);
-		return -5
+		return -5;
     }
 	else
     {

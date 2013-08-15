@@ -78,26 +78,26 @@ int print_addresses(const int domain,char *pif,char *pip)
 }
 
 
-int ms(){
+int ms(char *localip,char *mip,int mport,char *databuf,int nLen){
     struct in_addr localInterface;
     struct sockaddr_in groupSock;
     int sd;
-    char databuf[1024] = "Multicast test message lol!";
+    //char databuf[1024] = "Multicast test message lol!";
     int datalen = sizeof (databuf);
     
-    int mport=4321;
-    char mip[30];
-    char localip[30];
+    //int mport=4321;
+    //char mip[30];
+    //char localip[30];
 	
-    strcpy(mip,"226.1.1.1");
-    strcpy(localip,"192.168.1.224");
+    //strcpy(mip,"226.1.1.1");
+    //strcpy(localip,"192.168.1.224");
 	
-    datalen=strlen(databuf);
+    datalen=nLen;
     /* Create a datagram socket on which to send. */
     sd = socket (AF_INET, SOCK_DGRAM, 0);
     if (sd < 0) {
         perror ("Opening datagram socket error");
-        exit (1);
+		return -1;
     }
     else
         printf ("Opening the datagram socket...OK.\n");
@@ -131,7 +131,8 @@ int ms(){
     if (setsockopt (sd, IPPROTO_IP, IP_MULTICAST_IF, (char *) &localInterface,
 		sizeof (localInterface)) < 0) {
         perror ("Setting local interface error");
-        exit (1);
+		close(sd);
+		return -2;
     }
     else
         printf ("Setting the local interface...OK\n");
@@ -141,6 +142,8 @@ int ms(){
     if (sendto (sd, databuf, datalen, 0, (struct sockaddr *) &groupSock,
 		sizeof (groupSock)) < 0) {
         perror ("Sending datagram message error");
+		close(sd);
+		return -3;
     }
     else
         printf ("Sending datagram message...OK\n");
@@ -158,6 +161,7 @@ int ms(){
 		printf("The message is: %s\n", databuf);
 		}
     */
+	close(sd);
     return 0;
 }
 
@@ -273,6 +277,11 @@ int main (int argc, char *argv[])
 	int mrLen=0;
 	int ret;
 
+	char msip[30];
+	int msport=4322;
+	char msbuf[1024];
+	int sLen;
+
 	int n=0;
 	char header[30];
 	char pip[30];
@@ -281,12 +290,17 @@ int main (int argc, char *argv[])
 	strcpy(localip,"192.168.1.224");
 	strcpy(mrip,"226.1.1.1");
 
+	strcpy(msip,"226.1.1.2");
+	sprintf(msbuf,"rgetip %s %d test",localip,msport); 
+	slen=strlen(msbuf);
+
 	ret = mr(localip,mrip,mrport,mrcvbuf,&mrLen);
 	if( ret>=0){
 		n=sscanf(mrcvbuf,"%s%s%d",header,pip,&replayPort);
 		if(n==3){
 			if(0==stricmp(header,"getip")){
 				printf(" header: %s\n",header);
+				ms(localip,msip,msport,msbuf,slen);
 			}
 		}
 	}

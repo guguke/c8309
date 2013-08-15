@@ -292,15 +292,15 @@ int main (int argc, char *argv[])
 
 	strcpy(msip,"226.1.1.2");
 	sprintf(msbuf,"rgetip %s %d test",localip,msport); 
-	slen=strlen(msbuf);
+	sLen=strlen(msbuf);
 
 	ret = mr(localip,mrip,mrport,mrcvbuf,&mrLen);
 	if( ret>=0){
 		n=sscanf(mrcvbuf,"%s%s%d",header,pip,&replayPort);
 		if(n==3){
-			if(0==stricmp(header,"getip")){
+			if(0==strcmp(header,"getip")){   // stricmp ??????????
 				printf(" header: %s\n",header);
-				ms(localip,msip,msport,msbuf,slen);
+				ms(localip,msip,msport,msbuf,sLen);
 			}
 		}
 	}

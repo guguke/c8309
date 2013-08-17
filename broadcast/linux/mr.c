@@ -1,8 +1,9 @@
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <net/if.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -160,7 +161,7 @@ main (int argc, char *argv[])
     }
 	else
     {
-		buf[ret]=0;
+		databuf[ret]=0;
 		printf ("Reading datagram message...OK.\n");
 		printf ("The message from multicast server is: \"%s\"\n", databuf);
     }

@@ -179,7 +179,7 @@ int ms_ser2net(void)
 	int n=0;
 	char header[30];
 	char pip[30];
-	int replayPort=0;
+	int replyPort=0;
 	
 	char ifname[30];
 	char ifip[30];
@@ -329,13 +329,15 @@ int main (int argc, char *argv[])
 	int n=0;
 	char header[30];
 	char pip[30];
-	int replayPort=0;
+	int replyPort=0;
 	
+	
+	printf("usage mrs eth0\n");
+	if(argc<2) return -1;
 	if(argc>1){
 		strcpy(ifname,argv[1]);
 	}
 	else strcpy(ifname,"eth0");
-	printf("usage mrs eth0\n");
 
 	getIP(AF_INET,ifname,localip);
 	//strcpy(localip,"192.168.1.224");
@@ -358,7 +360,7 @@ int main (int argc, char *argv[])
 	
 	ret = mr(localip,mrip,mrport,mrcvbuf,&mrLen);
 	if( ret>=0){
-		n=sscanf(mrcvbuf,"%s%s%d",header,pip,&replayPort);
+		n=sscanf(mrcvbuf,"%s%s%d",header,pip,&replyPort);
 		if(n==3){
 			if(0==strcmp(header,"getip")){   // stricmp ??????????
 				printf(" header: %s\n",header);

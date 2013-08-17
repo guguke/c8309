@@ -1,11 +1,13 @@
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <net/if.h>
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 // get if ip : if="eth0" or "eth2"      

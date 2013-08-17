@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+int rmbuf(char *buf,char ch);
+
 //struct in_addr localInterface;
 //struct sockaddr_in groupSock;
 //int sd;
@@ -42,19 +44,20 @@ int main (int argc, char *argv[])
 		break;
 	}
 	len = strlen(sbuf);
-	rmchar(sbuf,'_');
+	rmbuf(sbuf,'_');
     ms(mcastip,mcastport,localip,sbuf,len);
     return 0;
 }
 
-void rmchar(char *buf,char ch)
+int rmbuf(char *buf,char ch)
 {
 	int i;
+	int len;
 	len = strlen(buf);
 	for(i=0;i<len;i++){
-		if( (0x0ff&ch)==(0x0ff)&buf[i]) buf[i]=0x20;
+		if( (0x0ff&ch)==(0x0ff&buf[i])) buf[i]=0x20;
 	}
-	return;
+	return  0;
 }
 
 

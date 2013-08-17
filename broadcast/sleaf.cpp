@@ -7,17 +7,17 @@
 
 //#define MCASTADDR     "226.1.1.1"
 //#define MCASTPORT      4321
-#define BUFSIZE        4048
-#define DEFAULT_COUNT  500
+//#define BUFSIZE        4048
+//#define DEFAULT_COUNT  500
 
 //BOOL  bSender = FALSE,      // Act as a sender?
 //bLoopBack = FALSE;    // Disable loopback?
 
-DWORD dwInterface,          // Local interface to bind to
-dwMulticastGroup,     // Multicast group to join
-dwCount;              // Number of messages to send/receive
+//DWORD dwInterface,          // Local interface to bind to
+//dwMulticastGroup,     // Multicast group to join
+//dwCount;              // Number of messages to send/receive
 
-short iPort;                // Port number to use
+//short iPort;                // Port number to use
 
 void getTimeStr(char *str)
 {
@@ -33,16 +33,20 @@ void getTimeStr(char *str)
 // sendbuf :
 int sleaf(char *MCASTADDR,int MCASTPORT,char *sendbuf,int nLen)
 {
-    struct sockaddr_in  local,		remote;
+	DWORD dwInterface,          // Local interface to bind to
+		dwMulticastGroup;     // Multicast group to join
+	//dwCount;              // Number of messages to send/receive
+	short iPort;                // Port number to use
+	
+	struct sockaddr_in  local,		remote;
     SOCKET              sock, sockM;
     //TCHAR               sendbuf[BUFSIZE];
-    int                 len = sizeof(struct sockaddr_in),
-		optval;
-
+    int                 len = sizeof(struct sockaddr_in),		optval;
+	
 	dwInterface = INADDR_ANY;
     dwMulticastGroup = inet_addr(MCASTADDR);
     iPort = MCASTPORT;
-
+	
     // Create the socket. In Winsock 2, you do have to specify the
     // multicast attributes that this socket will be used with.
     //
@@ -150,18 +154,18 @@ int main(int argc, char **argv)
 	int nLen=0;
     WSADATA             wsd;
 	char szTime[40];
-
+	
     if (WSAStartup(MAKEWORD(2, 2), &wsd) != 0)
     {
         printf("WSAStartup() failed\n");
         return -1;
     }
-
+	
 	getTimeStr(szTime);
 	sprintf(sendbuf,"getip 226.1.1.2 4322 %s",szTime);
 	nLen=strlen(sendbuf);
 	sleaf("226.1.1.1",4321,sendbuf,nLen);
-
+	
     WSACleanup();
 	return 0;
 }

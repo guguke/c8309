@@ -3,9 +3,10 @@
 #include <ws2tcpip.h>
 #include <stdio.h>
 #include <time.h>
-#define MC_ADDR     "226.1.1.1"
-#define MC_PORT     4321
-#define MAXLEN      256
+
+//#define MC_ADDR     "226.1.1.1"
+//#define MC_PORT     4321
+//#define MAXLEN      256
 
 // vc6 compile : prj setting add ws2_32.lib
 
@@ -25,10 +26,27 @@ void main(int argc, char **argv)
 	SOCKADDR_IN     mcAddr;
 	int             nMcLen;
 	int             n;
-	char            buf[MAXLEN];
+	char            buf[1000];
 	char sec[40];
 	WSADATA         wsaData;
-	int             nErr;    
+	int             nErr;   
+	char mip[30];
+	int mport=4321;
+
+	switch(argc){
+	case 4:
+		strcpy(buf,argv[3]);
+		mport=atoi(argv[2]);
+		strcpy(mip,argv[1]);
+		break;
+	case 3:
+		mport=atoi(argv[2]);
+	case 2:
+		strcpy(mip,argv[1]);
+	default:
+		break;
+	}
+
 	if(WSAStartup(0x0202, &wsaData) != 0)
 	{
 		//ReportErr("WSAStartup(..)");
@@ -42,25 +60,27 @@ void main(int argc, char **argv)
 		return;
 	}
 	mcAddr.sin_family       = AF_INET;
-	mcAddr.sin_addr.s_addr  = inet_addr(MC_ADDR);
-	mcAddr.sin_port         = htons(MC_PORT);     
+	mcAddr.sin_addr.s_addr  = inet_addr(mip);
+	mcAddr.sin_port         = htons(mport);     
 	nMcLen = sizeof(mcAddr);
 	n = 0;
 	//for(int i=0;i<3;i++)
 	//{
 	//Sleep(1000);
-	sec[0]=0;
-	getTimeStr(sec);
-	sprintf(buf, "getip 226.1.1.2 4322 %s",sec);
+	if(argc < 4 ){
+		sec[0]=0;
+		getTimeStr(sec);
+		sprintf(buf, "getip %s %d %s",mip,mport,sec);
+	}
 	nErr = sendto(s, buf, strlen(buf), 0, (struct sockaddr*)&mcAddr, nMcLen);
-#if 0
+
 	if(nErr == SOCKET_ERROR)
 	{
+		printf(" multicast %s:%d send error\n",mip,mport);
 		//WSAReportErr("sendto(...)");
-		break;
 	}
-#endif
-	printf("sent: %s   (%s:%d\n", buf,MC_ADDR,MC_PORT);
+
+	printf("sent: %s   (%s:%d\n", buf,mip,mport);
 	//}
 	WSACleanup();
 }

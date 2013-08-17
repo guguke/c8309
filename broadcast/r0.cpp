@@ -3,9 +3,9 @@
 #include <stdio.h> 
 #include <time.h>
 
-#define MC_ADDR     "226.1.1.2"
-#define MC_PORT     4322
-#define MAXLEN      256
+//#define MC_ADDR     "226.1.1.2"
+//#define MC_PORT     4322
+#define MAXLEN      2000
 
 
 void main(int argc, char **argv)
@@ -19,6 +19,22 @@ void main(int argc, char **argv)
 	SOCKADDR_IN     localAddr;
 	WSADATA         wsaData;
 	int             nErr;      
+	char mip[30];
+	int mport=4322;
+
+	printf("usage: r0 226.1.1.2 4322\n");
+
+	strcpy(mip,"226.1.1.2");
+	switch(argc){
+	case 3:
+		mport=atoi(argv[2]);
+	case 2:
+		strcpy(mip,argv[1]);
+	default:
+		break;
+	}
+	printf(" multicast rcv %s:%d\n",mip,mport);
+
 	if(WSAStartup(0x0202, &wsaData) != 0)
 	{
 		//ReportErr("WSAStartup(..)");
@@ -40,7 +56,7 @@ void main(int argc, char **argv)
 	memset(&localAddr, 0, sizeof(localAddr));      
 	localAddr.sin_family        = AF_INET;
 	localAddr.sin_addr.s_addr   = htonl(INADDR_ANY)/*inet_addr(MC_ADDR)*/;
-	localAddr.sin_port          = htons(MC_PORT);     
+	localAddr.sin_port          = htons(mport);     
 	nErr = bind(s, (struct sockaddr*)&localAddr, sizeof(localAddr));
 	if(nErr == SOCKET_ERROR)
 	{
@@ -49,7 +65,7 @@ void main(int argc, char **argv)
 		return;
 	}
 	/* Join multicast group */
-	ipmr.imr_multiaddr.s_addr  = inet_addr(MC_ADDR);
+	ipmr.imr_multiaddr.s_addr  = inet_addr(mip);
 	ipmr.imr_interface.s_addr  = htonl(INADDR_ANY);
 	nErr = setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char*)&ipmr, sizeof(ipmr));
 	if(nErr == SOCKET_ERROR)
@@ -59,8 +75,8 @@ void main(int argc, char **argv)
 		return;
 	}
 	mcAddr.sin_family       = AF_INET;
-	mcAddr.sin_addr.s_addr  = inet_addr(MC_ADDR);
-	mcAddr.sin_port         = htons(MC_PORT);
+	mcAddr.sin_addr.s_addr  = inet_addr(mip);
+	mcAddr.sin_port         = htons(mport);
 	nMcLen = sizeof(mcAddr);  
 	for(i=0;i<1;i++)
 	{

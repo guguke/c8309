@@ -1,4 +1,7 @@
 
+2013.08.17
+r0.cpp add para (argc,argv)
+
 2013.08.15
 leaf.cpp : win32 multicast examples, send and rcv
 sleaf.cpp : <== leaf.cpp    multicast send func

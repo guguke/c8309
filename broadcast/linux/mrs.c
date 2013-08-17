@@ -170,29 +170,29 @@ int ms_ser2net(void)
 {
 	char localip[30];
 	int ret;
-
+	
 	char msip[30];
 	int msport=4322;
 	char msbuf[1024];
 	int sLen;
-
+	
 	int n=0;
 	char header[30];
 	char pip[30];
 	int replayPort=0;
-
+	
 	char ifname[30];
 	char ifip[30];
 	char ifmac[40];
 	char tmp[100];
-
+	
 	strcpy(localip,"192.168.1.224");
 	
 	strcpy(msip,"226.1.1.2");
 	strcpy(ifname,"eth0");
 	getMAC(ifname,tmp,ifmac);
 	getIP(AF_INET,ifname,ifip);
-
+	
 	// 1: rgetip
 	// 2: src ip request
 	// 3: multicast ip
@@ -200,12 +200,12 @@ int ms_ser2net(void)
 	// 5. ser2net if name: "eth2"
 	// 6. ser2net if ip:
 	// 7. ser2net if MAC: 
-
+	
 	sprintf(msbuf,"rgetip %s %s %d %s %s %s",localip,msip,msport,ifname,ifip,ifmac); 
 	sLen=strlen(msbuf);
-
+	
 	ms(localip,msip,msport,msbuf,sLen);
-
+	
 	return 0;
 }
 
@@ -314,25 +314,34 @@ int mr(char *rip,char *mip,int rport,char *databuf,int *pnLen)
 
 int main (int argc, char *argv[])
 {
+	char ifname[20];
 	char localip[30],mrip[30];
 	int mrport=4321;
 	char mrcvbuf[1024];
 	int mrLen=0;
 	int ret;
-
+	
 	char msip[30];
 	int msport=4322;
 	char msbuf[1024];
 	int sLen;
-
+	
 	int n=0;
 	char header[30];
 	char pip[30];
 	int replayPort=0;
+	
+	if(argc>1){
+		strcpy(ifname,argv[1]);
+	}
+	else strcpy(ifname,"eth0");
+	printf("usage mrs eth0\n");
 
-	strcpy(localip,"192.168.1.224");
+	getIP(AF_INET,ifname,localip);
+	//strcpy(localip,"192.168.1.224");
+
 	strcpy(mrip,"226.1.1.1");
-
+	
 	strcpy(msip,"226.1.1.2");
 	// 1: rgetip
 	// 2: src ip request
@@ -341,10 +350,12 @@ int main (int argc, char *argv[])
 	// 5. ser2net if name: "eth2"
 	// 6. ser2net if ip:
 	// 7. ser2net if MAC: 
-
+	
 	sprintf(msbuf,"rgetip %s %s %d test",localip,msip,msport); 
 	sLen=strlen(msbuf);
-
+	printf(" mcast rcv : %s:%d\n",mrip,mrport);
+	printf(" mcast send : %s:%d    if:%s(%s)\n",msip,msport,ifname,localip);
+	
 	ret = mr(localip,mrip,mrport,mrcvbuf,&mrLen);
 	if( ret>=0){
 		n=sscanf(mrcvbuf,"%s%s%d",header,pip,&replayPort);
@@ -355,7 +366,7 @@ int main (int argc, char *argv[])
 			}
 		}
 	}
-
+	
 	return 0;
 }
 

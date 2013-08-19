@@ -166,13 +166,13 @@ int ms(char *localip,char *mip,int mport,char *databuf,int nLen){
     return 0;
 }
 
-int ms_ser2net(void)
+int ms_ser2net(char *srcip,char *msip,int msport,char *ifname)
 {
 	char localip[30];
 	int ret;
 	
-	char msip[30];
-	int msport=4322;
+	//char msip[30];
+	//int msport=4322;
 	char msbuf[1024];
 	int sLen;
 	
@@ -181,15 +181,15 @@ int ms_ser2net(void)
 	char pip[30];
 	int replyPort=0;
 	
-	char ifname[30];
+	//char ifname[30];
 	char ifip[30];
 	char ifmac[40];
 	char tmp[100];
 	
-	strcpy(localip,"192.168.1.224");
+	//strcpy(localip,"192.168.1.224");
 	
-	strcpy(msip,"226.1.1.2");
-	strcpy(ifname,"eth0");
+	//strcpy(msip,"226.1.1.2");
+	//strcpy(ifname,"eth0");
 	getMAC(ifname,tmp,ifmac);
 	getIP(AF_INET,ifname,ifip);
 	

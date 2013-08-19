@@ -356,7 +356,7 @@ int main (int argc, char *argv[])
 	
 	ret = mr(localip,mrip,mrport,mrcvbuf,&mrLen);
 	if( ret>=0){
-		n=sscanf(mrcvbuf,"%s%s%d",header,pip,&replyPort,clientip,sztime);
+		n=sscanf(mrcvbuf,"%s%s%d%s%s",header,pip,&replyPort,clientip,sztime);
 		if(n==5){
 			if(0==strcmp(header,"getip")){   // stricmp ??????????
 				printf(" header: %s\n",header);

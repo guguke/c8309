@@ -79,20 +79,14 @@ int getIP(const int domain,char *pif,char *pip)
 }
 
 
-int ms(char *localip,char *mip,int mport,char *databuf,int nLen){
+int ms(char *localip,char *mip,int mport,char *databuf,int nLen)
+{
     struct in_addr localInterface;
     struct sockaddr_in groupSock;
     int sd;
     //char databuf[1024] = "Multicast test message lol!";
-    int datalen = sizeof (databuf);
+    int datalen;
     
-    //int mport=4321;
-    //char mip[30];
-    //char localip[30];
-	
-    //strcpy(mip,"226.1.1.1");
-    //strcpy(localip,"192.168.1.224");
-	
     datalen=nLen;
     /* Create a datagram socket on which to send. */
     sd = socket (AF_INET, SOCK_DGRAM, 0);
@@ -165,14 +159,17 @@ int ms(char *localip,char *mip,int mport,char *databuf,int nLen){
 	close(sd);
     return 0;
 }
-
-int ms_ser2net(char *srcip,char *msip,int msport,char *ifname)
+// multicast reply  (getip 
+// srcip : client ip, using for check , client ip
+// msip: reply multicast ip : 226.1.1.2
+// msport:                    4322
+// ifname: eth2 ?
+// sn:  time str, 
+int ms_ser2net(char *srcip,char *msip,int msport,char *ifname,char *sn)
 {
 	char localip[30];
 	int ret;
 	
-	//char msip[30];
-	//int msport=4322;
 	char msbuf[1024];
 	int sLen;
 	
@@ -181,30 +178,25 @@ int ms_ser2net(char *srcip,char *msip,int msport,char *ifname)
 	char pip[30];
 	int replyPort=0;
 	
-	//char ifname[30];
 	char ifip[30];
 	char ifmac[40];
 	char tmp[100];
 	
-	//strcpy(localip,"192.168.1.224");
-	
-	//strcpy(msip,"226.1.1.2");
-	//strcpy(ifname,"eth0");
 	getMAC(ifname,tmp,ifmac);
 	getIP(AF_INET,ifname,ifip);
 	
 	// 1: rgetip
-	// 2: src ip request
-	// 3: multicast ip
-	// 4. multicast port
-	// 5. ser2net if name: "eth2"
-	// 6. ser2net if ip:
-	// 7. ser2net if MAC: 
-	
-	sprintf(msbuf,"rgetip %s %s %d %s %s %s",localip,msip,msport,ifname,ifip,ifmac); 
+	// 2: src ip request  client ip
+	// 3. sn : string time 
+	// 4: multicast ip
+	// 5: multicast port
+	// 6. ser2net if name: "eth2"
+	// 7. ser2net if ip:
+	// 8. ser2net if MAC: 
+	sprintf(msbuf,"rgetip %s %s %s %d %s %s %s",srcip,sn,msip,msport,ifname,ifip,ifmac); 
 	sLen=strlen(msbuf);
 	
-	ms(localip,msip,msport,msbuf,sLen);
+	ms(ifip,msip,msport,msbuf,sLen);
 	
 	return 0;
 }
@@ -321,6 +313,8 @@ int main (int argc, char *argv[])
 	int mrLen=0;
 	int ret;
 	
+	char sztime[20];
+	char clientip[20];
 	char msip[30];
 	int msport=4322;
 	char msbuf[1024];
@@ -339,12 +333,12 @@ int main (int argc, char *argv[])
 	}
 	else strcpy(ifname,"eth0");
 
+	// 使用的本地网卡地址
 	getIP(AF_INET,ifname,localip);
-	//strcpy(localip,"192.168.1.224");
 
 	strcpy(mrip,"226.1.1.1");
-	
 	strcpy(msip,"226.1.1.2");
+
 	// 1: rgetip
 	// 2: src ip request
 	// 3: multicast ip
@@ -353,6 +347,7 @@ int main (int argc, char *argv[])
 	// 6. ser2net if ip:
 	// 7. ser2net if MAC: 
 	
+	// fixme: not localip, use client ip 
 	sprintf(msbuf,"rgetip %s %s %d test",localip,msip,msport); 
 	sLen=strlen(msbuf);
 	printf(" mcast rcv : %s:%d\n",mrip,mrport);
@@ -360,11 +355,11 @@ int main (int argc, char *argv[])
 	
 	ret = mr(localip,mrip,mrport,mrcvbuf,&mrLen);
 	if( ret>=0){
-		n=sscanf(mrcvbuf,"%s%s%d",header,pip,&replyPort);
-		if(n==3){
+		n=sscanf(mrcvbuf,"%s%s%d",header,pip,&replyPort,clientip,sztime);
+		if(n==5){
 			if(0==strcmp(header,"getip")){   // stricmp ??????????
 				printf(" header: %s\n",header);
-				ms(localip,msip,msport,msbuf,sLen);
+				ms_ser2net(clientip,pip,replyPort,ifname,sztime);
 			}
 		}
 	}

@@ -10,6 +10,15 @@
 
 // vc6 compile : prj setting add ws2_32.lib
 
+int rmchar(char *buf,char ch)
+{
+	int i;
+	int len=strlen(buf);
+	for(i=0;i<len;i++){
+		if( (0x0ff&buf[i]) == (0x0ff&ch) ) buf[i]=0x20;
+	}
+	return 0;
+}
 
 void getTimeStr(char *str)
 {
@@ -33,6 +42,9 @@ void main(int argc, char **argv)
 	char mip[30];
 	int mport=4321;
 
+	strcpy(mip,"226.1.1.1");
+
+	printf(" == usage: s0 226.1.1.1 4321 getip_226.1.1.1_4321\n");
 	switch(argc){
 	case 4:
 		strcpy(buf,argv[3]);
@@ -72,6 +84,9 @@ void main(int argc, char **argv)
 		getTimeStr(sec);
 		sprintf(buf, "getip %s %d %s",mip,mport,sec);
 	}
+	rmchar(buf,'_');
+	printf("multicast send test: %s:%d  :: %s \n",mip,mport,buf);
+
 	nErr = sendto(s, buf, strlen(buf), 0, (struct sockaddr*)&mcAddr, nMcLen);
 
 	if(nErr == SOCKET_ERROR)

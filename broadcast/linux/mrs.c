@@ -195,6 +195,7 @@ int ms_ser2net(char *srcip,char *msip,int msport,char *ifname,char *sn)
 	// 8. ser2net if MAC: 
 	sprintf(msbuf,"rgetip %s %s %s %d %s %s %s",srcip,sn,msip,msport,ifname,ifip,ifmac); 
 	sLen=strlen(msbuf);
+	printf("ms_ser2net : %s\n",msbuf);
 	
 	ms(ifip,msip,msport,msbuf,sLen);
 	

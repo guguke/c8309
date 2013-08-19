@@ -354,6 +354,7 @@ int main (int argc, char *argv[])
 	printf(" mcast rcv : %s:%d\n",mrip,mrport);
 	printf(" mcast send : %s:%d    if:%s(%s)\n",msip,msport,ifname,localip);
 	
+	for(;;){
 	ret = mr(localip,mrip,mrport,mrcvbuf,&mrLen);
 	if( ret>=0){
 		n=sscanf(mrcvbuf,"%s%s%d%s%s",header,pip,&replyPort,clientip,sztime);
@@ -363,6 +364,7 @@ int main (int argc, char *argv[])
 				ms_ser2net(clientip,pip,replyPort,ifname,sztime);
 			}
 		}
+	}
 	}
 	
 	return 0;

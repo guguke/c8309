@@ -327,7 +327,8 @@ int main (int argc, char *argv[])
 	int replyPort=0;
 	
 	
-	printf("usage mrs eth0\n");
+	printf(" !! usage mrs eth0\n");
+	printf(" multicast rcv : 226.1.1.1:4321(default) , rcv str format(5 str) : getip replyIP replyPort clientIP szTime\n");
 	if(argc<2) return -1;
 	if(argc>1){
 		strcpy(ifname,argv[1]);

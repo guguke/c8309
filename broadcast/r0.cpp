@@ -22,7 +22,7 @@ void main(int argc, char **argv)
 	char mip[30];
 	int mport=4322;
 
-	printf("usage: r0 226.1.1.2 4322\n");
+	printf("usage: r0 226.1.1.2 4322               argc=1,2,3 \n");
 
 	strcpy(mip,"226.1.1.2");
 	switch(argc){
@@ -78,7 +78,7 @@ void main(int argc, char **argv)
 	mcAddr.sin_addr.s_addr  = inet_addr(mip);
 	mcAddr.sin_port         = htons(mport);
 	nMcLen = sizeof(mcAddr);  
-	for(i=0;i<1;i++)
+	for(i=0;i<5;i++)
 	{
 		//Sleep(1000);
 		nErr = recvfrom(s, buf, MAXLEN, 0, (struct sockaddr*)&mcAddr, &nMcLen);
@@ -92,7 +92,7 @@ void main(int argc, char **argv)
 		if(nErr>=0)buf[nErr]=0;
 		time_t t;
 		time(&t);
-		printf("%s %d \n", buf,t);
+		printf("rcv str:%s                   ||  rcv tick:%d \n", buf,t);
 	}
 	WSACleanup();
 }

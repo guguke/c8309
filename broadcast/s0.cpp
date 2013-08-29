@@ -44,7 +44,8 @@ void main(int argc, char **argv)
 
 	strcpy(mip,"226.1.1.1");
 
-	printf(" == usage: s0 226.1.1.1 4321 getip_226.1.1.1_4321\n");
+	printf(" !! usage: s0 226.1.1.1 4321 getip_226.1.1.1_4321\n");
+	if(argc<2) return;
 	switch(argc){
 	case 4:
 		strcpy(buf,argv[3]);

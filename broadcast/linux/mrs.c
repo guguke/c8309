@@ -195,6 +195,7 @@ int ms(char *localip,char *mip,int mport,char *databuf,int nLen)
 int ms_ser2net(char *srcip,char *msip,int msport,char *ifname,char *sn)
 {
 	char localip[30];
+	char hostname[40];
 	int ret;
 
 	char msbuf[1024];
@@ -211,6 +212,7 @@ int ms_ser2net(char *srcip,char *msip,int msport,char *ifname,char *sn)
 
 	getMAC(ifname,tmp,ifmac);
 	getIP(AF_INET,ifname,ifip);
+	gethostname(hostname,30);
 
 	// 1: rgetip
 	// 2: src ip request  client ip
@@ -220,7 +222,8 @@ int ms_ser2net(char *srcip,char *msip,int msport,char *ifname,char *sn)
 	// 6. ser2net if name: "eth2"
 	// 7. ser2net if ip:
 	// 8. ser2net if MAC: 
-	sprintf(msbuf,"rgetip %s %s %s %d %s %s %s",srcip,sn,msip,msport,ifname,ifip,ifmac); 
+	// 9. hostname
+	sprintf(msbuf,"rgetip %s %s %s %d %s %s %s %s",srcip,sn,msip,msport,ifname,ifip,ifmac,hostname); 
 	sLen=strlen(msbuf);
 	printf("ms_ser2net : %s\n",msbuf);
 

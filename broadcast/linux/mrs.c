@@ -376,13 +376,13 @@ void* thread_rcv (void *arg)
 	printf(" mcast send : %s:%d    if:%s(%s)\n",para_msip,para_sport,para_ifname,para_rip);
 
 	for(;;){
-		ret = mr(para_rip,para_mrip,para_rport,para_rbuf,&para_rLen);
+		ret = mr(para_rip,para_mrip,para_rport,para_rbuf,&para_rlen);
 		if( ret>=0){
 			n=sscanf(mrcvbuf,"%s%s%d%s%s",header,pip,&replyPort,clientip,sztime);
 			if(n==5){
 				if(0==strcmp(header,"getip")){   // stricmp ??????????
 					printf(" header: %s\n",header);
-					ms_ser2net(clientip,pip,replyPort,ifname,sztime);
+					ms_ser2net(clientip,pip,replyPort,para_ifname,sztime);
 				}
 			}
 		}
@@ -431,7 +431,7 @@ int main (int argc, char *argv[])
     pthread_join(tids, (void**)&ps);
     printf("\n return value from send thread is [%d]\n", *ps);
 
-    pthread_join(tidr, (void**)&ptr);
+    pthread_join(tidr, (void**)&pr);
     printf("\n return value from rcv thread is [%d]\n", *pr);
 
     return 0;

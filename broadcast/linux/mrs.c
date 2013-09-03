@@ -339,8 +339,6 @@ void* thread_send(void *arg)
 }
 void* thread_rcv (void *arg)
 {
-	char mrcvbuf[1024];
-	int mrLen=0;
 	int ret;
 
 	char sztime[20];
@@ -378,7 +376,7 @@ void* thread_rcv (void *arg)
 	for(;;){
 		ret = mr(para_rip,para_mrip,para_rport,para_rbuf,&para_rlen);
 		if( ret>=0){
-			n=sscanf(mrcvbuf,"%s%s%d%s%s",header,pip,&replyPort,clientip,sztime);
+			n=sscanf(para_rbuf,"%s%s%d%s%s",header,pip,&replyPort,clientip,sztime);
 			if(n==5){
 				if(0==strcmp(header,"getip")){   // stricmp ??????????
 					printf(" header: %s\n",header);

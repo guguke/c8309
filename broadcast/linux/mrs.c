@@ -8,11 +8,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-char para_rip[30];   // rcv network interface ip
-char para_mip[30];   // rcv multicast ip
+
+pthread_t tidr,tids;
+int thdr_ret,thds_ret;
+
+
+char para_ifname[30]; // if name : eth2 eth0 ......
+char para_rip[30];   // rcv network interface ip, local if ip addr
+char para_mrip[30];   // rcv multicast ip
 int para_rport; //      rcv multicast port
 char para_rbuf[3000];  // rcv multicast buffer
 int para_rlen;         // rcv buf len 2000
+
+char para_msip[30];   // send multicast ip
+int para_sport; //      send multicast port
 // multicast rcv
 // rip: local ip
 // mip: multicast ip
@@ -319,29 +328,23 @@ int mr(char *rip,char *mip,int rport,char *databuf,int *pnLen)
 	*pnLen=rlen;
 	return 0;
 }
-
-
-void* threadr(void *arg)
+void* thread_send(void *arg)
 {
+
+	printf("\n send thread start return:200\n");
+	threads_ret  = 200;
+	pthread_exit(&threads_ret);
+
 	return NULL;
 }
-
-
-
-
-int main (int argc, char *argv[])
+void* thread_rcv (void *arg)
 {
-	char ifname[20];
-	char localip[30],mrip[30];
-	int mrport=4321;
 	char mrcvbuf[1024];
 	int mrLen=0;
 	int ret;
 
 	char sztime[20];
 	char clientip[20];
-	char msip[30];
-	int msport=4322;
 	char msbuf[1024];
 	int sLen;
 
@@ -350,20 +353,13 @@ int main (int argc, char *argv[])
 	char pip[30];
 	int replyPort=0;
 
+	strcpy(para_mrip,"226.1.1.1");
+	para_rport=4321;
+	para_rlen=2000;
 
-	printf(" !! usage mrs eth0\n");
-	printf(" multicast rcv : 226.1.1.1:4321(default) , rcv str format(5 str) : getip replyIP replyPort clientIP szTime\n");
-	if(argc<2) return -1;
-	if(argc>1){
-		strcpy(ifname,argv[1]);
-	}
-	else strcpy(ifname,"eth0");
+	strcpy(para_msip,"226.1.1.2");
+	para_sport=4322;
 
-	// get local network interface ip addr
-	getIP(AF_INET,ifname,localip);
-
-	strcpy(mrip,"226.1.1.1");
-	strcpy(msip,"226.1.1.2");
 
 	// 1: rgetip
 	// 2: src ip request
@@ -380,7 +376,7 @@ int main (int argc, char *argv[])
 	printf(" mcast send : %s:%d    if:%s(%s)\n",msip,msport,ifname,localip);
 
 	for(;;){
-		ret = mr(localip,mrip,mrport,mrcvbuf,&mrLen);
+		ret = mr(para_rip,para_mrip,para_rport,para_rbuf,&para_rLen);
 		if( ret>=0){
 			n=sscanf(mrcvbuf,"%s%s%d%s%s",header,pip,&replyPort,clientip,sztime);
 			if(n==5){
@@ -395,4 +391,49 @@ int main (int argc, char *argv[])
 	return 0;
 }
 
+//char para_rip[30];   // rcv network interface ip, local if ip addr
+//char para_mip[30];   // rcv multicast ip
+//int para_rport; //      rcv multicast port
+//char para_rbuf[3000];  // rcv multicast buffer
+//int para_rlen;         // rcv buf len 2000
+
+int main (int argc, char *argv[])
+{
+    int err;
+    int *pr,*ps;
+
+	printf(" !! usage mrs eth0\n");
+	printf(" multicast rcv : 226.1.1.1:4321(default) , rcv str format(5 str) : getip replyIP replyPort clientIP szTime\n");
+	if(argc<2) return -1;
+
+	// get local network interface ip addr
+	strcpy(para_ifname,argv[1]);
+	getIP(AF_INET,para_ifname,para_rip);// local ip
+
+	err = pthread_create(&tidr, NULL, &thread_rcv, NULL);
+	if (err != 0){
+		printf("\ncan't create thread multicast rcv:[%s]", strerror(err));
+		return -1;
+	}
+	else {
+		printf("\n Thread multicast rcv created successfully\n");
+	}
+
+	err = pthread_create(&tids, NULL, &thread_send, NULL);
+	if (err != 0){
+		printf("\ncan't create thread multicast send: [%s]", strerror(err));
+		return -2;
+	}
+	else {
+		printf("\n Thread multicast send created successfully\n");
+	}
+
+    pthread_join(tids, (void**)&ps);
+    printf("\n return value from send thread is [%d]\n", *ps);
+
+    pthread_join(tidr, (void**)&ptr);
+    printf("\n return value from rcv thread is [%d]\n", *pr);
+
+    return 0;
+}
 

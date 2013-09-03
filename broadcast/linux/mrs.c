@@ -10,7 +10,7 @@
 
 
 pthread_t tidr,tids;
-int thdr_ret,thds_ret;
+int threadr_ret,threads_ret;
 
 
 char para_ifname[30]; // if name : eth2 eth0 ......
@@ -370,10 +370,10 @@ void* thread_rcv (void *arg)
 	// 7. ser2net if MAC: 
 
 	// fixme: not localip, use client ip 
-	sprintf(msbuf,"rgetip %s %s %d test",localip,msip,msport); 
+	sprintf(msbuf,"rgetip %s %s %d test",para_rip,para_msip,para_sport); 
 	sLen=strlen(msbuf);
-	printf(" mcast rcv : %s:%d\n",mrip,mrport);
-	printf(" mcast send : %s:%d    if:%s(%s)\n",msip,msport,ifname,localip);
+	printf(" mcast rcv : %s:%d\n",para_mrip,para_rport);
+	printf(" mcast send : %s:%d    if:%s(%s)\n",para_msip,para_sport,para_ifname,para_rip);
 
 	for(;;){
 		ret = mr(para_rip,para_mrip,para_rport,para_rbuf,&para_rLen);

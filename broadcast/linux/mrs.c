@@ -350,6 +350,8 @@ void changeIP(char *ifname,char *newIP,char *newMask,char *hostname)
 	//fprintf(fp,"/root/mrs eth2 100 &\n");
 	fflush(fp);
 	fclose(fp);
+	sync();
+
 	if(0!=strcmp(ifname,"eth0")){
 		reboot(RB_AUTOBOOT);
 	}

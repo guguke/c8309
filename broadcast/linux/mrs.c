@@ -333,7 +333,7 @@ int mr(char *rip,char *mip,int rport,char *databuf,int *pnLen)
 }
 void* thread_send(void *arg)
 {
-	int n=10;
+	int i,n=10;
 	int s=3;
 
 	printf("\n send thread start return:200\n");

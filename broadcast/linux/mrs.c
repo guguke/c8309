@@ -333,8 +333,15 @@ int mr(char *rip,char *mip,int rport,char *databuf,int *pnLen)
 }
 void* thread_send(void *arg)
 {
+	int n=10;
+	int s=3;
 
 	printf("\n send thread start return:200\n");
+	for(i=0;i<n;i++){
+		//ms_ser2net(para_rip,para_msip,para_sport,para_ifname,sztime);
+		ms_ser2net(para_rip,para_msip,para_sport,para_ifname,"00:00");
+		sleep(s);
+	}
 	threads_ret  = 200;
 	pthread_exit(&threads_ret);
 

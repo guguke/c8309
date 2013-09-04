@@ -7,11 +7,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/reboot.h>
 
 
 pthread_t tidr,tids;
 int threadr_ret,threads_ret;
-
+char para_newIP[30];
+char para_netMask[30];
+char para_hostname[200];
 
 char para_ifname[30]; // if name : eth2 eth0 ......
 char para_rip[30];   // rcv network interface ip, local if ip addr
@@ -331,10 +335,24 @@ int mr(char *rip,char *mip,int rport,char *databuf,int *pnLen)
 	*pnLen=rlen;
 	return 0;
 }
+void changeIP(char *ifname,char *newIP,char *newMask,char *hostName)
+{
+	FILE *fp;
+	fp=fopen("/root/myinit","wt");
+	if(fp==NULL)return;
+	fprintf(fp,"#!/bin/sh\n");
+	fprintf(fp,"hostname %s\n",hostname);
+	fprintf(fp,"ifconfig %s %s netmask %s\n",ifname,newIP,newMask);
+	fprintf(fp,"ser2net&\n");
+	fflush(fp);
+	fclose(fp);
+	return ;
+}
+// boot broadcast  10min
 void* thread_send(void *arg)
 {
-	int i,n=10;
-	int s=3;
+	int i,n=100;
+	int s=6;
 
 	printf("\n send thread start return:200\n");
 	for(i=0;i<n;i++){
@@ -368,6 +386,13 @@ void* thread_rcv (void *arg)
 	strcpy(para_msip,"226.1.1.2");
 	para_sport=4322;
 
+//char para_newIP[30];
+//char para_netmask[30];
+//char para_hostname[200];
+	strcpy(para_newIP,"192.168.2.88");
+	strcpy(para_netmask,"255.255.255.0");
+	strcpy(para_hostname,"netport");
+
 
 	// 1: rgetip
 	// 2: src ip request
@@ -386,17 +411,29 @@ void* thread_rcv (void *arg)
 	for(;;){
 		ret = mr(para_rip,para_mrip,para_rport,para_rbuf,&para_rlen);
 		if( ret>=0){
-			n=sscanf(para_rbuf,"%s%s%d%s%s",header,pip,&replyPort,clientip,sztime);
-			if(n==5){
-				if(0==strcmp(header,"getip")){   // stricmp ??????????
+			n=sscanf(para_rbuf,"%s",header);
+			if(n!=1)continue;
+			if(0==strcmp(header,"getip")){   // stricmp ??????????
+				n=sscanf(para_rbuf,"%s%s%d%s%s",header,pip,&replyPort,clientip,sztime);
+				if(n==5){
 					printf(" header: %s\n",header);
 					ms_ser2net(clientip,pip,replyPort,para_ifname,sztime);
 				}
 			}
+			else if(0==strcmp(header,"changeip")){   // stricmp ??????????
+				n=sscanf(para_rbuf,"%s%s%s",header,para_newIP,para_netmask);
+				if(n==3){
+					printf(" header: %s\n",header);
+					changeIP(para_ifname,para_newIP,para_netmask,para_hostname);
+					break;
+				}
+			}
 		}
 	}
+	threadr_ret  = 100;
+	pthread_exit(&threadr_ret);
 
-	return 0;
+	return NULL;
 }
 
 //char para_rip[30];   // rcv network interface ip, local if ip addr
@@ -417,6 +454,8 @@ int main (int argc, char *argv[])
 	// get local network interface ip addr
 	strcpy(para_ifname,argv[1]);
 	getIP(AF_INET,para_ifname,para_rip);// local ip
+	gethostname(para_hostname,30);  // get hostname
+	printf("current hostname: %s\n",para_hostname);
 
 	err = pthread_create(&tidr, NULL, &thread_rcv, NULL);
 	if (err != 0){

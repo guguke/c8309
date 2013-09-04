@@ -14,7 +14,7 @@
 pthread_t tidr,tids;
 int threadr_ret,threads_ret;
 char para_newIP[30];
-char para_netMask[30];
+char para_netmask[30];
 char para_hostname[200];
 
 char para_ifname[30]; // if name : eth2 eth0 ......
@@ -335,7 +335,7 @@ int mr(char *rip,char *mip,int rport,char *databuf,int *pnLen)
 	*pnLen=rlen;
 	return 0;
 }
-void changeIP(char *ifname,char *newIP,char *newMask,char *hostName)
+void changeIP(char *ifname,char *newIP,char *newMask,char *hostname)
 {
 	FILE *fp;
 	fp=fopen("/root/myinit","wt");

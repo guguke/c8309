@@ -348,6 +348,9 @@ void changeIP(char *ifname,char *newIP,char *newMask,char *hostname)
 	fprintf(fp,"ser2net&\n");
 	fflush(fp);
 	fclose(fp);
+	//if(0!=strcmp(ifname,"eth0"){
+		//reboot(RB_AUTOBOOT);
+	//}
 	return ;
 }
 // boot broadcast  10min

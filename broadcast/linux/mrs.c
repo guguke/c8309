@@ -17,6 +17,8 @@ char para_newIP[30];
 char para_netmask[30];
 char para_hostname[200];
 
+int nBootNum=100;
+
 char para_ifname[30]; // if name : eth2 eth0 ......
 char para_rip[30];   // rcv network interface ip, local if ip addr
 char para_mrip[30];   // rcv multicast ip
@@ -351,11 +353,11 @@ void changeIP(char *ifname,char *newIP,char *newMask,char *hostname)
 // boot broadcast  10min
 void* thread_send(void *arg)
 {
-	int i,n=100;
+	int i;
 	int s=6;
 
 	printf("\n send thread start return:200\n");
-	for(i=0;i<n;i++){
+	for(i=0;i<nBootNum;i++){
 		//ms_ser2net(para_rip,para_msip,para_sport,para_ifname,sztime);
 		ms_ser2net(para_rip,para_msip,para_sport,para_ifname,"00:00");
 		sleep(s);
@@ -448,8 +450,10 @@ int main (int argc, char *argv[])
     int *pr,*ps;
 
 	printf(" !! usage mrs eth0\n");
+	printf(" !! usage mrs eth0 10           (boot mcast num)\n");
 	printf(" multicast rcv : 226.1.1.1:4321(default) , rcv str format(5 str) : getip replyIP replyPort clientIP szTime\n");
 	if(argc<2) return -1;
+	if(argc>2) nBootNum=atoi(argv[2]);
 
 	// get local network interface ip addr
 	strcpy(para_ifname,argv[1]);

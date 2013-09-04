@@ -344,13 +344,15 @@ void changeIP(char *ifname,char *newIP,char *newMask,char *hostname)
 	if(fp==NULL)return;
 	fprintf(fp,"#!/bin/sh\n");
 	fprintf(fp,"hostname %s\n",hostname);
-	fprintf(fp,"ifconfig %s %s netmask %s\n",ifname,newIP,newMask);
+	//fprintf(fp,"ifconfig %s %s netmask %s\n",ifname,newIP,newMask);
+	fprintf(fp,"ifconfig %s %s\n",ifname,newIP);
 	fprintf(fp,"ser2net&\n");
+	//fprintf(fp,"/root/mrs eth2 100 &\n");
 	fflush(fp);
 	fclose(fp);
-	//if(0!=strcmp(ifname,"eth0"){
-		//reboot(RB_AUTOBOOT);
-	//}
+	if(0!=strcmp(ifname,"eth0"){
+		reboot(RB_AUTOBOOT);
+	}
 	return ;
 }
 // boot broadcast  10min

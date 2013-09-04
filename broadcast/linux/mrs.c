@@ -347,7 +347,7 @@ void changeIP(char *ifname,char *newIP,char *newMask,char *hostname)
 	//fprintf(fp,"ifconfig %s %s netmask %s\n",ifname,newIP,newMask);
 	fprintf(fp,"ifconfig %s %s\n",ifname,newIP);
 	fprintf(fp,"ser2net&\n");
-	//fprintf(fp,"/root/mrs eth2 100 &\n");
+	fprintf(fp,"/root/mrs eth2 100 &\n");
 	fflush(fp);
 	fclose(fp);
 	sync();

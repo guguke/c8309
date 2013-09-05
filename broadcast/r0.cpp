@@ -78,7 +78,7 @@ void main(int argc, char **argv)
 	mcAddr.sin_addr.s_addr  = inet_addr(mip);
 	mcAddr.sin_port         = htons(mport);
 	nMcLen = sizeof(mcAddr);  
-	for(i=0;i<5;i++)
+	for(i=0;i<500;i++)
 	{
 		//Sleep(1000);
 		nErr = recvfrom(s, buf, MAXLEN, 0, (struct sockaddr*)&mcAddr, &nMcLen);

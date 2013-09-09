@@ -1,4 +1,6 @@
-
+2013.09.09
+mrs.c 
+     gcc mrs.c -pthread
 2013.08.17
 ms.c add para (argc,argv)
 

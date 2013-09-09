@@ -466,6 +466,21 @@ static void my_init() {
 	strcpy(hhmmssFound,"unknown");
 }
 
+void mcGetipThread()
+{
+	int i;
+
+	for(i=0;i<5;i++){
+		sleep(1);
+		if(gNum<1){
+			mcGetip();
+			Sleep(2000);
+		}
+	}
+
+	return;
+}
+
 int rleaf(char *MCASTADDR,int MCASTPORT,char *recvbuf,char *pErr)
 {
 	DWORD dwInterface,          // Local interface to bind to
@@ -835,6 +850,7 @@ EXIT_SUCCESS : EXIT_FAILURE);
 
 	my_init();
 	_beginthread((void (__cdecl *)(void *))mcRcvThread,0,0);;         // cyx
+	_beginthread((void (__cdecl *)(void *))mcGetipThread,0,0);;         // cyx
 	// using thread !!
 	//for(i=0;i<5;i++){
 	//	sleep(1000);

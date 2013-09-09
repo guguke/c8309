@@ -436,11 +436,15 @@ int mcGetip()
 	return 0;
 }
 
-
+// mypara
 static int gNum=0; //接收到广播包的次数 max:4096
 static char gStatus[500];
 static char gRcv[1000];
 static char gErr[200];
+
+static char serverip[30];
+static char servermac[40];
+static char hhmmssFound[30];
 
 static int port_connect_8=0;
 
@@ -456,6 +460,10 @@ static void my_init() {
 
 	value=mg_get_option(ctx,"port_connect_8");
 	port_connect_8=getHex(value);
+
+	strcpy(serverip,"unknown");
+	strcpy(servermac,"unknown");
+	strcpy(hhmmssFound,"unknown");
 }
 
 int rleaf(char *MCASTADDR,int MCASTPORT,char *recvbuf,char *pErr)
@@ -756,6 +764,17 @@ static int begin_request_handler(struct mg_connection *conn) {
 			(int) strlen(buf), buf);
 		return 1;
 	}
+	else if (!strcmp(ri->uri, "/test001.html")) {// multicast rcv str: ip and mac, time , count
+		//ret=multicast_rcv("226.1.1.1",4321,0,mcRcv,mcErr);
+		//ret = rleaf("226.1.1.1",4321,mcRcv,mcErr);
+		sprintf(buf,"ip: %s, mac: %s, %s, num: %d",serverip,servermac,hhmmssFound,gNum);
+		// Show HTML form.
+		mg_printf(conn, "HTTP/1.0 200 OK\r\n"
+			"Content-Length: %d\r\n"
+			"Content-Type: text/html\r\n\r\n%s",
+			(int) strlen(buf), buf);
+		return 1;
+	}
 	else if (!strcmp(ri->uri, "/urlsearchserver.html")) {
 		nfSearch=1; // searching
 		mcGetip();
@@ -816,13 +835,14 @@ EXIT_SUCCESS : EXIT_FAILURE);
 
 	my_init();
 	_beginthread((void (__cdecl *)(void *))mcRcvThread,0,0);;         // cyx
-	for(i=0;i<5;i++){
-		sleep(1000);
-		if(gNum<1){
-			mcGetip();
-			sleep(2000);
-		}
-	}
+	// using thread !!
+	//for(i=0;i<5;i++){
+	//	sleep(1000);
+	//	if(gNum<1){
+	//		mcGetip();
+	//		sleep(2000);
+	//	}
+	//}
 }
 
 #ifdef _WIN32

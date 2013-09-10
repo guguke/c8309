@@ -301,6 +301,14 @@ void getTimeStr(char *str)
 	now=localtime(&t);
 	sprintf(str,("%02d:%02d:%02d"),now->tm_hour,now->tm_min,now->tm_sec);
 }
+void getTimeTStr(time_t *pt,char *str)
+{
+	//time_t t;
+	struct tm *now;
+	time(pt);
+	now=localtime(pt);
+	sprintf(str,("%02d:%02d:%02d"),now->tm_hour,now->tm_min,now->tm_sec);
+}
 
 // MCASTADDR : 226.1.1.1
 // MCASTPORT : 4321
@@ -442,9 +450,11 @@ static char gStatus[500];
 static char gRcv[1000];
 static char gErr[200];
 
-static char serverip[30];
-static char servermac[40];
+static char serverip[100];
+static char servermac[100];
+static char servername[100];
 static char hhmmssFound[30];
+static time_t tFound;
 
 static int port_connect_8=0;
 
@@ -463,6 +473,7 @@ static void my_init() {
 
 	strcpy(serverip,"unknown");
 	strcpy(servermac,"unknown");
+	strcpy(servername,"unknown");
 	strcpy(hhmmssFound,"unknown");
 }
 
@@ -470,12 +481,9 @@ void mcGetipThread()
 {
 	int i;
 
-	for(i=0;i<5;i++){
-		sleep(1);
-		if(gNum<1){
-			mcGetip();
-			Sleep(2000);
-		}
+	for(i=0;i<100;i++){
+		sleep(6);
+		mcGetip();
 	}
 
 	return;
@@ -493,6 +501,9 @@ int rleaf(char *MCASTADDR,int MCASTPORT,char *recvbuf,char *pErr)
     DWORD               i=0;
 	char rbuf[1000];
 	char szquit[200];
+	char szip[100];
+	char szmac[100];
+	char szname[100];
 	int nn;
 	
     dwInterface = INADDR_ANY;
@@ -574,7 +585,7 @@ int rleaf(char *MCASTADDR,int MCASTPORT,char *recvbuf,char *pErr)
 		
 		//    WSAETIMEDOUT
 		rbuf[ret] = 0;
-		memcpy(recvbuf,rbuf,ret);
+		memcpy(recvbuf,rbuf,ret);  // copy local to global
 		recvbuf[ret]=0;
 		//printf("RECV: '%s' from <%s>\n", recvbuf, inet_ntoa(from.sin_addr));
 		
@@ -583,13 +594,23 @@ int rleaf(char *MCASTADDR,int MCASTPORT,char *recvbuf,char *pErr)
 		// returns the same socket handle that you pass into it.
 		//
 		gNum++;
+
 		rbuf[50]=0;
 		nn=sscanf(rbuf,"%s",szquit);
-		if(nn==1){
+		if(nn==1){    // quit test
 			if(strcmp(szquit,"quitmongoosetest")==0){
 				ret = 0;
 				strcpy(gErr,"quit mongoose nomal");
 				break;
+			}
+			else if(strcmp(szquit,"rgetip")==0){      // rcv normal multicast
+				nn=sscanf(recvbuf,"%s%s%s%s%s%s%s%s%s",szquit,szquit,szquit,szquit,szquit,szquit,
+					szip,szmac,szname);
+				if(nn==9){
+					strcpy(serverip,szip);
+					strcpy(servermac,szmac);
+					strcpy(servername,szname);
+				}
 			}
 		}
 	}
@@ -688,7 +709,7 @@ int multicast_rcv(char *pAddr,int mcPort,int to,char *pRcv,char *pErr)
 	mcAddr.sin_port         = htons(mcPort);
 	nMcLen = sizeof(mcAddr);  
 	//for(i=0;i<5;i++)	{
-	//Sleep(1000);
+	//sleep(2);
 	nErr = recvfrom(s, buf, MAXLEN, 0, (struct sockaddr*)&mcAddr, &nMcLen);
 	if(nErr == SOCKET_ERROR)
 	{
@@ -782,7 +803,7 @@ static int begin_request_handler(struct mg_connection *conn) {
 	else if (!strcmp(ri->uri, "/test001.html")) {// multicast rcv str: ip and mac, time , count
 		//ret=multicast_rcv("226.1.1.1",4321,0,mcRcv,mcErr);
 		//ret = rleaf("226.1.1.1",4321,mcRcv,mcErr);
-		sprintf(buf,"ip: %s, mac: %s, %s, num: %d",serverip,servermac,hhmmssFound,gNum);
+		sprintf(buf,"ip: %s, mac: %s, hostname:%s %s, num: %d",serverip,servermac,servername,hhmmssFound,gNum);
 		// Show HTML form.
 		mg_printf(conn, "HTTP/1.0 200 OK\r\n"
 			"Content-Length: %d\r\n"

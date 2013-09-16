@@ -476,7 +476,44 @@ static void my_init() {
 	strcpy(servername,"unknown");
 	strcpy(hhmmssFound,"unknown");
 }
+// create hub4com cmd line para file
+// *pcom : serial port name \\.\cncbc0  
+// *pip : ip addr
+// *pfname : conf file name
+static void createConf(char *pcom,int port,char *pip,char *pfname)
+{
+	char p1[]="\n"
+"_BEGIN_\n"
+"  --share-mode=on\n"
+"  --create-filter=escparse,com,parse\n"
+"  --create-filter=pinmap,com,pinmap:--rts=cts --dtr=dsr\n"
+"  --create-filter=linectl,com,lc:--br=local --lc=local\n"
+"  --add-filters=0:com\n"
+"  --create-filter=telnet,tcp,telnet: --comport=client\n"
+"  --create-filter=pinmap,tcp,pinmap:--rts=cts --dtr=dsr --break=break\n"
+"  --create-filter=linectl,tcp,lc:--br=remote --lc=remote\n"
+"  --add-filters=1:tcp\n"
+"  --octs=off\n";
+//"  \\.\CNCB0\n"
+//"  --use-driver=tcp\n"
+//"  *192.168.1.225:3001\n"
+//"_END_\n"
+//		"\n";
+	char p2[]="  --use-driver=tcp\n";
+	char p3[]="_END_\n\n";
 
+	FILE *fp;
+	fp=fopen(pfname,"wt");
+	if(fp==NULL) return;
+	fprintf(fp,"%s",p1);
+	fprintf(fp,"  %s\n",pcom);
+	fprintf(fp,"%s",p2);
+	fprintf(fp,"  *%s:%d\n",pip,port);
+	fprintf(fp,"%s",p3);
+
+	fclose(fp);
+	return;
+}
 void mcGetipThread()
 {
 	int i;
@@ -809,6 +846,8 @@ static int begin_request_handler(struct mg_connection *conn) {
 			"Content-Length: %d\r\n"
 			"Content-Type: text/html\r\n\r\n%s",
 			(int) strlen(buf), buf);
+
+		createConf("\\\\.\\CNCB0",3001,"192.168.1.225","h4c0.txt");
 		return 1;
 	}
 	else if (!strcmp(ri->uri, "/urlsearchserver.html")) {

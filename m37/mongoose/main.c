@@ -283,6 +283,67 @@ static int log_message(const struct mg_connection *conn, const char *message) {
 	return 0;
 }
 
+DWORD RunSilent(char* strFunct, char* strstrParams)
+{
+	STARTUPINFO StartupInfo;
+	PROCESS_INFORMATION ProcessInfo;
+	char Args[4096];
+	char *pEnvCMD = NULL;
+	char *pDefaultCMD = "CMD.EXE";
+	DWORD rc;
+	int ret;
+	
+	memset(&StartupInfo, 0, sizeof(StartupInfo));
+	StartupInfo.cb = sizeof(STARTUPINFO);
+	StartupInfo.dwFlags = STARTF_USESHOWWINDOW;
+	StartupInfo.wShowWindow = SW_HIDE;
+	
+	Args[0] = 0;
+	
+	pEnvCMD = getenv("COMSPEC");
+	
+	if(pEnvCMD){
+		
+		strcpy(Args, pEnvCMD);
+	}
+	else{
+		strcpy(Args, pDefaultCMD);
+	}
+	
+	// "/c" option - Do the command then terminate the command window
+	strcat(Args, " /c "); 
+	//the application you would like to run from the command window
+	strcat(Args, strFunct);  
+	strcat(Args, " "); 
+	//the parameters passed to the application being run from the command window.
+	strcat(Args, strstrParams); 
+	
+	if (!CreateProcess( NULL, Args, NULL, NULL, FALSE,
+		CREATE_NEW_CONSOLE, 
+		NULL, 
+		NULL,
+		&StartupInfo,
+		&ProcessInfo))
+	{
+		return GetLastError();             
+	}
+	
+	//printf("pause..\n");
+	//getch();
+	//WaitForSingleObject(ProcessInfo.hProcess, INFINITE);
+	if(!GetExitCodeProcess(ProcessInfo.hProcess, &rc))	rc = 0;
+	
+	CloseHandle(ProcessInfo.hThread);
+	CloseHandle(ProcessInfo.hProcess);
+	
+	//printf(" terminate ?\n");
+	//getch();
+	//TerminateProcess(ProcessInfo.hProcess,0);
+	
+	return rc;
+	
+}
+
 static int getHex(char *str)
 {
 	int i=0,ret;
@@ -848,6 +909,28 @@ static int begin_request_handler(struct mg_connection *conn) {
 			(int) strlen(buf), buf);
 
 		createConf("\\\\.\\CNCB0",3001,"192.168.1.225","h4c0.txt");
+		return 1;
+	}
+	else if (!strcmp(ri->uri, "/testsilent.html")) {// multicast rcv str: ip and mac, time , count
+		RunSilent("t.exe","mongoose");
+		sprintf(buf,"ip: %s, mac: %s, hostname:%s %s, num: %d",serverip,servermac,servername,hhmmssFound,gNum);
+		// Show HTML form.
+		mg_printf(conn, "HTTP/1.0 200 OK\r\n"
+			"Content-Length: %d\r\n"
+			"Content-Type: text/html\r\n\r\n%s",
+			(int) strlen(buf), buf);
+
+		return 1;
+	}
+	else if (!strcmp(ri->uri, "/testkill.html")) {// multicast rcv str: ip and mac, time , count
+		RunSilent("taskkill"," /f /t /im t.exe");
+		sprintf(buf,"ip: %s, mac: %s, hostname:%s %s, num: %d",serverip,servermac,servername,hhmmssFound,gNum);
+		// Show HTML form.
+		mg_printf(conn, "HTTP/1.0 200 OK\r\n"
+			"Content-Length: %d\r\n"
+			"Content-Type: text/html\r\n\r\n%s",
+			(int) strlen(buf), buf);
+
 		return 1;
 	}
 	else if (!strcmp(ri->uri, "/urlsearchserver.html")) {

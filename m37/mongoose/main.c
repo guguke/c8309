@@ -832,6 +832,13 @@ static const char *html_form =
 "Input 2: <input type=\"text\" name=\"input_2\" /> <br/>"
 "<input type=\"submit\" />"
 "</form></body></html>";
+static const char *html_form_run =
+"<html><body>run silent"
+"<form method=\"POST\" action=\"/handle_post_request_run\">"
+"exe : <input type=\"text\" name=\"input_1\" /> <br/>"
+"argv: <input type=\"text\" name=\"input_2\" /> <br/>"
+"<input type=\"submit\" value=\"run\" />"
+"</form></body></html>";
 
 static const char *html_multi_rcv =
 "<html><body>start multicast rcv"
@@ -871,12 +878,40 @@ static int begin_request_handler(struct mg_connection *conn) {
 			post_data_len, post_data, post_data_len, input1, input2);
 		return 1;
 	} //else {
+	if (!strcmp(ri->uri, "/handle_post_request_run")) {
+		// User has submitted a form, show submitted data and a variable value
+		post_data_len = mg_read(conn, post_data, sizeof(post_data));
+		
+		// Parse form data. input1 and input2 are guaranteed to be NUL-terminated
+		mg_get_var(post_data, post_data_len, "input_1", input1, sizeof(input1));
+		mg_get_var(post_data, post_data_len, "input_2", input2, sizeof(input2));
+
+		RunSilent(input1,input2);
+		
+		// Send reply to the client, showing submitted form values.
+		mg_printf(conn, "HTTP/1.0 200 OK\r\n"
+			"Content-Type: text/plain\r\n\r\n"
+			"Submitted data: [%.*s]\n"
+			"Submitted data length: %d bytes\n"
+			"input_1: [%s]\n"
+			"input_2: [%s]\n",
+			post_data_len, post_data, post_data_len, input1, input2);
+		return 1;
+	} //else {
 	else if (!strcmp(ri->uri, "/index.html")) {
 		// Show HTML form.
 		mg_printf(conn, "HTTP/1.0 200 OK\r\n"
 			"Content-Length: %d\r\n"
 			"Content-Type: text/html\r\n\r\n%s",
 			(int) strlen(html_form), html_form);
+		return 1;
+	}
+	else if (!strcmp(ri->uri, "/runsilent.html")) {
+		// Show HTML form.
+		mg_printf(conn, "HTTP/1.0 200 OK\r\n"
+			"Content-Length: %d\r\n"
+			"Content-Type: text/html\r\n\r\n%s",
+			(int) strlen(html_form_run), html_form_run);
 		return 1;
 	}
 	else if (!strcmp(ri->uri, "/statustest.html")) {

@@ -283,6 +283,16 @@ static int log_message(const struct mg_connection *conn, const char *message) {
 	return 0;
 }
 
+void mylog(char *p)
+{
+	FILE *fp;
+	fp=fopen("mylog.txt","a+t");
+	if(fp==NULL)return;
+	fprintf(fp,"%s",p);
+	fclose(fp);
+	return;
+}
+
 DWORD RunSilent(char* strFunct, char* strstrParams)
 {
 	STARTUPINFO StartupInfo;
@@ -518,6 +528,7 @@ static char hhmmssFound[30];
 static time_t tFound;
 
 static int port_connect_8=0;
+static int status_connect_8=0;
 
 static int nfSearch=0;
 // 0: unknown
@@ -583,6 +594,51 @@ void mcGetipThread()
 		sleep(6);
 		mcGetip();
 	}
+
+	return;
+}
+//		RunSilent("taskkill"," /f /t /im t.exe");
+// disconnect port connected
+void disconnect8()
+{
+	int i,n;
+	char szexe[30],szargv[100];
+	strcpy(szexe,"taskkill");
+	for(i=0;i<8;i++){
+		n=1<<i;
+		if( (n & status_connect_8) > 0 ){
+			sprintf(szargv," /f /t /im h4c%d.exe",i);
+			RunSilent(szexe,szargv);
+		}
+	}
+	status_connect_8=0;
+	return;
+}
+// port connect 
+void connect8()
+{
+	int i,n;
+	char szexe[30],szargv[100];
+	for(i=1;i<8;i++){
+		n=1<<i;
+		if( (n & port_connect_8) > 0 ){
+			sprintf(szexe,"h4c%d.exe",i);
+			sprintf(szargv,"--load=h4c%d.txt,_BEGIN_,_END_",i);
+			RunSilent(szexe,szargv);
+		}
+	}
+	status_connect_8=port_connect_8;
+	return;
+}
+// for test
+void connect1()
+{
+	int i=1,n;
+	char szexe[30],szargv[30];
+
+	sprintf(szexe,"h4c%d.exe",i);
+	sprintf(szargv,"--load=h4c%d.txt,_BEGIN_,_END_",i);
+	RunSilent(szexe,szargv);
 
 	return;
 }
@@ -705,9 +761,14 @@ int rleaf(char *MCASTADDR,int MCASTPORT,char *recvbuf,char *pErr)
 				nn=sscanf(recvbuf,"%s%s%s%s%s%s%s%s%s",szquit,szquit,szquit,szquit,szquit,szquit,
 					szip,szmac,szname);
 				if(nn==9){
-					strcpy(serverip,szip);
-					strcpy(servermac,szmac);
-					strcpy(servername,szname);
+					if( 0 != strcmp(serverip,szip) ){
+						if( status_connect_8 != 0 ) disconnect8();						// disconnect8
+
+						strcpy(serverip,szip);
+						strcpy(servermac,szmac);
+						strcpy(servername,szname);
+						if( port_connect_8 != 0 ) connect8();
+					}
 				}
 			}
 		}
@@ -878,7 +939,7 @@ static int begin_request_handler(struct mg_connection *conn) {
 			post_data_len, post_data, post_data_len, input1, input2);
 		return 1;
 	} //else {
-	if (!strcmp(ri->uri, "/handle_post_request_run")) {
+	if (!strcmp(ri->uri, "/handle_post_request_run")) { //                        <== runsilent.html
 		// User has submitted a form, show submitted data and a variable value
 		post_data_len = mg_read(conn, post_data, sizeof(post_data));
 		
@@ -906,7 +967,7 @@ static int begin_request_handler(struct mg_connection *conn) {
 			(int) strlen(html_form), html_form);
 		return 1;
 	}
-	else if (!strcmp(ri->uri, "/runsilent.html")) {
+	else if (!strcmp(ri->uri, "/runsilent.html")) { // runsilent.html => html_form_run => handle_post_request_run 
 		// Show HTML form.
 		mg_printf(conn, "HTTP/1.0 200 OK\r\n"
 			"Content-Length: %d\r\n"
@@ -937,6 +998,7 @@ static int begin_request_handler(struct mg_connection *conn) {
 		//ret=multicast_rcv("226.1.1.1",4321,0,mcRcv,mcErr);
 		//ret = rleaf("226.1.1.1",4321,mcRcv,mcErr);
 		sprintf(buf,"ip: %s, mac: %s, hostname:%s %s, num: %d",serverip,servermac,servername,hhmmssFound,gNum);
+		mylog("test001.html\n");
 		// Show HTML form.
 		mg_printf(conn, "HTTP/1.0 200 OK\r\n"
 			"Content-Length: %d\r\n"
@@ -947,8 +1009,10 @@ static int begin_request_handler(struct mg_connection *conn) {
 		return 1;
 	}
 	else if (!strcmp(ri->uri, "/testsilent.html")) {// multicast rcv str: ip and mac, time , count
-		RunSilent("t.exe","mongoose");
-		sprintf(buf,"ip: %s, mac: %s, hostname:%s %s, num: %d",serverip,servermac,servername,hhmmssFound,gNum);
+		//RunSilent("t.exe","mongoose");
+		connect1();
+		sprintf(buf,"ip: %s, mac: %s, hostname:%s %s, num: %d, port_connect_8:%d",
+			serverip,servermac,servername,hhmmssFound,gNum,port_connect_8);
 		// Show HTML form.
 		mg_printf(conn, "HTTP/1.0 200 OK\r\n"
 			"Content-Length: %d\r\n"

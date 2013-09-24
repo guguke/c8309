@@ -590,11 +590,14 @@ void mcGetipThread()
 {
 	int i;
 
+	mylog(" == mcGetipThread()\n");
+
 	for(i=0;i<100;i++){
 		sleep(6);
 		mcGetip();
 	}
 
+	mylog(" == exit mcGetipThread\n");
 	return;
 }
 //		RunSilent("taskkill"," /f /t /im t.exe");
@@ -603,12 +606,18 @@ void disconnect8()
 {
 	int i,n;
 	char szexe[30],szargv[100];
+	char sz[100];
+
+	mylog(" disconnect \n");
 	strcpy(szexe,"taskkill");
 	for(i=0;i<8;i++){
 		n=1<<i;
 		if( (n & status_connect_8) > 0 ){
 			sprintf(szargv," /f /t /im h4c%d.exe",i);
 			RunSilent(szexe,szargv);
+
+			sprintf(sz," disconnect port %d\n",i);
+			mylog(sz);
 		}
 	}
 	status_connect_8=0;
@@ -619,9 +628,20 @@ void connect8()
 {
 	int i,n;
 	char szexe[30],szargv[100];
+	char portName[20],confName[20];
+	int port=3000;
+	char sz[100];
+
 	for(i=1;i<8;i++){
 		n=1<<i;
 		if( (n & port_connect_8) > 0 ){
+			sprintf(sz," connect8() ==> connect port:%d\n",i);
+			mylog(sz);
+			// createConf
+			sprintf(portName,"\\\\.\\CNCB%d",i);
+			sprintf(confName,"h4c%d.txt",i);
+			createConf(portName,port+i,serverip,confName);
+			//createConf("\\\\.\\CNCB0",3001,"192.168.1.225","h4c0.txt");
 			sprintf(szexe,"h4c%d.exe",i);
 			sprintf(szargv,"--load=h4c%d.txt,_BEGIN_,_END_",i);
 			RunSilent(szexe,szargv);
@@ -660,6 +680,8 @@ int rleaf(char *MCASTADDR,int MCASTPORT,char *recvbuf,char *pErr)
 	char szname[100];
 	int nn;
 	
+	mylog("  == rleaf()\n");
+
     dwInterface = INADDR_ANY;
     dwMulticastGroup = inet_addr(MCASTADDR);
     iPort = MCASTPORT;
@@ -762,12 +784,16 @@ int rleaf(char *MCASTADDR,int MCASTPORT,char *recvbuf,char *pErr)
 					szip,szmac,szname);
 				if(nn==9){
 					if( 0 != strcmp(serverip,szip) ){
+						mylog(" rleaf() ==> connect 8 : new ip\n");
 						if( status_connect_8 != 0 ) disconnect8();						// disconnect8
 
 						strcpy(serverip,szip);
 						strcpy(servermac,szmac);
 						strcpy(servername,szname);
-						if( port_connect_8 != 0 ) connect8();
+						if( port_connect_8 != 0 ){
+							mylog(" rleaf() ==> connect 8 : new connect\n");
+							connect8();
+						}
 					}
 				}
 			}
@@ -787,6 +813,9 @@ void mcRcvThread(void)
 	gRcv[0]=0;
 	gErr[0]=0;
 	strcpy(gRcv,"nothing\n");
+
+	mylog(" == mcRcvThread()\n");
+
 	for(;;){
 		ret=rleaf("226.1.1.2",4322,gRcv,gErr);
 		if(ret<=0){
@@ -794,6 +823,7 @@ void mcRcvThread(void)
 			break;
 		}
 	}
+	mylog(" == exit mcRcvThread()\n");
 	return;
 }
 
@@ -1090,6 +1120,7 @@ EXIT_SUCCESS : EXIT_FAILURE);
 		die("%s", "Failed to start Mongoose.");
 	}
 
+	mylog(" == start_mongoose() : before my_init,mcRcv,mcGetip\n");
 	my_init();
 	_beginthread((void (__cdecl *)(void *))mcRcvThread,0,0);;         // cyx
 	_beginthread((void (__cdecl *)(void *))mcGetipThread,0,0);;         // cyx
@@ -1214,6 +1245,8 @@ static void save_config(HWND hDlg, FILE *fp) {
 	char value[2000];
 	const char **options, *name, *default_value;
 	int i, id;
+
+	mylog("     === save_config() === \n");
 	
 	fprintf(fp, "%s", config_file_top_comment);
 	options = mg_get_valid_option_names();
@@ -1513,6 +1546,7 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam,
     case WM_COMMAND:
 		switch (LOWORD(wParam)) {
         case ID_QUIT:
+			if(status_connect_8!=0)disconnect8();
 			mg_stop(ctx);
 			Shell_NotifyIcon(NIM_DELETE, &TrayIcon);
 			PostQuitMessage(0);

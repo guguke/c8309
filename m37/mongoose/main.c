@@ -611,9 +611,11 @@ void mcGetipThread()
 
 	mylog(" == mcGetipThread()\n");
 
+	gNum=0;
 	for(i=0;i<100;i++){
-		sleep(6);
+		if(gNum>0)break;
 		mcGetip();
+		sleep(6);
 	}
 
 	mylog(" == exit mcGetipThread\n");
@@ -790,7 +792,6 @@ int rleaf(char *MCASTADDR,int MCASTPORT,char *recvbuf,char *pErr)
 		// For nonrooted control and data plane schemes, WSAJoinLeaf
 		// returns the same socket handle that you pass into it.
 		//
-		gNum++;
 
 		rbuf[50]=0;
 		nn=sscanf(rbuf,"%s",szquit);
@@ -804,6 +805,7 @@ int rleaf(char *MCASTADDR,int MCASTPORT,char *recvbuf,char *pErr)
 				nn=sscanf(recvbuf,"%s%s%s%s%s%s%s%s%s",szquit,szquit,szquit,szquit,szquit,szquit,
 					szip,szmac,szname);
 				if(nn==9){
+					gNum++;
 					if( 0 != strcmp(serverip,szip) ){
 						mylog(" rleaf() ==> connect 8 : new ip\n");
 						if( status_connect_8 != 0 ) disconnect8();						// disconnect8

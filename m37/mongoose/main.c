@@ -537,9 +537,26 @@ static int nfSearch=0;
 // 3: error
 // 4: time out
 
+void disconnectAll()
+{
+	int i,n;
+	char szexe[30],szargv[100];
+	char sz[100];
+	
+	mylog(" disconnect ALL \n");
+	strcpy(szexe,"taskkill");
+	sprintf(szargv," /f /t /fi \"IMAGENAME eq h4c*\" /im *");
+	RunSilent(szexe,szargv);
+	sleep(1);
+
+	status_connect_8=0;
+	return;
+}
+
 static void my_init() {
 	char *value;
 
+	mylog("    ==== my_init() ====\n");
 	value=mg_get_option(ctx,"port_connect_8");
 	port_connect_8=getHex(value);
 
@@ -547,6 +564,8 @@ static void my_init() {
 	strcpy(servermac,"unknown");
 	strcpy(servername,"unknown");
 	strcpy(hhmmssFound,"unknown");
+
+	disconnectAll();
 }
 // create hub4com cmd line para file
 // *pcom : serial port name \\.\cncbc0  
@@ -598,6 +617,7 @@ void mcGetipThread()
 	}
 
 	mylog(" == exit mcGetipThread\n");
+	_endthread();
 	return;
 }
 //		RunSilent("taskkill"," /f /t /im t.exe");
@@ -618,6 +638,7 @@ void disconnect8()
 
 			sprintf(sz," disconnect port %d\n",i);
 			mylog(sz);
+			sleep(1);
 		}
 	}
 	status_connect_8=0;
@@ -824,6 +845,7 @@ void mcRcvThread(void)
 		}
 	}
 	mylog(" == exit mcRcvThread()\n");
+	_endthread();
 	return;
 }
 
@@ -1225,6 +1247,8 @@ static void my_save_config() {
 	char *value;
 	const char **options, *name, *default_value;
 	int i;
+
+	mylog("   === my_save_config() ===\n");
 	
 	fp = fopen("tmp.txt","wt");
 	fprintf(fp, "%s", config_file_top_comment);

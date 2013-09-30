@@ -217,6 +217,7 @@ void ReadFromPipe(void)
 	BOOL bSuccess = FALSE;
 	HANDLE hParentStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	int i,j;
+	FILE *fp;
 	
 	for (i=0;i<1;i++) 
 	{ 
@@ -231,6 +232,9 @@ void ReadFromPipe(void)
 		printf("  ===== hex read : ");
 		for(j=0;j<dwRead;j++)printf("%02X ",chBuf[j]&0x0ff);
 		printf("   =========== \n");
+		fp=fopen("hex.bin","wb");
+		fwrite(chBuf,1,dwRead,fp);
+		fclose(fp);
 	} 
 } 
 

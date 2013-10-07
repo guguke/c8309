@@ -7,5 +7,10 @@ NSIS\install.nsi
 setup\setup.cpp
 sys\pnp.c
 
+com0com.cat  dir : com0com\i386
+com0com.cer
+com0com.pvk
+com0com.pfx
 
-
+certmgr.exe  ( <= winDDK\76.....\bin\x86\certmgr.exe
+  xp: c8309\com0com\x86\certmgr.exe

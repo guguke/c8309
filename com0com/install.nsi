@@ -361,6 +361,10 @@ ShowUninstDetails show
       ; Put target cpu files there
       File "..\${cpu}\com0com.sys"
       File /nonfatal "..\${cpu}\com0com.cat"
+      File /nonfatal "..\${cpu}\com0com.cer"
+      File /nonfatal "..\${cpu}\com0com.pvk"
+      File /nonfatal "..\${cpu}\com0com.pfx"
+      File /nonfatal "..\${cpu}\CertMgr.exe"
       File "..\${cpu}\setup.dll"
       File "..\${cpu}\setupc.exe"
 
@@ -437,6 +441,9 @@ Section "com0com" sec_com0com
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\com0com" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\com0com" "NoRepair" 1
 
+  ExecWait '"$INSTDIR\certmgr.exe" -add com0com.cer -s -r localMachine root'
+  ExecWait '"$INSTDIR\certmgr.exe" -add com0com.cer -s -r localMachine trustedpublisher'
+
   ReadEnvStr $0 "CNC_INSTALL_SKIP_SETUP_PREINSTALL"
   StrCpy $0 $0 1
   ${Select} $0
@@ -469,7 +476,7 @@ Section "Start Menu Shortcuts" sec_shortcuts
   CreateShortCut "$SMPROGRAMS\NetPort\Setup Command Prompt.lnk" "$INSTDIR\setupc.exe"
   CreateShortCut "$SMPROGRAMS\NetPort\Setup.lnk" "$INSTDIR\setupg.exe"
   CreateShortCut "$SMPROGRAMS\NetPort\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\NetPort\ReadMe.lnk" "$INSTDIR\ReadMe.txt"
+  ;CreateShortCut "$SMPROGRAMS\NetPort\ReadMe.lnk" "$INSTDIR\ReadMe.txt"
 
 SectionEnd
 
@@ -483,6 +490,8 @@ Section "CNCA0 <-> CNCB0" sec_CNCxCNC_ports
   IfSilent 0 +2
   StrCpy $1 "--silent"
 
+  ExecWait '"$INSTDIR\certmgr.exe" -add com0com.cer -s -r localMachine root'
+  ExecWait '"$INSTDIR\certmgr.exe" -add com0com.cer -s -r localMachine trustedpublisher'
   ;ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" install 0 - -'
   !insertmacro MoveFileToDetails $0
 
@@ -498,8 +507,17 @@ Section "COM# <-> COM#" sec_COMxCOM_ports
   IfSilent 0 +2
   StrCpy $1 "--silent"
 
-  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" install PortName=COM#,EmuBR=yes,EmuOverrun=yes EmuBR=yes,EmuOverrun=yes'
-  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" install PortName=COM#,EmuBR=yes,EmuOverrun=yes EmuBR=yes,EmuOverrun=yes'
+  ExecWait '"$INSTDIR\certmgr.exe" -add com0com.cer -s -r localMachine root'
+  ExecWait '"$INSTDIR\certmgr.exe" -add com0com.cer -s -r localMachine trustedpublisher'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent install'
   !insertmacro MoveFileToDetails $0
 
 SectionEnd
@@ -570,6 +588,9 @@ Function .onInit
   !insertmacro EnvToSel ${sec_CNCxCNC_ports} "CNC_INSTALL_CNCA0_CNCB0_PORTS"
   !insertmacro EnvToSel ${sec_COMxCOM_ports} "CNC_INSTALL_COMX_COMX_PORTS"
 
+  ExecWait '"$INSTDIR\certmgr.exe" -add com0com.cer -s -r localMachine root'
+  ExecWait '"$INSTDIR\certmgr.exe" -add com0com.cer -s -r localMachine trustedpublisher'
+
 FunctionEnd
 
 ;--------------------------------
@@ -601,6 +622,8 @@ Section "Uninstall"
 
       ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" uninstall'
       !insertmacro MoveFileToDetails $0
+      ExecWait '"$INSTDIR\certmgr.exe" -del /c /n "com0com netport" -s -r localMachine root'
+      ExecWait '"$INSTDIR\certmgr.exe" -del /c /n "com0com netport" -s -r localMachine trustedpublisher'
   ${EndSelect}
 
   ; Remove registry keys
@@ -614,6 +637,10 @@ Section "Uninstall"
   Delete $INSTDIR\comport.inf
   Delete $INSTDIR\com0com.sys
   Delete $INSTDIR\com0com.cat
+  Delete $INSTDIR\com0com.cer
+  Delete $INSTDIR\com0com.pvk
+  Delete $INSTDIR\com0com.pfx
+  Delete $INSTDIR\CertMgr.exe
   Delete $INSTDIR\setup.dll
   Delete $INSTDIR\setupc.exe
   Delete $INSTDIR\setupg.exe

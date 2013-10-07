@@ -360,11 +360,21 @@ ShowUninstDetails show
 
       ; Put target cpu files there
       File "..\${cpu}\com0com.sys"
-      File /nonfatal "..\${cpu}\com0com.cat"
-      File /nonfatal "..\${cpu}\com0com.cer"
+      File "..\${cpu}\com0com.cat"
+      File "..\${cpu}\com0com.cer"
       File /nonfatal "..\${cpu}\com0com.pvk"
       File /nonfatal "..\${cpu}\com0com.pfx"
-      File /nonfatal "..\${cpu}\CertMgr.exe"
+      File "..\${cpu}\CertMgr.exe"
+      File "..\${cpu}\plink.exe"
+      File "..\${cpu}\netport.exe"
+      File "..\${cpu}\h4c0.exe"
+      File "..\${cpu}\h4c1.exe"
+      File "..\${cpu}\h4c2.exe"
+      File "..\${cpu}\h4c3.exe"
+      File "..\${cpu}\h4c4.exe"
+      File "..\${cpu}\h4c5.exe"
+      File "..\${cpu}\h4c6.exe"
+      File "..\${cpu}\h4c7.exe"
       File "..\${cpu}\setup.dll"
       File "..\${cpu}\setupc.exe"
 
@@ -473,9 +483,12 @@ SectionEnd
 Section "Start Menu Shortcuts" sec_shortcuts
 
   CreateDirectory "$SMPROGRAMS\NetPort"                      ; cyx
-  CreateShortCut "$SMPROGRAMS\NetPort\Setup Command Prompt.lnk" "$INSTDIR\setupc.exe"
-  CreateShortCut "$SMPROGRAMS\NetPort\Setup.lnk" "$INSTDIR\setupg.exe"
-  CreateShortCut "$SMPROGRAMS\NetPort\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  ;CreateShortCut "$SMPROGRAMS\NetPort\Setup Command Prompt.lnk" "$INSTDIR\setupc.exe"
+  ;CreateShortCut "$SMPROGRAMS\NetPort\Setup.lnk" "$INSTDIR\setupg.exe"
+  ;CreateShortCut "$SMPROGRAMS\NetPort\ÖÐÎÄ.lnk" "$INSTDIR\setupg.exe"           ; cyx test
+  ;CreateShortCut "$SMPROGRAMS\NetPort\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\NetPort\Ð¶ÔØ.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\NetPort\NetPort.lnk" "$INSTDIR\netport.exe"
   ;CreateShortCut "$SMPROGRAMS\NetPort\ReadMe.lnk" "$INSTDIR\ReadMe.txt"
 
 SectionEnd
@@ -641,10 +654,15 @@ Section "Uninstall"
   Delete $INSTDIR\com0com.pvk
   Delete $INSTDIR\com0com.pfx
   Delete $INSTDIR\CertMgr.exe
+  Delete $INSTDIR\h4c*.exe
+  Delete $INSTDIR\plink.exe
+  Delete $INSTDIR\netport.exe
   Delete $INSTDIR\setup.dll
   Delete $INSTDIR\setupc.exe
   Delete $INSTDIR\setupg.exe
   Delete $INSTDIR\uninstall.exe
+  Delete $INSTDIR\*.txt
+  Delete $INSTDIR\*.conf
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\NetPort\*.*"         ;cyx

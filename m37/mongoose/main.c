@@ -1686,21 +1686,23 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam,
 			case WM_LBUTTONUP:
 			case WM_LBUTTONDBLCLK:
 				hMenu = CreatePopupMenu();
-				AppendMenu(hMenu, MF_STRING | MF_GRAYED, ID_SEPARATOR, server_name);
-				AppendMenu(hMenu, MF_SEPARATOR, ID_SEPARATOR, "");
+				//AppendMenu(hMenu, MF_STRING | MF_GRAYED, ID_SEPARATOR, server_name);
+				//AppendMenu(hMenu, MF_SEPARATOR, ID_SEPARATOR, "");
 				service_installed = manage_service(0);
 				snprintf(buf, sizeof(buf), "NT service: %s installed",
 					service_installed ? "" : "not");
-				AppendMenu(hMenu, MF_STRING | MF_GRAYED, ID_SEPARATOR, buf);
-				AppendMenu(hMenu, MF_STRING | (service_installed ? MF_GRAYED : 0),
-					ID_INSTALL_SERVICE, "Install service");
-				AppendMenu(hMenu, MF_STRING | (!service_installed ? MF_GRAYED : 0),
-					ID_REMOVE_SERVICE, "Deinstall service");
+				//AppendMenu(hMenu, MF_STRING | MF_GRAYED, ID_SEPARATOR, buf);
+				//AppendMenu(hMenu, MF_STRING | (service_installed ? MF_GRAYED : 0),
+				//	ID_INSTALL_SERVICE, "Install service");
+				//AppendMenu(hMenu, MF_STRING | (!service_installed ? MF_GRAYED : 0),
+				//	ID_REMOVE_SERVICE, "Deinstall service");
+				//AppendMenu(hMenu, MF_SEPARATOR, ID_SEPARATOR, "");
+				//AppendMenu(hMenu, MF_STRING, ID_CONNECT, "Start browser");
+				AppendMenu(hMenu, MF_STRING, ID_CONNECT, "´ò¿ª");
+				//AppendMenu(hMenu, MF_STRING, ID_SETTINGS, "Edit Settings");         // cyx
 				AppendMenu(hMenu, MF_SEPARATOR, ID_SEPARATOR, "");
-				AppendMenu(hMenu, MF_STRING, ID_CONNECT, "Start browser");
-				AppendMenu(hMenu, MF_STRING, ID_SETTINGS, "Edit Settings");
-				AppendMenu(hMenu, MF_SEPARATOR, ID_SEPARATOR, "");
-				AppendMenu(hMenu, MF_STRING, ID_QUIT, "Exit");
+				//AppendMenu(hMenu, MF_STRING, ID_QUIT, "Exit");
+				AppendMenu(hMenu, MF_STRING, ID_QUIT, "ÍË³ö");
 				GetCursorPos(&pt);
 				SetForegroundWindow(hWnd);
 				TrackPopupMenu(hMenu, 0, pt.x, pt.y, 0, hWnd, NULL);

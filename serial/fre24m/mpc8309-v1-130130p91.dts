@@ -247,6 +247,7 @@
             compatible = "ns16550";
             reg = <0x200000 0x8>;
             clock-frequency = <120000000>;
+            my-frequency = <240000000>;
             interrupts = <48 0x8>; 
             interrupt-parent = <&ipic>; 
         };   
@@ -256,6 +257,7 @@
            compatible = "ns16550";
            reg = <0x280000 0x8>;
            clock-frequency = <120000000>;
+           my-frequency = <240000000>;
            interrupts = <48 0x8>; 
            interrupt-parent = <&ipic>; 
         };                 
@@ -265,6 +267,7 @@
             compatible = "ns16550";
             reg = <0x300000 0x8>;
             clock-frequency = <120000000>;
+            my-frequency = <240000000>;
             interrupts = <48 0x8>; //??
             interrupt-parent = <&ipic>; //??
         };   
@@ -310,6 +313,7 @@
             compatible = "ns16550";
             reg = <0x380000 0x8>;
             clock-frequency = <120000000>;
+            my-frequency = <240000000>;
             interrupts = <48 0x8>; //??
             interrupt-parent = <&ipic>; //??
         };                      

@@ -1,3 +1,5 @@
+=> fdt addr 2000000
+=> fdt print
 / {
 	compatible = "fsl,mpc8309som";
 	#address-cells = <0x1>;

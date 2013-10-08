@@ -29,6 +29,7 @@
         serial5 = &serial5;
         serial6 = &serial6;
         serial7 = &serial7;
+        serial8 = &serial8;
 
         pci0 = &pci0;
        
@@ -184,36 +185,6 @@
             interrupt-parent = <&ipic>;
         };
 
-        serial1: serial@4600 {
-            cell-index = <1>;
-            device_type = "serial";
-            compatible = "ns16550";
-            reg = <0x4600 0x100>;
-            clock-frequency = <133333333>;
-            interrupts = <9 0x8>;
-            interrupt-parent = <&ipic>;
-        };
-/**/
-        serial2: serial@4900 {
-            cell-index = <2>;
-            device_type = "serial";
-            compatible = "ns16550";
-            reg = <0x4900 0x100>;
-            clock-frequency = <133333333>;
-            interrupts = <9 0x8>;
-            interrupt-parent = <&ipic>;
-        };
-
-        serial3: serial@4A00 {
-            cell-index = <3>;
-            device_type = "serial";
-            compatible = "ns16550";
-            reg = <0x4A00 0x100>;
-            clock-frequency = <133333333>;
-            interrupts = <9 0x8>;
-            interrupt-parent = <&ipic>;
-        };
-
         can0@1c000 {
             compatible = "fsl,mpc830x-flexcan";
             cell-index = <0>;
@@ -270,8 +241,8 @@
         ranges = <0x0 0xD8000000 0x04000000>;
         reg = <0xD8000000 0x04000000>;
            
-        serial4: serial@200000 {
-            cell-index = <4>;
+        serial1: serial@000000 {
+            cell-index = <1>;
             device_type = "serial";
             compatible = "ns16550";
             reg = <0x200000 0x8>;
@@ -279,8 +250,8 @@
             interrupts = <48 0x8>; 
             interrupt-parent = <&ipic>; 
         };   
-        serial5: serial@280000 {
-           cell-index = <5>;
+        serial2: serial@080000 {
+           cell-index = <2>;
            device_type = "serial";
            compatible = "ns16550";
            reg = <0x280000 0x8>;
@@ -288,8 +259,8 @@
            interrupts = <48 0x8>; 
            interrupt-parent = <&ipic>; 
         };                 
-        serial6: serial@300000 {
-            cell-index = <6>;
+        serial3: serial@100000 {
+            cell-index = <3>;
             device_type = "serial";
             compatible = "ns16550";
             reg = <0x300000 0x8>;
@@ -297,8 +268,44 @@
             interrupts = <48 0x8>; //??
             interrupt-parent = <&ipic>; //??
         };   
+        serial4: serial@200000 {
+            cell-index = <4>;
+            device_type = "serial";
+            compatible = "ns16550";
+            reg = <0x380000 0x8>;
+            clock-frequency = <120000000>;
+            interrupts = <48 0x8>; //??
+            interrupt-parent = <&ipic>; //??
+        };                      
+        serial5: serial@280000 {
+            cell-index = <5>;
+            device_type = "serial";
+            compatible = "ns16550";
+            reg = <0x380000 0x8>;
+            clock-frequency = <120000000>;
+            interrupts = <48 0x8>; //??
+            interrupt-parent = <&ipic>; //??
+        };                      
+        serial6: serial@300000 {
+            cell-index = <6>;
+            device_type = "serial";
+            compatible = "ns16550";
+            reg = <0x380000 0x8>;
+            clock-frequency = <120000000>;
+            interrupts = <48 0x8>; //??
+            interrupt-parent = <&ipic>; //??
+        };                      
         serial7: serial@380000 {
             cell-index = <7>;
+            device_type = "serial";
+            compatible = "ns16550";
+            reg = <0x380000 0x8>;
+            clock-frequency = <120000000>;
+            interrupts = <48 0x8>; //??
+            interrupt-parent = <&ipic>; //??
+        };                      
+        serial8: serial@180000 {
+            cell-index = <8>;
             device_type = "serial";
             compatible = "ns16550";
             reg = <0x380000 0x8>;

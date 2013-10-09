@@ -1699,7 +1699,7 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam,
 				//AppendMenu(hMenu, MF_SEPARATOR, ID_SEPARATOR, "");
 				//AppendMenu(hMenu, MF_STRING, ID_CONNECT, "Start browser");
 				AppendMenu(hMenu, MF_STRING, ID_CONNECT, "´ò¿ª");
-				//AppendMenu(hMenu, MF_STRING, ID_SETTINGS, "Edit Settings");         // cyx
+				AppendMenu(hMenu, MF_STRING, ID_SETTINGS, "Edit Settings");         // cyx
 				AppendMenu(hMenu, MF_SEPARATOR, ID_SEPARATOR, "");
 				//AppendMenu(hMenu, MF_STRING, ID_QUIT, "Exit");
 				AppendMenu(hMenu, MF_STRING, ID_QUIT, "ÍË³ö");

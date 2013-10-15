@@ -490,6 +490,7 @@ Section "Start Menu Shortcuts" sec_shortcuts
   CreateShortCut "$SMPROGRAMS\NetPort\п╤ть.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\NetPort\NetPort.lnk" "$INSTDIR\netport.exe"
   ;CreateShortCut "$SMPROGRAMS\NetPort\ReadMe.lnk" "$INSTDIR\ReadMe.txt"
+  CreateShortCut "$SMSTARTUP\netport.lnk" "$INSTDIR\netport.exe"
 
 SectionEnd
 
@@ -666,6 +667,7 @@ Section "Uninstall"
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\NetPort\*.*"         ;cyx
+  Delete "$SMSTARTUP\netport.lnk"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\NetPort"            ;cyx

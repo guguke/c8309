@@ -23,6 +23,7 @@ main(int argc,char *argv[])
 	int baud;
 	int baudrate;
 	int i;
+        printf(" serial send ver 1.01\n");
 	printf("usage: serialw /dev/ttyS1 115200\n");
 	if(argc<3) return;
 	for(i=0;i<9;i++)bufs[i]='1'+i;

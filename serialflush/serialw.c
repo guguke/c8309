@@ -70,7 +70,7 @@ main(int argc,char *argv[])
 	res = write(fd,bufs,26+26+9+2);
 	printf(" send(%d) : %s\n",res,bufs);
 	fsync(fd);
-	sleep(1);
+	//sleep(1);
 #if 0
 	while (STOP==FALSE) {       /* loop for input */
 		res = read(fd,buf,255);   /* returns after 5 chars have been input */
@@ -81,7 +81,7 @@ main(int argc,char *argv[])
 	}
 #endif
 	printf("\n");
-	tcsetattr(fd,TCSANOW,&oldtio);
+	//tcsetattr(fd,TCSANOW,&oldtio);
 	close(fd);
 	return;
 }

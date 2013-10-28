@@ -345,18 +345,19 @@ void changeIP(char *ifname,char *newIP,char *newMask,char *hostname)
 	fprintf(fp,"#!/bin/sh\n");
 	fprintf(fp,"hostname %s\n",hostname);
 	//fprintf(fp,"ifconfig %s %s netmask %s\n",ifname,newIP,newMask);
-	fprintf(fp,"ifconfig eth0 down\n");////////////////////////////////////
+	fprintf(fp,"ifconfig eth2 down\n");////////////////////////////////////
 	fprintf(fp,"ifconfig eth1 down\n");///////////////////////////////
 	fprintf(fp,"ifconfig %s %s\n",ifname,newIP);
 	fprintf(fp,"ser2net&\n");
-	fprintf(fp,"/root/mrs eth2 100 &\n");
+	//fprintf(fp,"/root/mrs eth2 100 &\n");
+	fprintf(fp,"/root/mrs eth0 100 &\n");
 	fflush(fp);
 	fclose(fp);
 	sync();
 
-	if(0!=strcmp(ifname,"eth0")){
+	//if(0!=strcmp(ifname,"eth0")){
 		reboot(RB_AUTOBOOT);
-	}
+	//}
 	return ;
 }
 // boot broadcast  10min

@@ -31,7 +31,7 @@ main(int argc,char *argv[])
       exit(1);
    }
    
-   printf("socket -->%s\n", NAME);
+   printf("socket -->%s\n", argv[1]);
    /* Read from the socket. */
    if (read(sock, buf, 1024) < 0)
       perror("receiving datagram packet");

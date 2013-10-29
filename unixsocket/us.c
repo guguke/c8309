@@ -23,7 +23,7 @@ main(argc, argv)
    /* Construct name of socket to send to. */
    name.sun_family = AF_UNIX;
    strcpy(name.sun_path, argv[1]);
-   name.sun_len = strlen(name.sun_path);
+   //name.sun_len = strlen(name.sun_path);
    /* Send message. */
    if (sendto(sock, DATA, sizeof(DATA), 0, (struct sockaddr *)&name,
        sizeof(struct sockaddr_un)) < 0) {

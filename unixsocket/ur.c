@@ -22,7 +22,7 @@ main()
    /* Create name. */
    name.sun_family = AF_UNIX;
    strcpy(name.sun_path, NAME);
-   name.sun_len = strlen(name.sun_path);
+   //name.sun_len = strlen(name.sun_path);
    if (bind(sock, (struct sockaddr *)&name, SUN_LEN(&name))) {
       perror("binding name to datagram socket");
       exit(1);

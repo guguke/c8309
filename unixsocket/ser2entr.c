@@ -13,6 +13,8 @@ main(int argc,char *argv[])
    struct sockaddr_un name;
    char buf[3000];
    char usname[300];
+   int ret;
+
    printf(" usage: ser2netr name_unix_socket       (default: /dev/shm/ser2net\n");
 
    if(argc<2) strcpy(usname,"/dev/shm/ser2net");

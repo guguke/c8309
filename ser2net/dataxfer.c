@@ -1489,6 +1489,27 @@ setup_trace(port_info_t *port)
     return;
 }
 
+// send to unix socket /dev/shm/ser2net
+static int usend(char *devshm,char *szbuf)
+{
+   int sock;
+   struct sockaddr_un name;
+   int len;
+   /* Create socket on which to send. */
+   sock = socket(AF_UNIX, SOCK_DGRAM, 0);
+   if (sock < 0)  return -1;
+
+   /* Construct name of socket to send to. */
+   name.sun_family = AF_UNIX;
+   strcpy(name.sun_path, devshm);
+   //name.sun_len = strlen(name.sun_path);
+   len = strlen(szbuf);
+   sendto(sock, szbuf, len, 0, (struct sockaddr *)&name,sizeof(struct sockaddr_un));
+
+   close(sock); 
+   return 0;
+}
+
 /* Called to set up a new connection's file descriptor. */
 static int
 setup_tcp_port(port_info_t *port)
@@ -1497,6 +1518,7 @@ setup_tcp_port(port_info_t *port)
     struct timeval then;
     sel_fd_handler_t tcp_write_handler;
     sel_fd_handler_t dev_write_handler;
+	char sz[2048];
 
     if (fcntl(port->tcpfd, F_SETFL, O_NONBLOCK) == -1) {
 	close(port->tcpfd);
@@ -1676,6 +1698,9 @@ setup_tcp_port(port_info_t *port)
     sel_start_timer(port->timer, &then);
 
     reset_timer(port);
+	// write unix socket /dev/shm/ser2net
+	sprintf(sz,"ser2net unix socket: port:%s dev:%s",port->portname,port->devname);
+	usend("/dev/shm/ser2net",sz);
     return 0;
 }
 
@@ -2246,62 +2271,6 @@ clear_old_port_config(int curr_config)
 	    curr = curr->next;
 	}
     }
-}
-
-// showshortport to unix socket /dev/shm/ser2net
-static void showshortport_us(port_info_t *port)
-{
-	char sz[NI_MAXHOST];
-	char buffer[NI_MAXHOST], portbuff[NI_MAXSERV];
-	int  count;
-	int  need_space = 0;
-
-	snprintf(buffer, 23, "%-22s", port->portname);
-
-	sprintf(buffer, " %-6s ", enabled_str[port->enabled]);
-
-	sprintf(buffer, "%7d ", port->timeout);
-
-	getnameinfo((struct sockaddr *) &(port->remote), sizeof(port->remote),
-		buffer, sizeof(buffer),
-		portbuff, sizeof(portbuff),
-		NI_NUMERICHOST | NI_NUMERICSERV);
-	count = strlen(buffer);
-	sprintf(buffer, ",%s ", portbuff);
-	count += strlen(buffer);
-	while (count < 23) {
-		count++;
-	}
-
-	snprintf(buffer, 23, "%-22s", port->devname);
-
-	sprintf(buffer, " %-14s ", state_str[port->tcp_to_dev_state]);
-
-	sprintf(buffer, "%-14s ", state_str[port->dev_to_tcp_state]);
-
-	sprintf(buffer, "%9d ", port->tcp_bytes_received);
-
-	sprintf(buffer, "%9d ", port->tcp_bytes_sent);
-
-	sprintf(buffer, "%9d ", port->dev_bytes_received);
-
-	sprintf(buffer, "%9d ", port->dev_bytes_sent);
-
-
-	if (port->enabled != PORT_RAWLP) {
-		//show_devcfg(cntlr, &(port->dinfo.termctl));
-		need_space = 1;
-	}
-
-	if (port->tcp_to_dev_state != PORT_UNCONNECTED) {
-		if (need_space) {
-			//controller_output(cntlr, " ", 1);
-		}
-
-		//show_devcontrol(cntlr, port->devfd);
-	}
-	//controller_output(cntlr, "\n\r", 2);
-
 }
 
 /* Print information about a port to the control port given in cntlr. */

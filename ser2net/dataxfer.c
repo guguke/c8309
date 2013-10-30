@@ -26,6 +26,7 @@
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
+#include <sys/un.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <unistd.h>

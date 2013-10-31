@@ -2282,7 +2282,7 @@ showshortport(struct controller_info *cntlr, port_info_t *port)
     int  count;
     int  need_space = 0;
 
-	usend("/dev/shm/ser2net","usend");
+	usend("/dev/shm/ser2net","usend\n\n");
 
     snprintf(buffer, 23, "%-22s", port->portname);
     controller_output(cntlr, buffer, strlen(buffer));

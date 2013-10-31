@@ -1511,6 +1511,72 @@ static int usend(char *devshm,char *szbuf)
    return 0;
 }
 
+static void
+	showshortport_un(port_info_t *port)
+{
+	char buffer[NI_MAXHOST], portbuff[NI_MAXSERV];
+	int  count;
+	int  need_space = 0;
+	char sz[2048];
+
+	sprintf(sz,"ser2net.status ");
+	sprintf(buffer, "%s ", port->portname);
+	strcat(sz,buffer);
+
+	sprintf(buffer, " %s ", enabled_str[port->enabled]);
+	strcat(sz,buffer);
+
+	//sprintf(buffer, "%7d ", port->timeout);
+
+	getnameinfo((struct sockaddr *) &(port->remote), sizeof(port->remote),
+		buffer, sizeof(buffer),
+		portbuff, sizeof(portbuff),
+		NI_NUMERICHOST | NI_NUMERICSERV);
+	strcat(sz,buffer);
+	strcat(sz," ");
+	sprintf(buffer, ",%s ", portbuff);
+	strcat(sz,buffer);
+
+	sprintf(buffer, "%s ", port->devname);
+	strcat(sz,buffer);
+
+	sprintf(buffer, " %s ", state_str[port->tcp_to_dev_state]);
+	strcat(sz,buffer);
+
+	sprintf(buffer, "%s ", state_str[port->dev_to_tcp_state]);
+	strcat(sz,buffer);
+
+	sprintf(buffer, "%d ", port->tcp_bytes_received);
+	strcat(sz,buffer);
+
+	sprintf(buffer, "%d ", port->tcp_bytes_sent);
+	strcat(sz,buffer);
+
+	sprintf(buffer, "%d ", port->dev_bytes_received);
+	strcat(sz,buffer);
+
+	sprintf(buffer, "%d ", port->dev_bytes_sent);
+	strcat(sz,buffer);
+
+#if 0
+	if (port->enabled != PORT_RAWLP) {
+		//show_devcfg(cntlr, &(port->dinfo.termctl));
+		need_space = 1;
+	}
+
+	if (port->tcp_to_dev_state != PORT_UNCONNECTED) {
+		if (need_space) {
+			//controller_output(cntlr, " ", 1);
+		}
+
+		//show_devcontrol(cntlr, port->devfd);
+	}
+	//controller_output(cntlr, "\n\r", 2);
+#endif
+	strcat(sz,"\n");
+	usend("/dev/shm/ser2net",sz);
+}
+
 /* Called to set up a new connection's file descriptor. */
 static int
 	setup_tcp_port(port_info_t *port)
@@ -1703,6 +1769,7 @@ static int
 	// write unix socket /dev/shm/ser2net
 	sprintf(sz,"ser2net unix socket: port:%s dev:%s 01234567890n\n",port->portname,port->devname);
 	usend("/dev/shm/ser2net",sz);
+	showshortport_un(port);
 	return 0;
 }
 
@@ -1987,6 +2054,7 @@ finish_shutdown_port(port_info_t *port)
 			free_port(curr);
 		}
 	}
+	showshortport_un(port);
 }
 
 static void
@@ -2283,8 +2351,6 @@ showshortport(struct controller_info *cntlr, port_info_t *port)
     char buffer[NI_MAXHOST], portbuff[NI_MAXSERV];
     int  count;
     int  need_space = 0;
-
-	usend("/dev/shm/ser2net","usend");
 
     snprintf(buffer, 23, "%-22s", port->portname);
     controller_output(cntlr, buffer, strlen(buffer));

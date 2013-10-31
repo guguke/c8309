@@ -46,7 +46,7 @@ main(int argc,char *argv[])
 		   perror("receiving datagram packet");
 		   break;
 	   }
-	   buf[2000]=0;
+	   buf[ret]=0;
 	   printf(" ret: %d str:%s\n", ret,buf);
 	   for(i=0;i<ret;i++) printf("%02X ",0x0ff & buf[i]);
 	   printf("\n ==end== \n");

@@ -47,9 +47,9 @@ main(int argc,char *argv[])
 		   break;
 	   }
 	   buf[ret]=0;
-	   printf(" ret: %d str:%s\n", ret,buf);
-	   for(i=0;i<ret;i++) printf("%02X ",0x0ff & buf[i]);
-	   printf("\n ==end== \n");
+	   printf(" num: %d str:%s\n", ret,buf);
+	   //for(i=0;i<ret;i++) printf("%02X ",0x0ff & buf[i]);
+	   //printf("\n ==end== \n");
    }
    close(sock);
    //unlink(NAME);

@@ -13,7 +13,7 @@ main(int argc,char *argv[])
    struct sockaddr_un name;
    char buf[3000];
    char usname[300];
-   int ret;
+   int ret,i;
 
    printf(" usage: ser2netr name_unix_socket       (default: /dev/shm/ser2net\n");
 
@@ -47,7 +47,9 @@ main(int argc,char *argv[])
 		   break;
 	   }
 	   buf[2000]=0;
-	   printf("%s\n", buf);
+	   printf(" ret: %d str:%s\n", buf);
+	   for(i=0;i<ret;i++) printf("%02d ",0x0ff & buf[i]);
+	   printf("\n ==end== \n");
    }
    close(sock);
    //unlink(NAME);

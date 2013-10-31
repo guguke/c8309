@@ -1701,7 +1701,7 @@ static int
 
 	reset_timer(port);
 	// write unix socket /dev/shm/ser2net
-	sprintf(sz,"ser2net unix socket: port:%s dev:%s",port->portname,port->devname);
+	sprintf(sz,"ser2net unix socket: port:%s dev:%s ==================\n",port->portname,port->devname);
 	usend("/dev/shm/ser2net",sz);
 	return 0;
 }
@@ -1896,7 +1896,7 @@ finish_shutdown_port(port_info_t *port)
 		sel_clear_fd_handlers(ser2net_sel, port->devfd);
 		tcflush(port->devfd, TCOFLUSH);
 		close(port->devfd);
-		usend("/dev/shm/ser2net","close 2\n");
+		usend("/dev/shm/ser2net","  ========================= close 2 ================================\n");
 		port->devfd = -1;
 	}
 #ifdef USE_UUCP_LOCKING

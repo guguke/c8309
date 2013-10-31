@@ -1513,196 +1513,197 @@ static int usend(char *devshm,char *szbuf)
 
 /* Called to set up a new connection's file descriptor. */
 static int
-setup_tcp_port(port_info_t *port)
+	setup_tcp_port(port_info_t *port)
 {
-    int options;
-    struct timeval then;
-    sel_fd_handler_t tcp_write_handler;
-    sel_fd_handler_t dev_write_handler;
+	int options;
+	struct timeval then;
+	sel_fd_handler_t tcp_write_handler;
+	sel_fd_handler_t dev_write_handler;
 	char sz[2048];
 
-    if (fcntl(port->tcpfd, F_SETFL, O_NONBLOCK) == -1) {
-	close(port->tcpfd);
-	port->tcpfd = -1;
-	syslog(LOG_ERR, "Could not fcntl the tcp port %s: %m", port->portname);
-	return -1;
-    }
-    options = 1;
-    if (setsockopt(port->tcpfd, IPPROTO_TCP, TCP_NODELAY,
-		   (char *) &options, sizeof(options)) == -1) {
-	close(port->tcpfd);
-	port->tcpfd = -1;
-	syslog(LOG_ERR, "Could not enable TCP_NODELAY tcp port %s: %m",
-	       port->portname);
-	return -1;
-    }
+	if (fcntl(port->tcpfd, F_SETFL, O_NONBLOCK) == -1) {
+		close(port->tcpfd);
+		port->tcpfd = -1;
+		syslog(LOG_ERR, "Could not fcntl the tcp port %s: %m", port->portname);
+		return -1;
+	}
+	options = 1;
+	if (setsockopt(port->tcpfd, IPPROTO_TCP, TCP_NODELAY,
+		(char *) &options, sizeof(options)) == -1) {
+			close(port->tcpfd);
+			port->tcpfd = -1;
+			syslog(LOG_ERR, "Could not enable TCP_NODELAY tcp port %s: %m",
+				port->portname);
+			return -1;
+	}
 
 #ifdef HAVE_TCPD_H
-    {
-	struct request_info req;
-	
-	request_init(&req, RQ_DAEMON, progname, RQ_FILE, port->tcpfd, NULL);
-	fromhost(&req);
+	{
+		struct request_info req;
 
-	if (!hosts_access(&req)) {
-	    char *err = "Access denied\n\r";
-	    write(port->tcpfd, err, strlen(err));
-	    close(port->tcpfd);
-	    port->tcpfd = -1;
-	    return -1;
+		request_init(&req, RQ_DAEMON, progname, RQ_FILE, port->tcpfd, NULL);
+		fromhost(&req);
+
+		if (!hosts_access(&req)) {
+			char *err = "Access denied\n\r";
+			write(port->tcpfd, err, strlen(err));
+			close(port->tcpfd);
+			port->tcpfd = -1;
+			return -1;
+		}
 	}
-    }
 #endif /* HAVE_TCPD_H */
 
 #ifdef USE_UUCP_LOCKING
-    {
-	int rv;
+	{
+		int rv;
 
-	rv = uucp_mk_lock(port->devname);
-	if (rv > 0 ) {
-	    char *err;
+		rv = uucp_mk_lock(port->devname);
+		if (rv > 0 ) {
+			char *err;
 
-	    err = "Port already in use by another process\n\r";
-	    write_ignore_fail(port->tcpfd, err, strlen(err));
-	    close(port->tcpfd);
-	    port->tcpfd = -1;
-	    return -1;
-	} else if (rv < 0) {
-	    char *err;
+			err = "Port already in use by another process\n\r";
+			write_ignore_fail(port->tcpfd, err, strlen(err));
+			close(port->tcpfd);
+			port->tcpfd = -1;
+			return -1;
+		} else if (rv < 0) {
+			char *err;
 
-	    err = "Error creating port lock file\n\r";
-	    write_ignore_fail(port->tcpfd, err, strlen(err));
-	    close(port->tcpfd);
-	    port->tcpfd = -1;
-	    return -1;
+			err = "Error creating port lock file\n\r";
+			write_ignore_fail(port->tcpfd, err, strlen(err));
+			close(port->tcpfd);
+			port->tcpfd = -1;
+			return -1;
+		}
 	}
-    }
 #endif /* USE_UUCP_LOCKING */
 
-    /* Oct 05 2001 druzus: NOCTTY - don't make 
-       device control tty for our process */
-    options = O_NONBLOCK | O_NOCTTY;
-    if (port->enabled == PORT_RAWLP) {
-	options |= O_WRONLY;
-    } else {
-	options |= O_RDWR;
-    }
-    port->devfd = open(port->devname, options);
-    if (port->devfd == -1) {
-	close(port->tcpfd);
-	port->tcpfd = -1;
-	syslog(LOG_ERR, "Could not open device %s for port %s: %m",
-	       port->devname,
-	       port->portname);
+	/* Oct 05 2001 druzus: NOCTTY - don't make 
+	device control tty for our process */
+	options = O_NONBLOCK | O_NOCTTY;
+	if (port->enabled == PORT_RAWLP) {
+		options |= O_WRONLY;
+	} else {
+		options |= O_RDWR;
+	}
+	port->devfd = open(port->devname, options);
+	if (port->devfd == -1) {
+		close(port->tcpfd);
+		port->tcpfd = -1;
+		syslog(LOG_ERR, "Could not open device %s for port %s: %m",
+			port->devname,
+			port->portname);
 #ifdef USE_UUCP_LOCKING
-	uucp_rm_lock(port->devname);
+		uucp_rm_lock(port->devname);
 #endif /* USE_UUCP_LOCKING */
-	return -1;
-    }
+		return -1;
+	}
 
-    if (port->enabled != PORT_RAWLP
-	&& !port->dinfo.disablebreak
-        && tcsetattr(port->devfd, TCSANOW, &(port->dinfo.termctl)) == -1)
-    {
-	close(port->tcpfd);
-	port->tcpfd = -1;
-	close(port->devfd);
-	port->devfd = -1;
-	syslog(LOG_ERR, "Could not set up device %s for port %s: %m",
-	       port->devname,
-	       port->portname);
+	if (port->enabled != PORT_RAWLP
+		&& !port->dinfo.disablebreak
+		&& tcsetattr(port->devfd, TCSANOW, &(port->dinfo.termctl)) == -1)
+	{
+		close(port->tcpfd);
+		port->tcpfd = -1;
+		close(port->devfd);
+		usend("/dev/shm/ser2net","close 1\n");
+		port->devfd = -1;
+		syslog(LOG_ERR, "Could not set up device %s for port %s: %m",
+			port->devname,
+			port->portname);
 #ifdef USE_UUCP_LOCKING
-	uucp_rm_lock(port->devname);
+		uucp_rm_lock(port->devname);
 #endif /* USE_UUCP_LOCKING */
-	return -1;
-    }
+		return -1;
+	}
 
-    /* Turn off BREAK. */
-    if (port->enabled != PORT_RAWLP &&
-              ioctl(port->devfd, TIOCCBRK) == -1) {
-	/* Probably not critical, but we should at least log something. */
-	syslog(LOG_ERR, "Could not turn off break for device %s port %s: %m",
-	       port->devname,
-	       port->portname);
-    }
-    port->is_2217 = 0;
-    port->break_set = 0;
+	/* Turn off BREAK. */
+	if (port->enabled != PORT_RAWLP &&
+		ioctl(port->devfd, TIOCCBRK) == -1) {
+			/* Probably not critical, but we should at least log something. */
+			syslog(LOG_ERR, "Could not turn off break for device %s port %s: %m",
+				port->devname,
+				port->portname);
+	}
+	port->is_2217 = 0;
+	port->break_set = 0;
 
-    port->banner = process_str_to_buf(port, port->dinfo.banner);
-    if (port->banner)
-	tcp_write_handler = handle_tcp_fd_banner_write;
-    else
-	tcp_write_handler = handle_tcp_fd_write;
-
-    port->devstr = process_str_to_buf(port, port->dinfo.openstr);
-    if (port->devstr)
-	dev_write_handler = handle_dev_fd_devstr_write;
-    else
-	dev_write_handler = handle_dev_fd_write;
-
-    if (port->dinfo.closestr)
-	port->closestr = strdup(port->dinfo.closestr);
-    else
-	port->closestr = NULL;
-
-    sel_set_fd_handlers(ser2net_sel,
-			port->devfd,
-			port,
-			port->enabled == PORT_RAWLP
-			? NULL
-			: handle_dev_fd_read,
-			dev_write_handler,
-			handle_dev_fd_except);
-    sel_set_fd_read_handler(ser2net_sel,
-			    port->devfd,
-			    ((port->enabled == PORT_RAWLP)
-			     ? SEL_FD_HANDLER_DISABLED
-			     : SEL_FD_HANDLER_ENABLED));
-    sel_set_fd_except_handler(ser2net_sel, port->devfd,
-			      SEL_FD_HANDLER_ENABLED);
-    if (port->devstr)
-	sel_set_fd_write_handler(ser2net_sel, port->devfd,
-				 SEL_FD_HANDLER_ENABLED);
-    port->dev_to_tcp_state = PORT_WAITING_INPUT;
-
-    sel_set_fd_handlers(ser2net_sel,
-			port->tcpfd,
-			port,
-			handle_tcp_fd_read,
-			tcp_write_handler,
-			handle_tcp_fd_except);
-    sel_set_fd_read_handler(ser2net_sel, port->tcpfd,
-			    SEL_FD_HANDLER_ENABLED);
-    sel_set_fd_except_handler(ser2net_sel, port->tcpfd,
-			      SEL_FD_HANDLER_ENABLED);
-    port->tcp_to_dev_state = PORT_WAITING_INPUT;
-
-    if (port->enabled == PORT_TELNET) {
-	telnet_init(&port->tn_data, port, telnet_output_ready,
-		    telnet_cmd_handler,
-		    telnet_cmds,
-		    telnet_init_seq, sizeof(telnet_init_seq));
-    } else {
-	buffer_init(&port->tn_data.out_telnet_cmd, NULL, 0);
-	sel_set_fd_read_handler(ser2net_sel, port->devfd,
-				SEL_FD_HANDLER_ENABLED);
+	port->banner = process_str_to_buf(port, port->dinfo.banner);
 	if (port->banner)
-	    sel_set_fd_write_handler(ser2net_sel, port->tcpfd,
-				     SEL_FD_HANDLER_ENABLED);
-    }
+		tcp_write_handler = handle_tcp_fd_banner_write;
+	else
+		tcp_write_handler = handle_tcp_fd_write;
 
-    setup_trace(port);
-    header_trace(port);
+	port->devstr = process_str_to_buf(port, port->dinfo.openstr);
+	if (port->devstr)
+		dev_write_handler = handle_dev_fd_devstr_write;
+	else
+		dev_write_handler = handle_dev_fd_write;
 
-    gettimeofday(&then, NULL);
-    then.tv_sec += 1;
-    sel_start_timer(port->timer, &then);
+	if (port->dinfo.closestr)
+		port->closestr = strdup(port->dinfo.closestr);
+	else
+		port->closestr = NULL;
 
-    reset_timer(port);
+	sel_set_fd_handlers(ser2net_sel,
+		port->devfd,
+		port,
+		port->enabled == PORT_RAWLP
+		? NULL
+		: handle_dev_fd_read,
+		dev_write_handler,
+		handle_dev_fd_except);
+	sel_set_fd_read_handler(ser2net_sel,
+		port->devfd,
+		((port->enabled == PORT_RAWLP)
+		? SEL_FD_HANDLER_DISABLED
+		: SEL_FD_HANDLER_ENABLED));
+	sel_set_fd_except_handler(ser2net_sel, port->devfd,
+		SEL_FD_HANDLER_ENABLED);
+	if (port->devstr)
+		sel_set_fd_write_handler(ser2net_sel, port->devfd,
+		SEL_FD_HANDLER_ENABLED);
+	port->dev_to_tcp_state = PORT_WAITING_INPUT;
+
+	sel_set_fd_handlers(ser2net_sel,
+		port->tcpfd,
+		port,
+		handle_tcp_fd_read,
+		tcp_write_handler,
+		handle_tcp_fd_except);
+	sel_set_fd_read_handler(ser2net_sel, port->tcpfd,
+		SEL_FD_HANDLER_ENABLED);
+	sel_set_fd_except_handler(ser2net_sel, port->tcpfd,
+		SEL_FD_HANDLER_ENABLED);
+	port->tcp_to_dev_state = PORT_WAITING_INPUT;
+
+	if (port->enabled == PORT_TELNET) {
+		telnet_init(&port->tn_data, port, telnet_output_ready,
+			telnet_cmd_handler,
+			telnet_cmds,
+			telnet_init_seq, sizeof(telnet_init_seq));
+	} else {
+		buffer_init(&port->tn_data.out_telnet_cmd, NULL, 0);
+		sel_set_fd_read_handler(ser2net_sel, port->devfd,
+			SEL_FD_HANDLER_ENABLED);
+		if (port->banner)
+			sel_set_fd_write_handler(ser2net_sel, port->tcpfd,
+			SEL_FD_HANDLER_ENABLED);
+	}
+
+	setup_trace(port);
+	header_trace(port);
+
+	gettimeofday(&then, NULL);
+	then.tv_sec += 1;
+	sel_start_timer(port->timer, &then);
+
+	reset_timer(port);
 	// write unix socket /dev/shm/ser2net
 	sprintf(sz,"ser2net unix socket: port:%s dev:%s",port->portname,port->devname);
 	usend("/dev/shm/ser2net",sz);
-    return 0;
+	return 0;
 }
 
 /* A connection request has come in on a port. */
@@ -1887,104 +1888,105 @@ free_port(port_info_t *port)
 static void
 finish_shutdown_port(port_info_t *port)
 {
-    int portnum;
+	int portnum;
 
-    /* To avoid blocking on close if we have written bytes and are in
-       flow-control, we flush the output queue. */
-    if (port->devfd != -1) {
-	sel_clear_fd_handlers(ser2net_sel, port->devfd);
-	tcflush(port->devfd, TCOFLUSH);
-	close(port->devfd);
-	port->devfd = -1;
-    }
+	/* To avoid blocking on close if we have written bytes and are in
+	flow-control, we flush the output queue. */
+	if (port->devfd != -1) {
+		sel_clear_fd_handlers(ser2net_sel, port->devfd);
+		tcflush(port->devfd, TCOFLUSH);
+		close(port->devfd);
+		usend("/dev/shm/ser2net","close 2\n");
+		port->devfd = -1;
+	}
 #ifdef USE_UUCP_LOCKING
-    uucp_rm_lock(port->devname);
+	uucp_rm_lock(port->devname);
 #endif /* USE_UUCP_LOCKING */
-    port->tcp_to_dev_state = PORT_UNCONNECTED;
-    buffer_reset(&port->tcp_to_dev);
-    port->tcp_bytes_received = 0;
-    port->tcp_bytes_sent = 0;
-    if (port->banner) {
-	free(port->banner->buf);
-	free(port->banner);
-	port->banner = NULL;
-    }
-    if (port->devstr) {
-	free(port->devstr->buf);
-	free(port->devstr);
-	port->devstr = NULL;
-    }
-    if (port->closestr)
-	free(port->closestr);
-    port->dev_to_tcp_state = PORT_UNCONNECTED;
-    buffer_reset(&port->dev_to_tcp);
-    port->dev_bytes_received = 0;
-    port->dev_bytes_sent = 0;
-
-    portnum = port_from_in_addr(port->tcpport.ss_family,
-				(struct sockaddr *) &port->tcpport);
-    if (portnum == 0) {
-	/* This was a zero port (for stdin/stdout), this is only
-	   allowed with one port at a time, and we shut down when it
-	   closes. */
-	exit(0);
-    }
-
-    /* If the port has been disabled, then delete it.  Check this before
-       the new config so the port will be deleted properly and not
-       reconfigured on a reconfig. */
-    if (port->config_num == -1) {
-	port_info_t *curr, *prev;
-
-	change_port_state(port, PORT_DISABLED);
-	prev = NULL;
-	curr = ports;
-	while ((curr != NULL) && (curr != port)) {
-	    prev = curr;
-	    curr = curr->next;
+	port->tcp_to_dev_state = PORT_UNCONNECTED;
+	buffer_reset(&port->tcp_to_dev);
+	port->tcp_bytes_received = 0;
+	port->tcp_bytes_sent = 0;
+	if (port->banner) {
+		free(port->banner->buf);
+		free(port->banner);
+		port->banner = NULL;
 	}
-	if (curr != NULL) {
-	    if (prev == NULL) {
-		ports = curr->next;
-	    } else {
-		prev->next = curr->next;
-	    }
-	    free_port(curr);
+	if (port->devstr) {
+		free(port->devstr->buf);
+		free(port->devstr);
+		port->devstr = NULL;
+	}
+	if (port->closestr)
+		free(port->closestr);
+	port->dev_to_tcp_state = PORT_UNCONNECTED;
+	buffer_reset(&port->dev_to_tcp);
+	port->dev_bytes_received = 0;
+	port->dev_bytes_sent = 0;
+
+	portnum = port_from_in_addr(port->tcpport.ss_family,
+		(struct sockaddr *) &port->tcpport);
+	if (portnum == 0) {
+		/* This was a zero port (for stdin/stdout), this is only
+		allowed with one port at a time, and we shut down when it
+		closes. */
+		exit(0);
 	}
 
-	return; /* We have to return here because we no longer have a port. */
-    }
+	/* If the port has been disabled, then delete it.  Check this before
+	the new config so the port will be deleted properly and not
+	reconfigured on a reconfig. */
+	if (port->config_num == -1) {
+		port_info_t *curr, *prev;
 
-    if (port->new_config != NULL) {
-	port_info_t *curr, *prev;
+		change_port_state(port, PORT_DISABLED);
+		prev = NULL;
+		curr = ports;
+		while ((curr != NULL) && (curr != port)) {
+			prev = curr;
+			curr = curr->next;
+		}
+		if (curr != NULL) {
+			if (prev == NULL) {
+				ports = curr->next;
+			} else {
+				prev->next = curr->next;
+			}
+			free_port(curr);
+		}
 
-	prev = NULL;
-	curr = ports;
-	while ((curr != NULL) && (curr != port)) {
-	    prev = curr;
-	    curr = curr->next;
+		return; /* We have to return here because we no longer have a port. */
 	}
-	if (curr != NULL) {
-	    port = curr->new_config;
-	    port->acceptfd = curr->acceptfd;
-	    sel_set_fd_handlers(ser2net_sel,
+
+	if (port->new_config != NULL) {
+		port_info_t *curr, *prev;
+
+		prev = NULL;
+		curr = ports;
+		while ((curr != NULL) && (curr != port)) {
+			prev = curr;
+			curr = curr->next;
+		}
+		if (curr != NULL) {
+			port = curr->new_config;
+			port->acceptfd = curr->acceptfd;
+			sel_set_fd_handlers(ser2net_sel,
 				port->acceptfd,
 				port,
 				handle_accept_port_read,
 				NULL,
 				NULL);
-	    curr->acceptfd = -1;
-	    port->next = curr->next;
-	    if (prev == NULL) {
-		ports = port;
-	    } else {
-		prev->next = port;
-	    }
-	    curr->enabled = PORT_DISABLED;
-	    curr->new_config = NULL;
-	    free_port(curr);
+			curr->acceptfd = -1;
+			port->next = curr->next;
+			if (prev == NULL) {
+				ports = port;
+			} else {
+				prev->next = port;
+			}
+			curr->enabled = PORT_DISABLED;
+			curr->new_config = NULL;
+			free_port(curr);
+		}
 	}
-    }
 }
 
 static void
@@ -2281,8 +2283,6 @@ showshortport(struct controller_info *cntlr, port_info_t *port)
     char buffer[NI_MAXHOST], portbuff[NI_MAXSERV];
     int  count;
     int  need_space = 0;
-
-	usend("/dev/shm/ser2net","usend\n\n");
 
     snprintf(buffer, 23, "%-22s", port->portname);
     controller_output(cntlr, buffer, strlen(buffer));

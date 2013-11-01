@@ -1511,6 +1511,69 @@ static int usend(char *devshm,char *szbuf)
    return 0;
 }
 
+void show_devcfg_un(struct controller_info *cntlr, struct termios *termctl)
+{
+    speed_t speed = cfgetospeed(termctl);
+    int     stopbits = termctl->c_cflag & CSTOPB;
+    int     databits = termctl->c_cflag & CSIZE;
+    int     parity_enabled = termctl->c_cflag & PARENB;
+    int     parity = termctl->c_cflag & PARODD;
+    int     xon = termctl->c_iflag & IXON;
+    int     xoff = termctl->c_iflag & IXOFF;
+    int     xany = termctl->c_iflag & IXANY;
+    int     flow_rtscts = termctl->c_cflag & CRTSCTS;
+    int     clocal = termctl->c_cflag & CLOCAL;
+    int     hangup_when_done = termctl->c_cflag & HUPCL;
+    char    *str;
+
+    str = baud_string(speed);
+    controller_output(cntlr, str, strlen(str));
+    controller_output(cntlr, " ", 1);
+
+    if (xon && xoff && xany) {
+      controller_output(cntlr, "XONXOFF ", 8);
+    }      
+    
+    if (flow_rtscts) {
+      controller_output(cntlr, "RTSCTS ", 7);
+    }
+
+    if (clocal) {
+      controller_output(cntlr, "LOCAL ", 6);
+    }
+
+    if (hangup_when_done) {
+      controller_output(cntlr, "HANGUP_WHEN_DONE ", 17);
+    }
+
+    if (stopbits) {
+	str = "2STOPBITS";
+    } else {
+	str = "1STOPBIT";
+    }
+    controller_output(cntlr, str, strlen(str));
+    controller_output(cntlr, " ", 1);
+
+    switch (databits) {
+    case CS7: str = "7DATABITS"; break;
+    case CS8: str = "8DATABITS"; break;
+    default: str = "unknown databits";
+    }
+    controller_output(cntlr, str, strlen(str));
+    controller_output(cntlr, " ", 1);
+
+    if (parity_enabled) {
+	if (parity) {
+	    str = "ODD";
+	} else {
+	    str = "EVEN";
+	}
+    } else {
+	str = "NONE";
+    }
+    controller_output(cntlr, str, strlen(str));
+}
+
 static void
 	showshortport_un(port_info_t *port)
 {
@@ -1518,6 +1581,7 @@ static void
 	int  count;
 	int  need_space = 0;
 	char sz[2048];
+    struct termios termio;
 
 	sprintf(sz,"ser2net.status ");
 	sprintf(buffer, "%s_", port->portname);

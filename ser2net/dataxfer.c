@@ -2395,6 +2395,9 @@ showshortport(struct controller_info *cntlr, port_info_t *port)
     sprintf(buffer, "%9d ", port->dev_bytes_sent);
     controller_output(cntlr, buffer, strlen(buffer));
 
+    if (port->tcp_to_dev_state != PORT_UNCONNECTED) {
+		tcgetattr(port->devfd,&(port->dinfo.termctl));
+	}
 
     if (port->enabled != PORT_RAWLP) {
 	show_devcfg(cntlr, &(port->dinfo.termctl));

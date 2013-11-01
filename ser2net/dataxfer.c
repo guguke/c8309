@@ -1539,7 +1539,7 @@ static void
 	sprintf(buffer, "%s_", port->devname);
 	strcat(sz,buffer);
 
-	sprintf(buffer, " %s_", state_str[port->tcp_to_dev_state]);
+	sprintf(buffer, "%s_", state_str[port->tcp_to_dev_state]);
 	strcat(sz,buffer);
 
 	sprintf(buffer, "%s_", state_str[port->dev_to_tcp_state]);
@@ -1554,7 +1554,7 @@ static void
 	sprintf(buffer, "%d_", port->dev_bytes_received);
 	strcat(sz,buffer);
 
-	sprintf(buffer, "%d_", port->dev_bytes_sent);
+	sprintf(buffer, "%d", port->dev_bytes_sent);
 	strcat(sz,buffer);
 
 #if 0

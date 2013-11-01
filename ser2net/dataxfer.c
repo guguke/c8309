@@ -73,7 +73,7 @@ static char *uucp_lck_dir = "/var/lock";
 					     so I can send data. */
 #define PORT_CLOSING			3 /* Waiting for output close
 					     string to be sent. */
-char *state_str[] = { "unconnected", "waiting input", "waiting output",
+char *state_str[] = { "unconnected", "waiting.input", "waiting.output",
 		      "closing" };
 
 #define PORT_DISABLED		0 /* The port is not open. */
@@ -1520,7 +1520,7 @@ static void
 	char sz[2048];
 
 	sprintf(sz,"ser2net.status ");
-	sprintf(buffer, "%s ", port->portname);
+	sprintf(buffer, "%s_", port->portname);
 	strcat(sz,buffer);
 
 	//sprintf(buffer, " %s ", enabled_str[port->enabled]);
@@ -1533,28 +1533,28 @@ static void
 		portbuff, sizeof(portbuff),
 		NI_NUMERICHOST | NI_NUMERICSERV);
 	strcat(sz,buffer);
-	sprintf(buffer, ":%s ", portbuff);
+	sprintf(buffer, ":%s_", portbuff);
 	strcat(sz,buffer);
 
-	sprintf(buffer, "%s ", port->devname);
+	sprintf(buffer, "%s_", port->devname);
 	strcat(sz,buffer);
 
-	sprintf(buffer, " %s ", state_str[port->tcp_to_dev_state]);
+	sprintf(buffer, " %s_", state_str[port->tcp_to_dev_state]);
 	strcat(sz,buffer);
 
-	sprintf(buffer, "%s ", state_str[port->dev_to_tcp_state]);
+	sprintf(buffer, "%s_", state_str[port->dev_to_tcp_state]);
 	strcat(sz,buffer);
 
-	sprintf(buffer, "%d ", port->tcp_bytes_received);
+	sprintf(buffer, "%d_", port->tcp_bytes_received);
 	strcat(sz,buffer);
 
-	sprintf(buffer, "%d ", port->tcp_bytes_sent);
+	sprintf(buffer, "%d_", port->tcp_bytes_sent);
 	strcat(sz,buffer);
 
-	sprintf(buffer, "%d ", port->dev_bytes_received);
+	sprintf(buffer, "%d_", port->dev_bytes_received);
 	strcat(sz,buffer);
 
-	sprintf(buffer, "%d ", port->dev_bytes_sent);
+	sprintf(buffer, "%d_", port->dev_bytes_sent);
 	strcat(sz,buffer);
 
 #if 0

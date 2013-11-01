@@ -1523,8 +1523,8 @@ static void
 	sprintf(buffer, "%s ", port->portname);
 	strcat(sz,buffer);
 
-	sprintf(buffer, " %s ", enabled_str[port->enabled]);
-	strcat(sz,buffer);
+	//sprintf(buffer, " %s ", enabled_str[port->enabled]);
+	//strcat(sz,buffer);
 
 	//sprintf(buffer, "%7d ", port->timeout);
 
@@ -1533,8 +1533,7 @@ static void
 		portbuff, sizeof(portbuff),
 		NI_NUMERICHOST | NI_NUMERICSERV);
 	strcat(sz,buffer);
-	strcat(sz," ");
-	sprintf(buffer, ",%s ", portbuff);
+	sprintf(buffer, ":%s ", portbuff);
 	strcat(sz,buffer);
 
 	sprintf(buffer, "%s ", port->devname);

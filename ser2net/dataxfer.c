@@ -1620,7 +1620,7 @@ static void
 	strcat(sz,buffer);
 
 	if (port->tcp_to_dev_state != PORT_UNCONNECTED) {
-		tcgetattr(port->deffd,&termio);
+		tcgetattr(port->devfd,&termio);
 	}
 
 	if (port->enabled != PORT_RAWLP) {

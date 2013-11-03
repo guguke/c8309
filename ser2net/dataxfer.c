@@ -1528,7 +1528,7 @@ void show_devcfg_un(char *sz, struct termios *termctl)
 	char p[200];
 
 	str = baud_string(speed);
-	sprintf(sz,"%s.",str);
+	sprintf(sz,"_%s.",str);
 
 	if (xon && xoff && xany) {
 		strcat(sz,"XONXOFF.");

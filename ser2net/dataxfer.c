@@ -1839,7 +1839,7 @@ static int
 	reset_timer(port);
 	// write unix socket /dev/shm/ser2net
 	//sprintf(sz,"ser2net unix socket: port:%s dev:%s 01234567890n\n",port->portname,port->devname);
-	usend("/dev/shm/ser2net",sz);
+	//usend("/dev/shm/ser2net",sz);
 	showshortport_un(port);
 	return 0;
 }

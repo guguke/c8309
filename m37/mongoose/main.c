@@ -654,7 +654,6 @@ static void createConf(char *pcom,int port,char *pip,char *pfname)
 {
 	char p1[]="\n"
 "_BEGIN_\n"
-"  --share-mode=on\n"
 "  --create-filter=escparse,com,parse\n"
 "  --create-filter=pin2con,com,connect: --connect=dcd\n"
 "  --create-filter=pinmap,com,pinmap:--rts=cts --dtr=dsr\n"

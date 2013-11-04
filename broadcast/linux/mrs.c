@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <sys/reboot.h>
 
+pthread_t tidun;
+int threadun_ret;
 
 pthread_t tidr,tids;
 int threadr_ret,threads_ret;
@@ -38,8 +40,53 @@ int para_sport; //      send multicast port
 
 
 
+// thread unix domain socket rcv
+int thread_rcv_un()
+{
+   int sock, length;
+   struct sockaddr_un name;
+   char buf[3000];
+   char usname[300];
+   int ret,i;
 
+   strcpy(usname,"/dev/shm/ser2net");
+   unlink(usname);
 
+   /* Create socket from which to read. */
+   sock = socket(AF_UNIX, SOCK_DGRAM, 0);
+   if (sock < 0) {
+      //perror("opening datagram socket");
+	  return 1;
+   }
+  
+   /* Create name. */
+   name.sun_family = AF_UNIX;
+   //strcpy(name.sun_path, NAME);
+   strcpy(name.sun_path, usname);
+   //name.sun_len = strlen(name.sun_path);
+   if (bind(sock, (struct sockaddr *)&name, SUN_LEN(&name))) {
+       //perror("binding name to datagram socket");
+	   return 2;
+   }
+   
+   //printf("socket (%s) :\n", usname);
+   for(;;){
+	   /* Read from the socket. */
+	   ret = read(sock, buf, 2000);
+	   if ( ret < 0){
+		   //perror("receiving datagram packet");
+		   break;
+	   }
+	   buf[ret]=0;
+	   printf(" num: %d str:%s\n", ret,buf);
+	   //for(i=0;i<ret;i++) printf("%02X ",0x0ff & buf[i]);
+	   //printf("\n ==end== \n");
+   }
+   close(sock);
+   //unlink(NAME);
+   unlink(usname);
+   return 0;
+}
 
 // get if MAC 
 // ifname:eth0 eth1
@@ -348,7 +395,7 @@ void changeIP(char *ifname,char *newIP,char *newMask,char *hostname)
 	fprintf(fp,"ifconfig eth2 down\n");////////////////////////////////////
 	fprintf(fp,"ifconfig eth1 down\n");///////////////////////////////
 	fprintf(fp,"ifconfig %s %s\n",ifname,newIP);
-	fprintf(fp,"ser2net&\n");
+	fprintf(fp,"/root/ser2net &\n");
 	//fprintf(fp,"/root/mrs eth2 100 &\n");
 	fprintf(fp,"/root/mrs eth0 100 &\n");
 	fflush(fp);
@@ -457,7 +504,7 @@ void* thread_rcv (void *arg)
 int main (int argc, char *argv[])
 {
     int err;
-    int *pr,*ps;
+    int *pr,*ps,*pun;
 
 	printf(" !! usage mrs eth0\n");
 	printf(" !! usage mrs eth0 10           (boot mcast num)\n");
@@ -489,11 +536,23 @@ int main (int argc, char *argv[])
 		printf("\n Thread multicast send created successfully\n");
 	}
 
+	err = pthread_create(&tidun, NULL, &thread_rcv_un, NULL);
+	if (err != 0){
+		printf("\ncan't create thread unix domain socket rcv: [%s]", strerror(err));
+		return -2;
+	}
+	else {
+		printf("\n Thread unix domain socket rcv created successfully\n");
+	}
+
     pthread_join(tids, (void**)&ps);
     printf("\n return value from send thread is [%d]\n", *ps);
 
     pthread_join(tidr, (void**)&pr);
     printf("\n return value from rcv thread is [%d]\n", *pr);
+
+    pthread_join(tidun, (void**)&pun);
+    printf("\n return value from unix domain socket rcv thread is [%d]\n", *pun);
 
     return 0;
 }

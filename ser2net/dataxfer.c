@@ -1627,10 +1627,12 @@ static void
 		if (port->tcp_to_dev_state != PORT_UNCONNECTED) {
 			show_devcfg_un(sz1, &termio);
 			need_space = 1;
+			usend("/dev/shm/ser2net","!=unconnected\n");
 		}
 		else{
 			show_devcfg_un(sz1, &(port->dinfo.termctl));
 			need_space = 1;
+			usend("/dev/shm/ser2net","else ==unconnected\n");
 		}
 	}
 #if 0

@@ -1581,7 +1581,7 @@ static void
 	char sz[2048],sz1[1024];
 	struct termios termio;
 
-	sprintf(sz,"ser2net.status ");
+	sprintf(sz,"ser2net.status 100 10 ");// ver 1.00 num:10
 	sprintf(buffer, "%s_", port->portname);
 	strcat(sz,buffer);
 
@@ -1627,12 +1627,12 @@ static void
 		if (port->tcp_to_dev_state != PORT_UNCONNECTED) {
 			show_devcfg_un(sz1, &termio);
 			need_space = 1;
-			usend("/dev/shm/ser2net","!=unconnected\n");
+			//usend("/dev/shm/ser2net","!=unconnected\n");
 		}
 		else{
 			show_devcfg_un(sz1, &(port->dinfo.termctl));
 			need_space = 1;
-			usend("/dev/shm/ser2net","else ==unconnected\n");
+			//usend("/dev/shm/ser2net","else ==unconnected\n");
 		}
 	}
 #if 0

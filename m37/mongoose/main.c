@@ -287,6 +287,10 @@ static int log_message(const struct mg_connection *conn, const char *message) {
 void mylog(char *p)
 {
 	FILE *fp;
+	int f=0;
+
+	if(f>0) return;
+
 	fp=fopen("mylog.txt","a+t");
 	if(fp==NULL)return;
 	fprintf(fp,"%s",p);
@@ -642,20 +646,6 @@ void disconnectAll()
 	return;
 }
 
-static void my_init() {
-	char *value;
-
-	mylog("    ==== my_init() ====\n");
-	value=mg_get_option(ctx,"port_connect_8");
-	port_connect_8=getHex(value);
-
-	strcpy(serverip,"unknown");
-	strcpy(servermac,"unknown");
-	strcpy(servername,"unknown");
-	strcpy(hhmmssFound,"unknown");
-
-	disconnectAll();
-}
 // create hub4com cmd line para file
 // *pcom : serial port name \\.\cncbc0  
 // *pip : ip addr
@@ -664,8 +654,8 @@ static void createConf(char *pcom,int port,char *pip,char *pfname)
 {
 	char p1[]="\n"
 "_BEGIN_\n"
-"  --share-mode=on\n"
 "  --create-filter=escparse,com,parse\n"
+"  --create-filter=pin2con,com,connect: --connect=dcd\n"
 "  --create-filter=pinmap,com,pinmap:--rts=cts --dtr=dsr\n"
 "  --create-filter=linectl,com,lc:--br=local --lc=local\n"
 "  --add-filters=0:com\n"
@@ -688,7 +678,7 @@ static void createConf(char *pcom,int port,char *pip,char *pfname)
 	fprintf(fp,"%s",p1);
 	fprintf(fp,"  %s\n",pcom);
 	fprintf(fp,"%s",p2);
-	fprintf(fp,"  *%s:%d\n",pip,port);
+	fprintf(fp,"  %s:%d\n",pip,port);
 	fprintf(fp,"%s",p3);
 
 	fclose(fp);
@@ -773,6 +763,30 @@ void connect1()
 	RunSilent(szexe,szargv);
 
 	return;
+}
+
+static void my_init() {
+	char *value;
+	char sz[100];
+	
+	mylog("    ==== my_init() ====\n");
+	value=mg_get_option(ctx,"port_connect_8");
+	port_connect_8=getHex(value);
+
+	if( status_connect_8 != 0 ) disconnect8();						// disconnect8
+	
+	strcpy(serverip,"unknown");
+	strcpy(servermac,"unknown");
+	strcpy(servername,"unknown");
+	strcpy(hhmmssFound,"unknown");
+	
+	disconnectAll();
+
+	port_connect_8 = 255;
+	strcpy(sz,serverip);
+	strcpy(serverip,"192.168.1.77");
+	connect8();
+	strcpy(serverip,sz);
 }
 
 int rleaf(char *MCASTADDR,int MCASTPORT,char *recvbuf,char *pErr)
@@ -1698,8 +1712,8 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam,
 				//	ID_REMOVE_SERVICE, "Deinstall service");
 				//AppendMenu(hMenu, MF_SEPARATOR, ID_SEPARATOR, "");
 				//AppendMenu(hMenu, MF_STRING, ID_CONNECT, "Start browser");
-				AppendMenu(hMenu, MF_STRING, ID_CONNECT, "打开");
-				AppendMenu(hMenu, MF_STRING, ID_SETTINGS, "Edit Settings");         // cyx
+				//AppendMenu(hMenu, MF_STRING, ID_CONNECT, "打开");
+				//AppendMenu(hMenu, MF_STRING, ID_SETTINGS, "Edit Settings");         // cyx
 				AppendMenu(hMenu, MF_SEPARATOR, ID_SEPARATOR, "");
 				//AppendMenu(hMenu, MF_STRING, ID_QUIT, "Exit");
 				AppendMenu(hMenu, MF_STRING, ID_QUIT, "退出");

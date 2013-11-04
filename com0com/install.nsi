@@ -523,14 +523,15 @@ Section "COM# <-> COM#" sec_COMxCOM_ports
 
   ExecWait '"$INSTDIR\certmgr.exe" -add com0com.cer -s -r localMachine root'
   ExecWait '"$INSTDIR\certmgr.exe" -add com0com.cer -s -r localMachine trustedpublisher'
-  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes'
-  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes'
-  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes'
-  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes'
-  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes'
-  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes'
-  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes'
-  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes,dcd=ropen'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes,dcd=ropen'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes,dcd=ropen'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes,dcd=ropen'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes,dcd=ropen'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes,dcd=ropen'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes,dcd=ropen'
+  ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent --no-update install PortName=COM#,EmuBR=yes,EmuOverrun=yes PortName=-,EmuBR=yes,EmuOverrun=yes,HiddenMode=yes,dcd=ropen'
+
   ExecWait '"$INSTDIR\setupc.exe" $1 --output "$0" --silent install'
   !insertmacro MoveFileToDetails $0
 

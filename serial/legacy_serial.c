@@ -56,12 +56,12 @@ static int __init add_legacy_port(struct device_node *np, int want_index,
 	u32 clock = BASE_BAUD * 16;
 	int index;
 
-	printk(KERN_DEBUG "  == 1 clock : %d   np:0x%x\n",clock,(unsigned int)np);
+	//printk(KERN_DEBUG "  == 1 clock : %d   np:0x%x\n",clock,(unsigned int)np);
 	/* get clock freq. if present */
 	clk = of_get_property(np, "clock-frequency", NULL);
 	if (clk && *clk)
 		clock = *clk;
-	printk(KERN_DEBUG "  == 2 clock : %d   clk:0x%x  *clk:%d\n",clock,(unsigned int)clk,*clk);
+	//printk(KERN_DEBUG "  == 2 clock : %d   clk:0x%x  *clk:%d\n",clock,(unsigned int)clk,*clk);
 	clka = of_get_property(np, "my-frequency", NULL);
 	if (clka && *clka)
 		clock = *clka;
@@ -138,7 +138,7 @@ static int __init add_legacy_soc_port(struct device_node *np,
 		| UPF_FIXED_PORT;
 	struct device_node *tsi = of_get_parent(np);
 
-	printk(KERN_DEBUG " == add legacy soc port\n");
+	//printk(KERN_DEBUG " == add legacy soc port\n");
 	/* We only support ports that have a clock frequency properly
 	 * encoded in the device-tree.
 	 */
@@ -163,7 +163,7 @@ static int __init add_legacy_soc_port(struct device_node *np,
 	if (addr == OF_BAD_ADDR)
 		return -1;
 
-	printk(KERN_DEBUG " == add legacy soc port == before add legacy port\n");
+	//printk(KERN_DEBUG " == add legacy soc port == before add legacy port\n");
 	/* Add port, irq will be dealt with later. We passed a translated
 	 * IO port value. It will be fixed up later along with the irq
 	 */

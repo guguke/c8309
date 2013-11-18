@@ -1,0 +1,245 @@
+################################################### -*- makefile-gmake -*- ######
+# File name    : Makefile
+# Create Date  : 2013-08(August)-17 Saturday  14:33:31 (+0000,UTC)
+# Author       : ZhengYi <goodmenzy@gmail.com>
+#
+# License      :
+#     GPL2v
+#
+#     This program is free software; you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License version 2 as
+#     published by the Free Software Foundation.
+#
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with this program; if not, write to the Free Software
+#     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#--------1---------2---------3---------4---------5---------6---------7---------8
+.PHONY: all clean distclean help
+
+# the default target
+all:
+
+###########################################
+#### cmd line options
+ifeq ("$(origin O)", "command line")
+  DIR_OUTPUT := $(O)
+endif
+
+VERBOSE=0
+ifeq ("$(origin V)", "command line")
+  VERBOSE  := $(V)
+endif
+
+ifeq ("$(origin BUILD)", "command line")
+  BUILD_NAME  := -$(BUILD)
+else
+  BUILD_NAME  :=
+endif
+
+DIR_PROJECT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+DIR_OUTPUT  := $(if $(DIR_OUTPUT),$(DIR_OUTPUT),$(DIR_PROJECT)/build-output)
+
+CROSS_COMPILE := $(PWD)/softwares/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-
+export CROSS_COMPILE
+
+CONFIG_SYSROOT := $(PWD)/softwares/arm-unknown-linux-gnueabi/arm-unknown-linux-gnueabi/sysroot
+export CONFIG_SYSROOT
+
+PATH := $(PWD)/softwares/arm-unknown-linux-gnueabi/bin/:$(PATH)
+export PATH
+
+###########################################
+#### sub projects
+.PHONY: $(SUB_PROJ)
+SUB_PROJ    :=  uboot linux-kernel busybox initrd e2fsprogs
+.PHONY: $(addprefix clean_,$(SUB_PROJ))
+
+###########################################
+#### config show
+define  do_show_config
+	@echo "DIR_PROJECT = $(DIR_PROJECT)"
+	@echo "DIR_OUTPUT  = $(DIR_OUTPUT)"
+	@echo "SUB_PROJ    = $(SUB_PROJ)"
+	@echo "VERBOSE     = $(VERBOSE)"
+endef
+.PHONY: show_config
+show_config:
+	$(do_show_config)
+
+###########################################
+#### clean and misc targets
+clean:
+	@rm -rfv  *~
+	@rm -rfv $(DIR_OUTPUT)/boot_image.bin{,.bz2}
+
+distclean: clean $(addprefix clean_,$(SUB_PROJ))
+	@if [ -d $(DIR_OUTPUT) ]; then rmdir $(DIR_OUTPUT); fi
+
+help:
+	@echo "V=1|2"
+	@echo "O=<output-dir>"
+	@echo "BUILD=<build name>"
+
+###########################################
+#### sub-project U-Boot
+U_BOOT_DIR_SRC    := $(DIR_PROJECT)/softwares/u-boot.git/
+U_BOOT_DIR_OUTPUT := $(DIR_OUTPUT)/build-output-u-boot
+U_BOOT_CONFIG_AUTO:= $(U_BOOT_DIR_OUTPUT)/include/config.h
+U_BOOT_CONFIG     := $(U_BOOT_DIR_SRC)/include/configs/mx51_njxj.h
+U_BOOT_CONFIG     += $(U_BOOT_DIR_SRC)/board/njxj/mx51_njxj/*
+U_BOOT_MAKE_OPT   := CROSS_COMPILE=$(CROSS_COMPILE)
+U_BOOT_BUILD_TARG := mx51_njxj
+U_BOOT_RESULTS    := $(U_BOOT_DIR_OUTPUT)/tools/mkimage
+U_BOOT_RESULTS    += $(U_BOOT_DIR_OUTPUT)/u-boot.bin
+U_BOOT_RESULTS    += $(U_BOOT_DIR_OUTPUT)/imximage.conf
+
+$(U_BOOT_CONFIG_AUTO):
+	cd $(U_BOOT_DIR_SRC) && source ./environ-setup.sh && $(MAKE) O=$(U_BOOT_DIR_OUTPUT) $(U_BOOT_MAKE_OPT) $(U_BOOT_BUILD_TARG)_config
+
+$(U_BOOT_DIR_OUTPUT)/tools/mkimage:
+	cd $(U_BOOT_DIR_SRC) && $(MAKE) O=$(U_BOOT_DIR_OUTPUT) $(U_BOOT_MAKE_OPT) tools
+
+$(U_BOOT_DIR_OUTPUT)/u-boot.bin: $(U_BOOT_CONFIG) $(U_BOOT_CONFIG_AUTO)
+	cd $(U_BOOT_DIR_SRC) && source ./environ-setup.sh && $(MAKE) O=$(U_BOOT_DIR_OUTPUT) $(U_BOOT_MAKE_OPT) 
+#$(dir $@)u-boot.imx
+
+$(U_BOOT_DIR_OUTPUT)/imximage.conf: $(U_BOOT_DIR_OUTPUT)/board/njxj/mx51_njxj/imximage.cfg.cfgtmp
+	cp $<  $@
+
+$(U_BOOT_DIR_OUTPUT)/board/njxj/mx51_njxj/imximage.cfg.cfgtmp: $(U_BOOT_DIR_OUTPUT)/u-boot.bin
+
+uboot: $(U_BOOT_RESULTS)
+
+clean_uboot:
+	@rm -rf $(U_BOOT_DIR_OUTPUT)
+	@echo "clean $(U_BOOT_DIR_OUTPUT)"
+
+###########################################
+#### sub-project Linux Kernel
+LINUX_KERNEL_VERSION    := v3.10.2
+LINUX_KERNEL_DIR_SRC    := $(DIR_PROJECT)/softwares/linux-kernel/linux-kernel-$(LINUX_KERNEL_VERSION)
+LINUX_KERNEL_CONFIG     := $(DIR_PROJECT)/softwares/linux-kernel/linux-kernel-$(LINUX_KERNEL_VERSION).config
+LINUX_KERNEL_DIR_OUTPUT := $(DIR_OUTPUT)/build-output-linux-kernel-$(LINUX_KERNEL_VERSION)
+LINUX_KERNEL_IMAGE      := $(LINUX_KERNEL_DIR_OUTPUT)/arch/arm/boot/zImage
+
+.PHONY: linux-kernel-menuconfig
+linux-kernel-menuconfig:
+	cd $(LINUX_KERNEL_DIR_SRC) && make ARCH=arm O=$(LINUX_KERNEL_DIR_OUTPUT) menuconfig
+	cp -v $(LINUX_KERNEL_DIR_OUTPUT)/.config $(LINUX_KERNEL_CONFIG)
+
+linux-kernel $(LINUX_KERNEL_IMAGE): $(LINUX_KERNEL_CONFIG)
+	mkdir -p $(LINUX_KERNEL_DIR_OUTPUT)
+	cp $(LINUX_KERNEL_CONFIG)  $(LINUX_KERNEL_DIR_OUTPUT)/.config
+	cd $(LINUX_KERNEL_DIR_SRC) && make ARCH=arm O=$(LINUX_KERNEL_DIR_OUTPUT) V=$(VERBOSE) -j4
+
+clean_linux-kernel:
+	@rm -rf $(LINUX_KERNEL_DIR_OUTPUT)
+	@echo "clean $(LINUX_KERNEL_DIR_OUTPUT)"
+
+###########################################
+#### sub-project Busybox
+BUSYBOX_VERSION    := 1.21.1
+BUSYBOX_DIR_SRC    := $(DIR_PROJECT)/softwares/busybox/busybox-$(BUSYBOX_VERSION)
+BUSYBOX_CONFIG     := $(DIR_PROJECT)/softwares/busybox/busybox-$(BUSYBOX_VERSION).config
+BUSYBOX_DIR_OUTPUT := $(DIR_OUTPUT)/build-output-busybox-$(BUSYBOX_VERSION)
+BUSYBOX_EXE        := $(BUSYBOX_DIR_OUTPUT)/busybox
+
+.PHONY: busybox-menuconfig
+busybox-menuconfig:
+	cd $(BUSYBOX_DIR_SRC) && make ARCH=arm O=$(BUSYBOX_DIR_OUTPUT) menuconfig
+	cp -v $(BUSYBOX_DIR_OUTPUT)/.config    $(BUSYBOX_CONFIG)
+
+busybox $(BUSYBOX_EXE): $(BUSYBOX_CONFIG)
+	mkdir -p $(BUSYBOX_DIR_OUTPUT)
+	cp $(BUSYBOX_CONFIG)    $(BUSYBOX_DIR_OUTPUT)/.config
+	cd $(BUSYBOX_DIR_SRC) && make ARCH=arm O=$(BUSYBOX_DIR_OUTPUT) V=$(VERBOSE) -j4
+
+clean_busybox:
+	@rm -rf $(BUSYBOX_DIR_OUTPUT)
+	@echo "clean $(BUSYBOX_DIR_OUTPUT)"
+
+###########################################
+#### e2fsprogs
+E2FSPROGS_DIR_SRC    := $(DIR_PROJECT)/softwares/e2fsprogs/
+E2FSPROGS_DIR_OUTPUT := $(DIR_OUTPUT)/build-output-e2fsprogs/e2fsprogs-1.42.8/
+
+e2fsprogs:
+	mkdir -p $(E2FSPROGS_DIR_OUTPUT)
+	cd $(E2FSPROGS_DIR_OUTPUT).. && tar -xf $(E2FSPROGS_DIR_SRC)/e2fsprogs-1.42.8.tar.gz
+	cd $(E2FSPROGS_DIR_OUTPUT) && ./configure  --host=arm-unknown-linux-gnueabi --prefix=`pwd`/fakeroot/
+	cd $(E2FSPROGS_DIR_OUTPUT) && make -j
+	cd $(E2FSPROGS_DIR_OUTPUT) && make install
+	cd $(E2FSPROGS_DIR_OUTPUT) && rm -rf `pwd`/fakeroot/share
+
+clean_e2fsprogs:
+	@rm -rf $(E2FSPROGS_DIR_OUTPUT)
+	@echo "clean $(E2FSPROGS_DIR_OUTPUT)"
+
+###########################################
+#### sub-project Initrd
+INITRD_DIR_SRC    := $(DIR_PROJECT)/softwares/initrd
+INITRD_DIR_OUTPUT := $(DIR_OUTPUT)/build-output-initrd
+INITRD_IMAGE      := $(INITRD_DIR_OUTPUT)/initrd.cpio
+INITRD_FILES      := $(shell find $(INITRD_DIR_SRC)/ -type f)
+
+initrd $(INITRD_IMAGE): $(BUSYBOX_EXE) $(INITRD_FILES) # $(E2FSPROGS_DIR_OUTPUT)/fakeroot/
+	@mkdir -p $(INITRD_DIR_SRC)/initrd-fs/{bin,lib,dev,etc,home,mnt,proc,root,sbin,sys,tmp,usr,var/log}
+	@mkdir -p $(INITRD_DIR_SRC)/initrd-fs/usr/{bin,sbin}
+	@mkdir -p $(INITRD_DIR_OUTPUT)
+	@rsync -ac $(INITRD_DIR_SRC)/initrd-fs        $(INITRD_DIR_OUTPUT)/
+	@ # rsync -ac $(E2FSPROGS_DIR_OUTPUT)/fakeroot/  $(INITRD_DIR_OUTPUT)/initrd-fs
+	@cp -v $(BUSYBOX_EXE)  $(INITRD_DIR_OUTPUT)/initrd-fs/bin/
+	@chmod +s $(INITRD_DIR_OUTPUT)/initrd-fs/bin/${notdir $(BUSYBOX_EXE)}
+	@echo "===================================================="     > $(INITRD_DIR_OUTPUT)/initrd-fs/etc/issue
+	@echo "     Tiny Linux created by Brock.Zheng"                   >> $(INITRD_DIR_OUTPUT)/initrd-fs/etc/issue
+	@echo "      `git show HEAD --format=%H --name-only | head -1`"  >> $(INITRD_DIR_OUTPUT)/initrd-fs/etc/issue
+	@echo "===================================================="     >> $(INITRD_DIR_OUTPUT)/initrd-fs/etc/issue
+	@cd $(INITRD_DIR_OUTPUT)/initrd-fs && find > ../file-list
+	@cd $(INITRD_DIR_OUTPUT)/initrd-fs && fakeroot -- cpio -H 'newc' -o < ../file-list > ../initrd.cpio
+	@cd $(INITRD_DIR_OUTPUT)/ && cpio -vt < initrd.cpio
+
+clean_initrd:
+	@rm -rf $(INITRD_DIR_OUTPUT)
+	@echo "clean $(INITRD_DIR_OUTPUT)"
+
+###########################################
+#### Final Image
+BOOT_IMAGE               := $(DIR_OUTPUT)/boot_image$(BUILD_NAME).bin
+BOOT_IMAGE_BZ2           := $(BOOT_IMAGE).bz2
+BOOT_IMAGE_BURN          := $(DIR_PROJECT)/burn/$(notdir $(BOOT_IMAGE))
+BOOT_IMAGE_DIR_SRC       := $(DIR_PROJECT)/boot-image
+BOOT_IMAGE_PREREQUISITES := $(U_BOOT_DIR_OUTPUT)/tools/mkimage
+BOOT_IMAGE_PREREQUISITES += $(U_BOOT_DIR_OUTPUT)/u-boot.bin
+BOOT_IMAGE_PREREQUISITES += $(U_BOOT_DIR_OUTPUT)/imximage.conf
+BOOT_IMAGE_PREREQUISITES += $(LINUX_KERNEL_IMAGE)
+BOOT_IMAGE_PREREQUISITES += $(INITRD_IMAGE)
+
+# hard coded boot entry, VERY BAD solution, but VERY easy
+BOOT_ENTRY                = $(addprefix 0x,$(shell nm $(U_BOOT_DIR_OUTPUT)/u-boot | grep 'T _start' | cut -d ' ' -f 1))
+$(BOOT_IMAGE): $(BOOT_IMAGE_PREREQUISITES)
+	mkdir -p $(dir $@)
+	$(BOOT_IMAGE_DIR_SRC)/bootimg-gen.sh -n\
+	   -o $@ \
+	   -u $(U_BOOT_DIR_OUTPUT)/u-boot.bin \
+	   -x $(U_BOOT_DIR_OUTPUT)/imximage.conf \
+	   -m "$(U_BOOT_DIR_OUTPUT)/tools/mkimage" \
+	   -k $(LINUX_KERNEL_IMAGE) \
+	   -i $(INITRD_IMAGE) \
+	   -e $(BOOT_ENTRY)
+
+$(BOOT_IMAGE_BZ2): $(BOOT_IMAGE)
+	bzip2 -c --best $<  > $@
+
+$(BOOT_IMAGE_BURN): $(BOOT_IMAGE)
+	@cp -v $<  $(dir $@)
+
+all: $(BOOT_IMAGE) $(BOOT_IMAGE_BZ2) $(BOOT_IMAGE_BURN)
+
+################################################################################
+#---------------------------- The End of This File -----------------------------

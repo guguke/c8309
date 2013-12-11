@@ -83,7 +83,6 @@
 
 #include <config_cmd_default.h>
 
-#define CONFIG_CMD_BOOTZ
 #define CONFIG_CMD_PING
 #define CONFIG_CMD_DHCP
 #define CONFIG_BOOTP_SUBNETMASK
@@ -161,7 +160,7 @@
 #define CONFIG_MII
 #define CONFIG_DISCOVER_PHY
 
-//#define CONFIG_GET_FEC_MAC_ADDR_FROM_IIM
+#define CONFIG_GET_FEC_MAC_ADDR_FROM_IIM
 #define CONFIG_IIM_MAC_ADDR_OFFSET      0x24
 
 #define CONFIG_FEC0_IOBASE	FEC_BASE_ADDR
@@ -178,15 +177,7 @@
 
 #define CONFIG_BOOTDELAY	3
 
-/* Nand Flash settings */
-
-//#define CONFIG_CMD_NAND
-//#define CONFIG_SYS_MAX_NAND_DEVICE    1
-//#define CONFIG_SYS_NAND_BASE          NFC_BASE_ADDR_AXI /* 0xCFFF0000 */
-
 #define CONFIG_PRIME	"FEC0"
-#define CONFIG_ETHADDR          00:00:61:33:14:05
-#define CONFIG_IPADDR           192.168.1.88
 
 #define CONFIG_LOADADDR		0x90800000	/* loadaddr env var */
 
@@ -220,7 +211,7 @@
  * Miscellaneous configurable options
  */
 #define CONFIG_SYS_LONGHELP		/* undef to save memory */
-#define CONFIG_SYS_PROMPT		"nj> "
+#define CONFIG_SYS_PROMPT		"BBG U-Boot > "
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_SYS_CBSIZE		256	/* Console I/O Buffer Size */
 /* Print Buffer Size */
@@ -251,7 +242,7 @@
  */
 #define CONFIG_NR_DRAM_BANKS	1
 #define PHYS_SDRAM_1		CSD0_BASE_ADDR
-#define PHYS_SDRAM_1_SIZE	(256 * 1024 * 1024)
+#define PHYS_SDRAM_1_SIZE	(512 * 1024 * 1024)
 #define iomem_valid_addr(addr, size) \
 	(addr >= PHYS_SDRAM_1 && addr <= (PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE))
 

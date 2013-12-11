@@ -33,3 +33,24 @@
 #define CONFIG_FEC_MXC_PHYADDR	0x1F
 #define CONFIG_ETHPRIME		"FEC"
         /* "setenv ethact FEC;"                                             */
+
+mx51_3stack.h:#define CONFIG_CMD_NAND
+mx51_3stack.h:#define CONFIG_MXC_NAND
+mx51_3stack.h: * NAND FLASH driver setup
+mx51_3stack.h:#define NAND_MAX_CHIPS         8
+mx51_3stack.h:#define CONFIG_SYS_MAX_NAND_DEVICE    1
+mx51_3stack.h:#define CONFIG_SYS_NAND_BASE          0x40000000
+mx51_3stack.h:#define CONFIG_NAND_FW_16BIT	0 /* 1: 16bit 0: 8bit */
+mx51_3stack.h:#define CONFIG_FSL_ENV_IN_NAND
+mx51_3stack.h:/* #define CONFIG_FSL_ENV_IN_NAND */
+mx51_3stack.h:#if defined(CONFIG_FSL_ENV_IN_NAND)
+mx51_3stack.h:	#define CONFIG_ENV_IS_IN_NAND 1
+mx51_njxj.h:#define CONFIG_CMD_NAND
+mx51_njxj.h:#define CONFIG_SYS_MAX_NAND_DEVICE    1
+mx51_njxj.h:#define CONFIG_SYS_NAND_BASE          NFC_BASE_ADDR_AXI /* 0xCFFF0000 */
+mx51_njxj.h:#define CONFIG_NAND_MXC
+mx51_njxj.h:#define CONFIG_MXC_NAND_REGS_BASE     (CONFIG_SYS_NAND_BASE)
+mx51_njxj.h:#define CONFIG_MXC_NAND_IP_REGS_BASE  (NFC_BASE_ADDR)
+mx51_njxj.h:#define CONFIG_MXC_NAND_HWECC
+mx51_njxj.h:#define CONFIG_SYS_NAND_USE_FLASH_BBT
+mx51_njxj.h:#define CONFIG_SYS_NAND_LARGEPAGE

@@ -154,13 +154,13 @@
 /*
  * Eth Configs
  */
-#define CONFIG_HAS_ETH1
+//#define CONFIG_HAS_ETH1
 #define CONFIG_NET_MULTI 1
 #define CONFIG_MXC_FEC
 #define CONFIG_MII
 #define CONFIG_DISCOVER_PHY
 
-#define CONFIG_GET_FEC_MAC_ADDR_FROM_IIM
+//#define CONFIG_GET_FEC_MAC_ADDR_FROM_IIM
 #define CONFIG_IIM_MAC_ADDR_OFFSET      0x24
 
 #define CONFIG_FEC0_IOBASE	FEC_BASE_ADDR
@@ -171,6 +171,8 @@
 
 
 /* Enable below configure when supporting nand */
+#define CONFIG_CMD_NAND
+#define CONFIG_MXC_NAND
 #define CONFIG_CMD_ENV
 
 #undef CONFIG_CMD_IMLS
@@ -211,7 +213,7 @@
  * Miscellaneous configurable options
  */
 #define CONFIG_SYS_LONGHELP		/* undef to save memory */
-#define CONFIG_SYS_PROMPT		"BBG U-Boot > "
+#define CONFIG_SYS_PROMPT		"v002 > "
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_SYS_CBSIZE		256	/* Console I/O Buffer Size */
 /* Print Buffer Size */
@@ -242,7 +244,7 @@
  */
 #define CONFIG_NR_DRAM_BANKS	1
 #define PHYS_SDRAM_1		CSD0_BASE_ADDR
-#define PHYS_SDRAM_1_SIZE	(512 * 1024 * 1024)
+#define PHYS_SDRAM_1_SIZE	(256 * 1024 * 1024)
 #define iomem_valid_addr(addr, size) \
 	(addr >= PHYS_SDRAM_1 && addr <= (PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE))
 
@@ -250,6 +252,13 @@
  * FLASH and environment organization
  */
 #define CONFIG_SYS_NO_FLASH
+/*-----------------------------------------------------------------------
+ * NAND FLASH driver setup
+ */
+#define NAND_MAX_CHIPS         8
+#define CONFIG_SYS_MAX_NAND_DEVICE    1
+#define CONFIG_SYS_NAND_BASE          0x40000000
+#define CONFIG_NAND_FW_16BIT	0 /* 1: 16bit 0: 8bit */
 
 /* Monitor at beginning of flash */
 /* #define CONFIG_FSL_ENV_IN_SF */

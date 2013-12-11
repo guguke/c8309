@@ -1,0 +1,34 @@
+keyword, mx51_3stack.h
+#define CONFIG_HAS_ETH1
+#define CONFIG_ETHPRIME
+
+#define CONFIG_MXC_FEC
+#define CONFIG_FEC0_IOBASE	FEC_BASE_ADDR
+#define CONFIG_FEC0_PINMUX	-1
+#define CONFIG_FEC0_PHY_ADDR	0x1F
+#define CONFIG_FEC0_MIIBASE 	-1
+
+keywork, mx51_bbg.h
+#define CONFIG_HAS_ETH1
+#define CONFIG_ETHADDR          00:00:61:33:14:05
+
+#define CONFIG_MXC_FEC
+//#define CONFIG_GET_FEC_MAC_ADDR_FROM_IIM
+#define CONFIG_FEC0_IOBASE	FEC_BASE_ADDR
+#define CONFIG_FEC0_PINMUX	-1
+#define CONFIG_FEC0_PHY_ADDR	0x1F
+#define CONFIG_FEC0_MIIBASE 	-1
+#define CONFIG_PRIME	"FEC0"
+		"ethprime=FEC0\0"					\
+keyword, mx51_nj.h
+#define CONFIG_USB_HOST_ETHER
+#define CONFIG_USB_ETHER_ASIX
+#define CONFIG_USB_ETHER_SMSC95XX
+#
+#define CONFIG_ETHPRIME		"FEC"
+#define CONFIG_ETHADDR          00:00:61:33:14:05
+#define CONFIG_FEC_MXC
+#define IMX_FEC_BASE	FEC_BASE_ADDR
+#define CONFIG_FEC_MXC_PHYADDR	0x1F
+#define CONFIG_ETHPRIME		"FEC"
+        /* "setenv ethact FEC;"                                             */

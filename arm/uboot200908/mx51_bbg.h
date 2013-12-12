@@ -174,6 +174,7 @@
 #define CONFIG_CMD_NAND
 #define CONFIG_MXC_NAND
 #define CONFIG_CMD_ENV
+#define CMD_SAVEENV
 
 #undef CONFIG_CMD_IMLS
 
@@ -213,7 +214,7 @@
  * Miscellaneous configurable options
  */
 #define CONFIG_SYS_LONGHELP		/* undef to save memory */
-#define CONFIG_SYS_PROMPT		"v002 > "
+#define CONFIG_SYS_PROMPT		"v005 > "
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_SYS_CBSIZE		256	/* Console I/O Buffer Size */
 /* Print Buffer Size */
@@ -262,14 +263,15 @@
 
 /* Monitor at beginning of flash */
 /* #define CONFIG_FSL_ENV_IN_SF */
-#define CONFIG_FSL_ENV_IN_MMC
+//#define CONFIG_FSL_ENV_IN_MMC
+#define CONFIG_FSL_ENV_IN_NAND
 
 #define CONFIG_ENV_SECT_SIZE    (128 * 1024)
 #define CONFIG_ENV_SIZE         CONFIG_ENV_SECT_SIZE
 
-#if defined(CONFIG_FSL_ENV_IN_MMC)
-	#define CONFIG_ENV_IS_IN_MMC	1
-	#define CONFIG_ENV_OFFSET	(768 * 1024)
+#if defined(CONFIG_FSL_ENV_IN_NAND)
+	#define CONFIG_ENV_IS_IN_NAND	1
+	#define CONFIG_ENV_OFFSET	0x80000
 #elif defined(CONFIG_FSL_ENV_IN_SF)
 	#define CONFIG_ENV_IS_IN_SPI_FLASH	1
 	#define CONFIG_ENV_SPI_CS		1

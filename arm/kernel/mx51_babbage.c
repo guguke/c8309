@@ -497,6 +497,102 @@ static struct mxc_spdif_platform_data mxc_spdif_data = {
 	.spdif_clk = NULL,	/* spdif bus clk */
 };
 
+/* NAND Flash Partitions */
+#ifdef CONFIG_MTD_PARTITIONS
+
+static struct mtd_partition nand_flash_partitions[] = {
+	{
+	 .name = "bootloader",
+	 .offset = 0,
+	 .size = 4 * 1024 * 1024},
+	{
+	 .name = "nand.kernel",
+	 .offset = MTDPART_OFS_APPEND,
+	 .size = 4 * 1024 * 1024},
+	{
+	 .name = "nand.rootfs",
+	 .offset = MTDPART_OFS_APPEND,
+	 .size = 8 * 1024 * 1024},
+	{
+	 .name = "nand.rootfs1",
+	 .offset = MTDPART_OFS_APPEND,
+	 .size = 16 * 1024 * 1024},
+	{
+	 .name = "nand.rootfs2",
+	 .offset = MTDPART_OFS_APPEND,
+	 .size = 32 * 1024 * 1024},
+	{
+	 .name = "nand.rootfs3",
+	 .offset = MTDPART_OFS_APPEND,
+	 .size = 64 * 1024 * 1024},
+	{
+	 .name = "nand.rootfs4",
+	 .offset = MTDPART_OFS_APPEND,
+	 .size = 128 * 1024 * 1024},
+	{
+	 .name = "nand.rootfs5",
+	 .offset = MTDPART_OFS_APPEND,
+	 .size = 256 * 1024 * 1024},
+	{
+	 .name = "nand.rootfs99",
+	 .offset = MTDPART_OFS_APPEND,
+	 .size = MTDPART_SIZ_FULL},
+};
+
+#endif
+
+extern void gpio_nand_active(void);
+extern void gpio_nand_inactive(void);
+
+static int nand_init(void)
+{
+	/* Configure the pins */
+	gpio_nand_active();
+	return 0;
+}
+
+static void nand_exit(void)
+{
+	/* Free the pins */
+	gpio_nand_inactive();
+}
+
+static struct flash_platform_data mxc_nand_data = {
+	#ifdef CONFIG_MTD_PARTITIONS
+		.parts = nand_flash_partitions,
+		.nr_parts = ARRAY_SIZE(nand_flash_partitions),
+	#endif
+	.width = 1,
+	.init = nand_init,
+	.exit = nand_exit,
+};
+
+/* i.MX MTD NAND Flash Controller */
+
+#if defined(CONFIG_MTD_NAND_IMX_NFC) || defined(CONFIG_MTD_NAND_IMX_NFC_MODULE)
+
+/*
+ * Platform-specific information about this device. Some of the details depend
+ * on the SoC. See imx_init_nfc() below for code that fills in the rest.
+ */
+
+static struct imx_nfc_platform_data imx_nfc_platform_data = {
+	.nfc_major_version  = 3,
+	.nfc_minor_version  = 2,
+	.force_ce           = false,
+	.target_cycle_in_ns = 30,
+	.clock_name         = "nfc_clk",
+	.set_page_size      = 0,
+	.interleave         = false,
+	#ifdef CONFIG_MTD_PARTITIONS
+		.partitions      = nand_flash_partitions,
+		.partition_count = ARRAY_SIZE(nand_flash_partitions),
+	#endif
+};
+
+#endif /* i.MX MTD NAND Flash Controller */
+
+
 static struct resource mxcfb_resources[] = {
 	[0] = {
 	       .flags = IORESOURCE_MEM,
@@ -1222,6 +1318,12 @@ static void __init mxc_board_init(void)
 	mxc_register_device(&mxc_fec_device, NULL);
 	mxc_register_device(&mxc_v4l2_device, NULL);
 	mxc_register_device(&mxc_v4l2out_device, NULL);
+
+#if defined(CONFIG_MTD_NAND_IMX_NFC) || defined(CONFIG_MTD_NAND_IMX_NFC_MODULE)
+	mxc_register_device(&imx_nfc_device, &imx_nfc_platform_data);
+#else
+	mxc_register_device(&mxc_nandv2_mtd_device, &mxc_nand_data);
+#endif
 
 	mx51_babbage_init_mc13892();
 

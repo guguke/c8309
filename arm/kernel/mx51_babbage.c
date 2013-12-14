@@ -619,6 +619,7 @@ static int __init mxc_init_fb(void)
 {
 	if (!machine_is_mx51_babbage())
 		return 0;
+	else return 0;
 
 	/* DI0-LVDS */
 	gpio_set_value(BABBAGE_LVDS_POWER_DOWN, 0);

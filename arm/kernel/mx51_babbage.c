@@ -1320,12 +1320,14 @@ static void __init mxc_board_init(void)
 	mxc_register_device(&mxc_v4l2_device, NULL);
 	mxc_register_device(&mxc_v4l2out_device, NULL);
 
+	pr_info(KERN_ERROR "==========MTD==========\n");
+#if 0
 #if defined(CONFIG_MTD_NAND_IMX_NFC) || defined(CONFIG_MTD_NAND_IMX_NFC_MODULE)
 	mxc_register_device(&imx_nfc_device, &imx_nfc_platform_data);
 #else
 	mxc_register_device(&mxc_nandv2_mtd_device, &mxc_nand_data);
 #endif
-
+#endif
 	mx51_babbage_init_mc13892();
 
 	if (board_is_rev(BOARD_REV_2))

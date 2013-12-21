@@ -50,6 +50,7 @@
 #include "devices.h"
 #include "crm_regs.h"
 #include "usb.h"
+#include "mx51_pins_my.h"
 
 /*!
  * @file mach-mx51/mx51_babbage.c
@@ -65,7 +66,8 @@
 #define BABBAGE_SD2_WP		(0*32 + 5)	/* GPIO_1_5 */
 #define BABBAGE_SD2_CD_2_5		(0*32 + 6)	/* GPIO_1_6 */
 #define BABBAGE_USBH1_HUB_RST		(0*32 + 7)	/* GPIO_1_7 */
-#define BABBAGE_PMIC_INT		(0*32 + 8)	/* GPIO_1_8 */
+//#define BABBAGE_PMIC_INT		(0*32 + 8)	/* GPIO_1_8 */
+#define BABBAGE_PMIC_INT		(0*32 + 5)	/* GPIO_1_8 */
 
 #define BABBAGE_USB_CLK_EN_B		(1*32 + 1)	/* GPIO_2_1 */
 #define BABBAGE_OSC_EN_B		(1*32 + 2)	/* GPIO_2_2 */
@@ -73,7 +75,8 @@
 #define BABBAGE_CAM_RESET		(1*32 + 7)	/* GPIO_2_7 */
 #define BABBAGE_FM_PWR		(1*32 + 12)	/* GPIO_2_12 */
 #define BABBAGE_VGA_RESET		(1*32 + 13)	/* GPIO_2_13 */
-#define BABBAGE_FEC_PHY_RESET		(1*32 + 14)	/* GPIO_2_14 */
+//#define BABBAGE_FEC_PHY_RESET		(1*32 + 14)	/* GPIO_2_14 */
+#define BABBAGE_FEC_PHY_RESET		(1*32 + 27)	/* GPIO_2_14 */
 #define BABBAGE_FM_RESET		(1*32 + 15)	/* GPIO_2_15 */
 #define BABBAGE_AUDAMP_STBY		(1*32 + 17)	/* GPIO_2_17 */
 #define BABBAGE_POWER_KEY		(1*32 + 21)	/* GPIO_2_21 */
@@ -97,6 +100,43 @@ extern int __init mx51_babbage_init_mc13892(void);
 extern struct cpu_wp *(*get_cpu_wp)(int *wp);
 extern void (*set_num_cpu_wp)(int num);
 static int num_cpu_wp = 3;
+
+static struct mxc_iomux_pin_cfg __initdata nand_iomux_pins[] = {
+	{
+	 MX51_PIN_NANDF_CS0, IOMUX_CONFIG_ALT0,
+	 },
+#if 0
+	{
+	 MX51_PIN_NANDF_CS1, IOMUX_CONFIG_ALT0,
+	 },
+	{
+	 MX51_PIN_NANDF_CS2, IOMUX_CONFIG_ALT0,
+	 },
+	{
+	 MX51_PIN_NANDF_CS3, IOMUX_CONFIG_ALT0,
+	 },
+	{
+	 MX51_PIN_NANDF_CS4, IOMUX_CONFIG_ALT0,
+	 },
+	{
+	 MX51_PIN_NANDF_CS5, IOMUX_CONFIG_ALT0,
+	 },
+	{
+	 MX51_PIN_NANDF_CS6, IOMUX_CONFIG_ALT0,
+	 },
+	{
+	 MX51_PIN_NANDF_CS7, IOMUX_CONFIG_ALT0,
+	 },
+	/* TO2 */
+	{
+	 MX51_PIN_GPIO_NAND, IOMUX_CONFIG_ALT0,
+	 },
+	/* TO1 */
+	{
+	 MX51_PIN_NANDF_RB5, IOMUX_CONFIG_ALT0,
+	 },
+#endif
+};
 
 static struct pad_desc mx51babbage_pads[] = {
 	/* UART1 */
@@ -159,7 +199,28 @@ static struct pad_desc mx51babbage_pads[] = {
 	MX51_PAD_CSI2_D19__GPIO_4_12,
 	MX51_PAD_CSI2_HSYNC__GPIO_4_14,
 	MX51_PAD_CSPI1_RDY__GPIO_4_26,
+	// fec
+	MX51_PAD_DI2_PIN3__FEC_MDIO,//			IOMUX_PAD(0x750, 0x348, 2, 0x0,   0, MX51_PAD_CTRL_1 | PAD_CTL_PUS_22K_UP)
+	MX51_PAD_DI2_DISP_CLK__FEC_RDAT1,//	IOMUX_PAD(0x754, 0x34c, 2, 0x0,   0, MX51_PAD_CTRL_2)
+	MX51_PAD_DI_GP4__FEC_RDAT2,//			IOMUX_PAD(0x758, 0x350, 2, 0x0,   0, MX51_PAD_CTRL_2)
+	MX51_PAD_DISP2_DAT0__FEC_RDAT3,//		IOMUX_PAD(0x75c, 0x354, 2, 0x0,   0, MX51_PAD_CTRL_2)
+	MX51_PAD_DISP2_DAT1__FEC_RX_ER,//		IOMUX_PAD(0x760, 0x358, 2, 0x0,   0, MX51_PAD_CTRL_2)
+	MX51_PAD_DI2_PIN4__FEC_CRS,//			IOMUX_PAD(0x748, 0x340, 2, 0x0,   0, MX51_PAD_CTRL_2)
+	MX51_PAD_DISP2_DAT10__FEC_COL,//		IOMUX_PAD(0x784, 0x37c, 2, 0x0, 0, MX51_PAD_CTRL_2)
+	MX51_PAD_DISP2_DAT11__FEC_RXCLK,//		IOMUX_PAD(0x788, 0x380, 2, 0x0, 0, MX51_PAD_CTRL_2)
+	MX51_PAD_DISP2_DAT15__FEC_TDAT0,//		IOMUX_PAD(0x798, 0x390, 2, 0x0, 0, MX51_PAD_CTRL_5)
+	MX51_PAD_DISP2_DAT14__FEC_RDAT0,//		IOMUX_PAD(0x794, 0x38c, 2, 0x0, 0, MX51_PAD_CTRL_2)
+	MX51_PAD_DI_GP3__FEC_TX_ER,//			IOMUX_PAD(0x744, 0x33c, 2, 0x0, 0, MX51_PAD_CTRL_5)
+	MX51_PAD_DI2_PIN2__FEC_MDC,//			IOMUX_PAD(0x74c, 0x344, 2, 0x0, 0, MX51_PAD_CTRL_5)
+	MX51_PAD_DISP2_DAT6__FEC_TDAT1,//		IOMUX_PAD(0x774, 0x36c, 2, 0x0, 0, MX51_PAD_CTRL_5)
+	MX51_PAD_DISP2_DAT7__FEC_TDAT2,//		IOMUX_PAD(0x778, 0x370, 2, 0x0, 0, MX51_PAD_CTRL_5)
+	MX51_PAD_DISP2_DAT8__FEC_TDAT3,//		IOMUX_PAD(0x77c, 0x374, 2, 0x0, 0, MX51_PAD_CTRL_5)
+	MX51_PAD_DISP2_DAT9__FEC_TX_EN,//		IOMUX_PAD(0x780, 0x378, 2, 0x0, 0, MX51_PAD_CTRL_5)
+	MX51_PAD_DISP2_DAT13__FEC_TX_CLK,//	IOMUX_PAD(0x790, 0x388, 2, 0x0, 0, MX51_PAD_CTRL_4)
+	MX51_PAD_DISP2_DAT12__FEC_RX_DV,//		IOMUX_PAD(0x78c, 0x384, 2, 0x0, 0, MX51_PAD_CTRL_2)
 
+	MX51_PAD_EIM_CS2__GPIO_2_27,
+#if 0
 	MX51_PAD_EIM_EB2__FEC_MDIO,
 	MX51_PAD_EIM_EB3__FEC_RDAT1,
 	MX51_PAD_EIM_CS2__FEC_RDAT2,
@@ -177,10 +238,10 @@ static struct pad_desc mx51babbage_pads[] = {
 	MX51_PAD_NANDF_CS6__FEC_TDAT3,
 	MX51_PAD_NANDF_CS7__FEC_TX_EN,
 	MX51_PAD_NANDF_RDY_INT__FEC_TX_CLK,
-
+#endif
 	MX51_PAD_GPIO_NAND__PATA_INTRQ,
 
-	MX51_PAD_DI_GP4__DI2_PIN15,
+	//MX51_PAD_DI_GP4__DI2_PIN15,
 #ifdef CONFIG_FB_MXC_CLAA_WVGA_SYNC_PANEL
 	MX51_PAD_DISP1_DAT22__DISP2_DAT16,
 	MX51_PAD_DISP1_DAT23__DISP2_DAT17,
@@ -218,7 +279,7 @@ static struct pad_desc mx51babbage_pads[] = {
 
 	MX51_PAD_CSPI1_SS1__CSPI1_SS1,
 
-	MX51_PAD_DI_GP3__CSI1_DATA_EN,
+	//MX51_PAD_DI_GP3__CSI1_DATA_EN,
 	MX51_PAD_CSI1_D10__CSI1_D10,
 	MX51_PAD_CSI1_D11__CSI1_D11,
 	MX51_PAD_CSI1_D12__CSI1_D12,
@@ -504,37 +565,17 @@ static struct mtd_partition nand_flash_partitions[] = {
 	{
 	 .name = "bootloader",
 	 .offset = 0,
-	 .size = 4 * 1024 * 1024},
+	 .size = 128 * 1024 * 1024},
 	{
-	 .name = "nand.kernel",
-	 .offset = MTDPART_OFS_APPEND,
-	 .size = 4 * 1024 * 1024},
-	{
-	 .name = "nand.rootfs",
-	 .offset = MTDPART_OFS_APPEND,
-	 .size = 8 * 1024 * 1024},
-	{
-	 .name = "nand.rootfs1",
-	 .offset = MTDPART_OFS_APPEND,
-	 .size = 16 * 1024 * 1024},
-	{
-	 .name = "nand.rootfs2",
-	 .offset = MTDPART_OFS_APPEND,
-	 .size = 32 * 1024 * 1024},
-	{
-	 .name = "nand.rootfs3",
-	 .offset = MTDPART_OFS_APPEND,
-	 .size = 64 * 1024 * 1024},
-	{
-	 .name = "nand.rootfs4",
+	 .name = "nand.rootfs128",
 	 .offset = MTDPART_OFS_APPEND,
 	 .size = 128 * 1024 * 1024},
 	{
-	 .name = "nand.rootfs5",
+	 .name = "nand.user256",
 	 .offset = MTDPART_OFS_APPEND,
 	 .size = 256 * 1024 * 1024},
 	{
-	 .name = "nand.rootfs99",
+	 .name = "nand.free512",
 	 .offset = MTDPART_OFS_APPEND,
 	 .size = MTDPART_SIZ_FULL},
 };
@@ -1158,11 +1199,29 @@ static int __init mxc_init_power_key(void)
 	return ret;
 }
 late_initcall(mxc_init_power_key);
+static void __init my_nand_io_init(void)
+{
+	int i, num;
+	struct mxc_iomux_pin_cfg *pin_ptr;
+
+	pin_ptr = nand_iomux_pins;
+	num = ARRAY_SIZE(nand_iomux_pins);
+
+	for (i = 0; i < num; i++) {
+		mxc_request_iomux(pin_ptr[i].pin, pin_ptr[i].mux_mode);
+		if (pin_ptr[i].pad_cfg)
+			mxc_iomux_set_pad(pin_ptr[i].pin, pin_ptr[i].pad_cfg);
+		if (pin_ptr[i].in_select)
+			mxc_iomux_set_input(pin_ptr[i].in_select,
+					pin_ptr[i].in_mode);
+	}
+}
 
 static void __init mx51_babbage_io_init(void)
 {
 	mxc_iomux_v3_setup_multiple_pads(mx51babbage_pads,
 					ARRAY_SIZE(mx51babbage_pads));
+	//my_nand_io_init();
 
 	gpio_request(BABBAGE_PMIC_INT, "pmic-int");
 	gpio_request(BABBAGE_SD1_CD, "sdhc1-detect");
@@ -1226,7 +1285,7 @@ static void __init mx51_babbage_io_init(void)
 	/* power key */
 	gpio_request(BABBAGE_POWER_KEY, "power-key");
 	gpio_direction_input(BABBAGE_POWER_KEY);
-
+#if 0
 	if (cpu_is_mx51_rev(CHIP_REV_3_0) > 0) {
 		/* DVI_I2C_ENB = 0 tristates the DVI I2C level shifter */
 		gpio_request(BABBAGE_DVI_I2C_EN, "dvi-i2c-en");
@@ -1264,6 +1323,7 @@ static void __init mx51_babbage_io_init(void)
 		struct pad_desc onewire = MX51_PAD_OWIRE_LINE__OWIRE_LINE;
 		mxc_iomux_v3_setup_pad(&onewire);
 	}
+#endif
 }
 
 /*!
@@ -1295,16 +1355,16 @@ static void __init mxc_board_init(void)
 	mxc_register_device(&mxci2c_hs_device, &mxci2c_hs_data);
 	mxc_register_device(&mxc_rtc_device, &srtc_data);
 	mxc_register_device(&mxc_w1_master_device, &mxc_w1_data);
-	mxc_register_device(&mxc_ipu_device, &mxc_ipu_data);
-	mxc_register_device(&mxc_tve_device, &tve_data);
-	mxc_register_device(&mxcvpu_device, &mxc_vpu_data);
-	mxc_register_device(&gpu_device, NULL);
+//	mxc_register_device(&mxc_ipu_device, &mxc_ipu_data);
+//	mxc_register_device(&mxc_tve_device, &tve_data);
+//	mxc_register_device(&mxcvpu_device, &mxc_vpu_data);
+//	mxc_register_device(&gpu_device, NULL);
 	mxc_register_device(&mxcscc_device, NULL);
 	mxc_register_device(&mx51_lpmode_device, NULL);
 	mxc_register_device(&busfreq_device, NULL);
 	mxc_register_device(&sdram_autogating_device, NULL);
-	mxc_register_device(&mxc_dvfs_core_device, &dvfs_core_data);
-	mxc_register_device(&mxc_dvfs_per_device, &dvfs_per_data);
+//	mxc_register_device(&mxc_dvfs_core_device, &dvfs_core_data);
+//	mxc_register_device(&mxc_dvfs_per_device, &dvfs_per_data);
 	mxc_register_device(&mxc_iim_device, NULL);
 	mxc_register_device(&mxc_pwm1_device, NULL);
 	mxc_register_device(&mxc_pwm1_backlight_device,
@@ -1315,18 +1375,15 @@ static void __init mxc_board_init(void)
 	mxc_register_device(&mxc_ssi1_device, NULL);
 	mxc_register_device(&mxc_ssi2_device, NULL);
 	mxc_register_device(&mxc_ssi3_device, NULL);
-	mxc_register_device(&mxc_alsa_spdif_device, &mxc_spdif_data);
+//	mxc_register_device(&mxc_alsa_spdif_device, &mxc_spdif_data);
 	mxc_register_device(&mxc_fec_device, NULL);
-	mxc_register_device(&mxc_v4l2_device, NULL);
-	mxc_register_device(&mxc_v4l2out_device, NULL);
+//	mxc_register_device(&mxc_v4l2_device, NULL);
+//	mxc_register_device(&mxc_v4l2out_device, NULL);
 
-	pr_info(KERN_ERROR "==========MTD==========\n");
-#if 0
 #if defined(CONFIG_MTD_NAND_IMX_NFC) || defined(CONFIG_MTD_NAND_IMX_NFC_MODULE)
 	mxc_register_device(&imx_nfc_device, &imx_nfc_platform_data);
 #else
 	mxc_register_device(&mxc_nandv2_mtd_device, &mxc_nand_data);
-#endif
 #endif
 	mx51_babbage_init_mc13892();
 
@@ -1338,7 +1395,7 @@ static void __init mxc_board_init(void)
 		/* BB2.0 */
 		spi_register_board_info(mxc_spi_nor_device,
 					ARRAY_SIZE(mxc_spi_nor_device));
-
+#if 0
 	i2c_register_board_info(0, mxc_i2c0_board_info,
 				ARRAY_SIZE(mxc_i2c0_board_info));
 	i2c_register_board_info(1, mxc_i2c1_board_info,
@@ -1351,7 +1408,7 @@ static void __init mxc_board_init(void)
 	}
 	i2c_register_board_info(3, mxc_i2c_hs_board_info,
 				ARRAY_SIZE(mxc_i2c_hs_board_info));
-
+#endif
 	pm_power_off = mxc_power_off;
 
 	if (cpu_is_mx51_rev(CHIP_REV_1_1) == 2) {

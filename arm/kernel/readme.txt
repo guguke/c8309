@@ -1,3 +1,4 @@
+cc000 : == ltib/rootfs/boot/linux.config
 
 linux/arch/arm/mach-mx5/mx51_3stack.c
 linux/arch/arm/mach-mx5/mx51_babbage.c

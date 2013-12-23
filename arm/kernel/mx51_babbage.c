@@ -1285,7 +1285,7 @@ static void __init mx51_babbage_io_init(void)
 	/* power key */
 	gpio_request(BABBAGE_POWER_KEY, "power-key");
 	gpio_direction_input(BABBAGE_POWER_KEY);
-#if 0
+#if 1
 	if (cpu_is_mx51_rev(CHIP_REV_3_0) > 0) {
 		/* DVI_I2C_ENB = 0 tristates the DVI I2C level shifter */
 		gpio_request(BABBAGE_DVI_I2C_EN, "dvi-i2c-en");
@@ -1355,16 +1355,16 @@ static void __init mxc_board_init(void)
 	mxc_register_device(&mxci2c_hs_device, &mxci2c_hs_data);
 	mxc_register_device(&mxc_rtc_device, &srtc_data);
 	mxc_register_device(&mxc_w1_master_device, &mxc_w1_data);
-//	mxc_register_device(&mxc_ipu_device, &mxc_ipu_data);
-//	mxc_register_device(&mxc_tve_device, &tve_data);
-//	mxc_register_device(&mxcvpu_device, &mxc_vpu_data);
-//	mxc_register_device(&gpu_device, NULL);
+	mxc_register_device(&mxc_ipu_device, &mxc_ipu_data);
+	mxc_register_device(&mxc_tve_device, &tve_data);
+	mxc_register_device(&mxcvpu_device, &mxc_vpu_data);
+	mxc_register_device(&gpu_device, NULL);
 	mxc_register_device(&mxcscc_device, NULL);
 	mxc_register_device(&mx51_lpmode_device, NULL);
 	mxc_register_device(&busfreq_device, NULL);
 	mxc_register_device(&sdram_autogating_device, NULL);
-//	mxc_register_device(&mxc_dvfs_core_device, &dvfs_core_data);
-//	mxc_register_device(&mxc_dvfs_per_device, &dvfs_per_data);
+	mxc_register_device(&mxc_dvfs_core_device, &dvfs_core_data);
+	mxc_register_device(&mxc_dvfs_per_device, &dvfs_per_data);
 	mxc_register_device(&mxc_iim_device, NULL);
 	mxc_register_device(&mxc_pwm1_device, NULL);
 	mxc_register_device(&mxc_pwm1_backlight_device,
@@ -1375,10 +1375,10 @@ static void __init mxc_board_init(void)
 	mxc_register_device(&mxc_ssi1_device, NULL);
 	mxc_register_device(&mxc_ssi2_device, NULL);
 	mxc_register_device(&mxc_ssi3_device, NULL);
-//	mxc_register_device(&mxc_alsa_spdif_device, &mxc_spdif_data);
+	mxc_register_device(&mxc_alsa_spdif_device, &mxc_spdif_data);
 	mxc_register_device(&mxc_fec_device, NULL);
-//	mxc_register_device(&mxc_v4l2_device, NULL);
-//	mxc_register_device(&mxc_v4l2out_device, NULL);
+	mxc_register_device(&mxc_v4l2_device, NULL);
+	mxc_register_device(&mxc_v4l2out_device, NULL);
 
 #if defined(CONFIG_MTD_NAND_IMX_NFC) || defined(CONFIG_MTD_NAND_IMX_NFC_MODULE)
 	mxc_register_device(&imx_nfc_device, &imx_nfc_platform_data);
@@ -1395,7 +1395,7 @@ static void __init mxc_board_init(void)
 		/* BB2.0 */
 		spi_register_board_info(mxc_spi_nor_device,
 					ARRAY_SIZE(mxc_spi_nor_device));
-#if 0
+#if 1
 	i2c_register_board_info(0, mxc_i2c0_board_info,
 				ARRAY_SIZE(mxc_i2c0_board_info));
 	i2c_register_board_info(1, mxc_i2c1_board_info,

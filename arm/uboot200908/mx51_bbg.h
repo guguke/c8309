@@ -93,9 +93,9 @@
 #define CONFIG_NET_RETRY_COUNT	100
 #define CONFIG_CMD_SPI
 #define CONFIG_CMD_SF
-#define CONFIG_CMD_MMC
+//#define CONFIG_CMD_MMC
 #define CONFIG_CMD_IIM
-#define CONFIG_CMD_I2C
+//#define CONFIG_CMD_I2C
 
 #define CONFIG_CMD_CLOCK
 #define CONFIG_REF_CLK_FREQ CONFIG_MX51_HCLK_FREQ
@@ -134,7 +134,7 @@
 	#define CONFIG_IMX_MMC
 	#define CONFIG_SYS_FSL_ESDHC_NUM	2
 	#define CONFIG_SYS_FSL_ESDHC_ADDR       0
-	#define CONFIG_SYS_MMC_ENV_DEV	0
+	//#define CONFIG_SYS_MMC_ENV_DEV	0
 	#define CONFIG_DOS_PARTITION	1
 	#define CONFIG_CMD_FAT		1
 	#define CONFIG_DYNAMIC_MMC_DEVNO
@@ -160,8 +160,8 @@
 #define CONFIG_MII
 #define CONFIG_DISCOVER_PHY
 
-//#define CONFIG_GET_FEC_MAC_ADDR_FROM_IIM
-#define CONFIG_IIM_MAC_ADDR_OFFSET      0x24
+#define CONFIG_GET_FEC_MAC_ADDR_FROM_IIM
+#define CONFIG_IIM_MAC_ADDR_OFFSET      0x20
 
 #define CONFIG_FEC0_IOBASE	FEC_BASE_ADDR
 #define CONFIG_FEC0_PINMUX	-1
@@ -193,10 +193,14 @@
 		"bootargs_base=setenv bootargs console=ttymxc0,115200\0"\
 		"bootargs_nfs=setenv bootargs ${bootargs} root=/dev/nfs "\
 			"ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0"\
-		"bootcmd=run bootcmd_net\0"				\
 		"bootcmd_net=run bootargs_base bootargs_nfs; "		\
 			"tftpboot ${loadaddr} ${kernel}; bootm\0"	\
 		"load_uboot=tftpboot ${loadaddr} ${uboot}\0"		\
+		"ipaddr=192.168.1.88\0"         \
+		"serverip=192.168.1.224\0"         \
+		"bootcmd=run cmd0\0"            \
+		"args1=setenv bootargs console=ttymxc0,115200 root=/dev/ram rw mem=256m\0"       \
+		"cmd0=nand read 93000000 100000 300000;nand read 93400000 400000 a00000;run args1;bootm 93000000 93400000\0"          \
 
 /*
  * The MX51 3stack board seems to have a hardware "peculiarity" confirmed under
@@ -214,7 +218,7 @@
  * Miscellaneous configurable options
  */
 #define CONFIG_SYS_LONGHELP		/* undef to save memory */
-#define CONFIG_SYS_PROMPT		"v005 > "
+#define CONFIG_SYS_PROMPT		"v008 > "
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_SYS_CBSIZE		256	/* Console I/O Buffer Size */
 /* Print Buffer Size */
@@ -256,7 +260,7 @@
 /*-----------------------------------------------------------------------
  * NAND FLASH driver setup
  */
-#define NAND_MAX_CHIPS         8
+#define NAND_MAX_CHIPS         1
 #define CONFIG_SYS_MAX_NAND_DEVICE    1
 #define CONFIG_SYS_NAND_BASE          0x40000000
 #define CONFIG_NAND_FW_16BIT	0 /* 1: 16bit 0: 8bit */
@@ -269,16 +273,17 @@
 #define CONFIG_ENV_SECT_SIZE    (128 * 1024)
 #define CONFIG_ENV_SIZE         CONFIG_ENV_SECT_SIZE
 
-#if defined(CONFIG_FSL_ENV_IN_NAND)
+//#if defined(CONFIG_FSL_ENV_IN_NAND)
 	#define CONFIG_ENV_IS_IN_NAND	1
-	#define CONFIG_ENV_OFFSET	0x80000
-#elif defined(CONFIG_FSL_ENV_IN_SF)
-	#define CONFIG_ENV_IS_IN_SPI_FLASH	1
-	#define CONFIG_ENV_SPI_CS		1
 	#define CONFIG_ENV_OFFSET       (768 * 1024)
-#else
-	#define CONFIG_ENV_IS_NOWHERE	1
-#endif
+	//#define CONFIG_ENV_OFFSET	0x80000
+//#elif defined(CONFIG_FSL_ENV_IN_SF)
+	//#define CONFIG_ENV_IS_IN_SPI_FLASH	1
+	//#define CONFIG_ENV_SPI_CS		1
+	//#define CONFIG_ENV_OFFSET       (768 * 1024)
+//#else
+	//#define CONFIG_ENV_IS_NOWHERE	1
+//#endif
 /*
  * JFFS2 partitions
  */

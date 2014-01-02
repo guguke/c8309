@@ -252,6 +252,7 @@ void setup_nfc(void)
 {
 	/* Enable NFC IOMUX */
 	mxc_request_iomux(MX51_PIN_NANDF_CS0, IOMUX_CONFIG_ALT0);
+#if 0
 	mxc_request_iomux(MX51_PIN_NANDF_CS1, IOMUX_CONFIG_ALT0);
 	mxc_request_iomux(MX51_PIN_NANDF_CS2, IOMUX_CONFIG_ALT0);
 	mxc_request_iomux(MX51_PIN_NANDF_CS3, IOMUX_CONFIG_ALT0);
@@ -259,6 +260,7 @@ void setup_nfc(void)
 	mxc_request_iomux(MX51_PIN_NANDF_CS5, IOMUX_CONFIG_ALT0);
 	mxc_request_iomux(MX51_PIN_NANDF_CS6, IOMUX_CONFIG_ALT0);
 	mxc_request_iomux(MX51_PIN_NANDF_CS7, IOMUX_CONFIG_ALT0);
+#endif
 }
 
 static void setup_expio(void)
@@ -349,6 +351,7 @@ s32 spi_get_cfg(struct imx_spi_dev_t *dev)
 #ifdef CONFIG_IMX_ECSPI
 void spi_io_init(struct imx_spi_dev_t *dev)
 {
+	//printf(" === spi io init dev->base:%08x\n", dev->base);     // 0x7001.0000  rm p62
 	switch (dev->base) {
 	case CSPI1_BASE_ADDR:
 		/* 000: Select mux mode: ALT0 mux port: MOSI of instance: ecspi1 */
@@ -398,8 +401,9 @@ void spi_io_init(struct imx_spi_dev_t *dev)
 int fec_get_mac_addr(unsigned char *mac)
 {
 	u32 *iim1_mac_base =
-		(u32 *)(IIM_BASE_ADDR + IIM_BANK_AREA_1_OFFSET +
-			CONFIG_IIM_MAC_ADDR_OFFSET);
+		//(u32 *)(IIM_BASE_ADDR + IIM_BANK_AREA_1_OFFSET +
+		(u32 *)(IIM_BASE_ADDR + 
+		     CONFIG_IIM_MAC_ADDR_OFFSET);
 	int i;
 
 	for (i = 0; i < 6; ++i, ++iim1_mac_base)
@@ -412,87 +416,134 @@ int fec_get_mac_addr(unsigned char *mac)
 static void setup_fec(void)
 {
 	/*FEC_MDIO*/
-	writel(0x3, IOMUXC_BASE_ADDR + 0x0D4);
-	writel(0x1FD, IOMUXC_BASE_ADDR + 0x0468);
-	writel(0x0, IOMUXC_BASE_ADDR + 0x0954);
+	//writel(0x3, IOMUXC_BASE_ADDR + 0x0D4);
+	//writel(0x1FD, IOMUXC_BASE_ADDR + 0x0468);
+	//writel(0x0, IOMUXC_BASE_ADDR + 0x0954);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x348);
+	writel(0x1FD, IOMUXC_BASE_ADDR + 0x750);
+	writel(0x1, IOMUXC_BASE_ADDR + 0x0954);
 
 	/*FEC_MDC*/
-	writel(0x2, IOMUXC_BASE_ADDR + 0x13C);
-	writel(0x2004, IOMUXC_BASE_ADDR + 0x0524);
+	//writel(0x2, IOMUXC_BASE_ADDR + 0x13C);
+	//writel(0x2004, IOMUXC_BASE_ADDR + 0x0524);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x344);
+	writel(0x2004, IOMUXC_BASE_ADDR + 0x74c);
 
 	/* FEC RDATA[3] */
-	writel(0x3, IOMUXC_BASE_ADDR + 0x0EC);
-	writel(0x180, IOMUXC_BASE_ADDR + 0x0480);
-	writel(0x0, IOMUXC_BASE_ADDR + 0x0964);
+	//writel(0x3, IOMUXC_BASE_ADDR + 0x0EC);
+	//writel(0x180, IOMUXC_BASE_ADDR + 0x0480);
+	//writel(0x0, IOMUXC_BASE_ADDR + 0x0964);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x354);
+	writel(0x180, IOMUXC_BASE_ADDR + 0x75c);
+	writel(0x1, IOMUXC_BASE_ADDR + 0x0964);
 
 	/* FEC RDATA[2] */
-	writel(0x3, IOMUXC_BASE_ADDR + 0x0E8);
-	writel(0x180, IOMUXC_BASE_ADDR + 0x047C);
-	writel(0x0, IOMUXC_BASE_ADDR + 0x0960);
+	//writel(0x3, IOMUXC_BASE_ADDR + 0x0E8);
+	//writel(0x180, IOMUXC_BASE_ADDR + 0x047C);
+	//writel(0x0, IOMUXC_BASE_ADDR + 0x0960);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x350);
+	writel(0x180, IOMUXC_BASE_ADDR + 0x758);
+	writel(0x1, IOMUXC_BASE_ADDR + 0x0960);
 
 	/* FEC RDATA[1] */
-	writel(0x3, IOMUXC_BASE_ADDR + 0x0d8);
-	writel(0x180, IOMUXC_BASE_ADDR + 0x046C);
-	writel(0x0, IOMUXC_BASE_ADDR + 0x095C);
+	//writel(0x3, IOMUXC_BASE_ADDR + 0x0d8);
+	//writel(0x180, IOMUXC_BASE_ADDR + 0x046C);
+	//writel(0x0, IOMUXC_BASE_ADDR + 0x095C);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x34c);
+	writel(0x180, IOMUXC_BASE_ADDR + 0x754);
+	writel(0x1, IOMUXC_BASE_ADDR + 0x095C);
 
 	/* FEC RDATA[0] */
-	writel(0x2, IOMUXC_BASE_ADDR + 0x016C);
-	writel(0x2180, IOMUXC_BASE_ADDR + 0x0554);
-	writel(0x0, IOMUXC_BASE_ADDR + 0x0958);
+	//writel(0x2, IOMUXC_BASE_ADDR + 0x016C);
+	//writel(0x2180, IOMUXC_BASE_ADDR + 0x0554);
+	//writel(0x0, IOMUXC_BASE_ADDR + 0x0958);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x038c);
+	writel(0x2180, IOMUXC_BASE_ADDR + 0x794);
+	writel(0x1, IOMUXC_BASE_ADDR + 0x0958);
 
 	/* FEC TDATA[3] */
-	writel(0x2, IOMUXC_BASE_ADDR + 0x148);
-	writel(0x2004, IOMUXC_BASE_ADDR + 0x0530);
+	//writel(0x2, IOMUXC_BASE_ADDR + 0x148);
+	//writel(0x2004, IOMUXC_BASE_ADDR + 0x0530);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x374);
+	writel(0x2004, IOMUXC_BASE_ADDR + 0x77c);
 
 	/* FEC TDATA[2] */
-	writel(0x2, IOMUXC_BASE_ADDR + 0x144);
-	writel(0x2004, IOMUXC_BASE_ADDR + 0x052C);
+	//writel(0x2, IOMUXC_BASE_ADDR + 0x144);
+	//writel(0x2004, IOMUXC_BASE_ADDR + 0x052C);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x370);
+	writel(0x2004, IOMUXC_BASE_ADDR + 0x778);
 
 	/* FEC TDATA[1] */
-	writel(0x2, IOMUXC_BASE_ADDR + 0x140);
-	writel(0x2004, IOMUXC_BASE_ADDR + 0x0528);
+	//writel(0x2, IOMUXC_BASE_ADDR + 0x140);
+	//writel(0x2004, IOMUXC_BASE_ADDR + 0x0528);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x36c);
+	writel(0x2004, IOMUXC_BASE_ADDR + 0x774);
 
 	/* FEC TDATA[0] */
-	writel(0x2, IOMUXC_BASE_ADDR + 0x0170);
-	writel(0x2004, IOMUXC_BASE_ADDR + 0x0558);
+	//writel(0x2, IOMUXC_BASE_ADDR + 0x0170);
+	//writel(0x2004, IOMUXC_BASE_ADDR + 0x0558);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x390);
+	writel(0x2004, IOMUXC_BASE_ADDR + 0x798);
 
 	/* FEC TX_EN */
-	writel(0x1, IOMUXC_BASE_ADDR + 0x014C);
-	writel(0x2004, IOMUXC_BASE_ADDR + 0x0534);
+	//writel(0x1, IOMUXC_BASE_ADDR + 0x014C);
+	//writel(0x2004, IOMUXC_BASE_ADDR + 0x0534);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x378);
+	writel(0x2004, IOMUXC_BASE_ADDR + 0x780);
 
 	/* FEC TX_ER */
-	writel(0x2, IOMUXC_BASE_ADDR + 0x0138);
-	writel(0x2004, IOMUXC_BASE_ADDR + 0x0520);
+	//writel(0x2, IOMUXC_BASE_ADDR + 0x0138);
+	//writel(0x2004, IOMUXC_BASE_ADDR + 0x0520);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x33c);
+	writel(0x2004, IOMUXC_BASE_ADDR + 0x744);
 
 	/* FEC TX_CLK */
-	writel(0x1, IOMUXC_BASE_ADDR + 0x0150);
-	writel(0x2180, IOMUXC_BASE_ADDR + 0x0538);
-	writel(0x0, IOMUXC_BASE_ADDR + 0x0974);
+	//writel(0x1, IOMUXC_BASE_ADDR + 0x0150);
+	//writel(0x2180, IOMUXC_BASE_ADDR + 0x0538);
+	//writel(0x0, IOMUXC_BASE_ADDR + 0x0974);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x388);
+	writel(0x2180, IOMUXC_BASE_ADDR + 0x790);
+	writel(0x1, IOMUXC_BASE_ADDR + 0x0974);
 
 	/* FEC COL */
-	writel(0x1, IOMUXC_BASE_ADDR + 0x0124);
-	writel(0x2180, IOMUXC_BASE_ADDR + 0x0500);
-	writel(0x0, IOMUXC_BASE_ADDR + 0x094c);
+	//writel(0x1, IOMUXC_BASE_ADDR + 0x0124);
+	//writel(0x2180, IOMUXC_BASE_ADDR + 0x0500);
+	//writel(0x0, IOMUXC_BASE_ADDR + 0x094c);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x37c);
+	writel(0x2180, IOMUXC_BASE_ADDR + 0x784);
+	writel(0x1, IOMUXC_BASE_ADDR + 0x094c);
 
 	/* FEC RX_CLK */
-	writel(0x1, IOMUXC_BASE_ADDR + 0x0128);
-	writel(0x2180, IOMUXC_BASE_ADDR + 0x0504);
-	writel(0x0, IOMUXC_BASE_ADDR + 0x0968);
+	//writel(0x1, IOMUXC_BASE_ADDR + 0x0128);
+	//writel(0x2180, IOMUXC_BASE_ADDR + 0x0504);
+	//writel(0x0, IOMUXC_BASE_ADDR + 0x0968);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x380);
+	writel(0x2180, IOMUXC_BASE_ADDR + 0x788);
+	writel(0x1, IOMUXC_BASE_ADDR + 0x0968);
 
 	/* FEC CRS */
-	writel(0x3, IOMUXC_BASE_ADDR + 0x0f4);
-	writel(0x180, IOMUXC_BASE_ADDR + 0x0488);
-	writel(0x0, IOMUXC_BASE_ADDR + 0x0950);
+	//writel(0x3, IOMUXC_BASE_ADDR + 0x0f4);
+	//writel(0x180, IOMUXC_BASE_ADDR + 0x0488);
+	//writel(0x0, IOMUXC_BASE_ADDR + 0x0950);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x340);
+	writel(0x180, IOMUXC_BASE_ADDR + 0x748);
+	writel(0x1, IOMUXC_BASE_ADDR + 0x0950);
 
 	/* FEC RX_ER */
-	writel(0x3, IOMUXC_BASE_ADDR + 0x0f0);
-	writel(0x180, IOMUXC_BASE_ADDR + 0x0484);
-	writel(0x0, IOMUXC_BASE_ADDR + 0x0970);
+	//writel(0x3, IOMUXC_BASE_ADDR + 0x0f0);
+	//writel(0x180, IOMUXC_BASE_ADDR + 0x0484);
+	//writel(0x0, IOMUXC_BASE_ADDR + 0x0970);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x358);
+	writel(0x180, IOMUXC_BASE_ADDR + 0x760);
+	writel(0x1, IOMUXC_BASE_ADDR + 0x0970);
 
 	/* FEC RX_DV */
-	writel(0x2, IOMUXC_BASE_ADDR + 0x164);
-	writel(0x2180, IOMUXC_BASE_ADDR + 0x054C);
-	writel(0x0, IOMUXC_BASE_ADDR + 0x096C);
+	//writel(0x2, IOMUXC_BASE_ADDR + 0x164);
+	//writel(0x2180, IOMUXC_BASE_ADDR + 0x054C);
+	//writel(0x0, IOMUXC_BASE_ADDR + 0x096C);
+	writel(0x2, IOMUXC_BASE_ADDR + 0x384);
+	writel(0x2180, IOMUXC_BASE_ADDR + 0x78c);
+	writel(0x1, IOMUXC_BASE_ADDR + 0x096C);
 }
 #endif
 
@@ -535,15 +586,18 @@ static void setup_core_voltage_i2c(void)
 
 	writel(0x0, CCM_BASE_ADDR + CLKCTL_CACRR);
 	reg = readl(GPIO2_BASE_ADDR + 0x0);
-	reg &= ~0x4000;  /* Lower reset line */
+	//reg &= ~0x4000;  /* Lower reset line */
+	reg &= ~0x08000000;  /* Lower reset line */
 	writel(reg, GPIO2_BASE_ADDR + 0x0);
 
 	reg = readl(GPIO2_BASE_ADDR + 0x4);
-	reg |= 0x4000;  /* configure GPIO lines as output */
+	//reg |= 0x4000;  /* configure GPIO lines as output */
+	reg |= 0x08000000;  /* configure GPIO lines as output */
 	writel(reg, GPIO2_BASE_ADDR + 0x4);
 
 	/* Reset the ethernet controller over GPIO */
-	writel(0x1, IOMUXC_BASE_ADDR + 0x0AC);
+	//writel(0x1, IOMUXC_BASE_ADDR + 0x0AC);   //gpio2.14
+	writel(0x1, IOMUXC_BASE_ADDR + 0x0e8);      //gpio2.27
 
 	/*Configure LDO4*/
 	i2c_read(0x34, 0x12, 1, buf, 1);
@@ -567,7 +621,8 @@ static void setup_core_voltage_i2c(void)
 	udelay(500);
 
 	reg = readl(GPIO2_BASE_ADDR + 0x0);
-	reg |= 0x4000;
+	//reg |= 0x4000;
+	reg |= 0x08000000;
 	writel(reg, GPIO2_BASE_ADDR + 0x0);
 }
 #endif
@@ -579,7 +634,7 @@ static void setup_core_voltage_spi(void)
 	unsigned int val;
 	unsigned int reg;
 
-	puts("PMIC Mode: SPI\n");
+	puts(" === PMIC Mode: SPI\n");
 
 #define REV_ATLAS_LITE_1_0         0x8
 #define REV_ATLAS_LITE_1_1         0x9
@@ -685,15 +740,18 @@ static void setup_core_voltage_spi(void)
 	udelay(200);
 
 	reg = readl(GPIO2_BASE_ADDR + 0x0);
-	reg &= ~0x4000;  /* Lower reset line */
+	//reg &= ~0x4000;  /* Lower reset line */
+	reg &= ~0x08000000;  /* Lower reset line */
 	writel(reg, GPIO2_BASE_ADDR + 0x0);
 
 	reg = readl(GPIO2_BASE_ADDR + 0x4);
-	reg |= 0x4000;  /* configure GPIO lines as output */
+	//reg |= 0x4000;  /* configure GPIO lines as output */
+	reg |= 0x08000000;  /* configure GPIO lines as output */
 	writel(reg, GPIO2_BASE_ADDR + 0x4);
 
 	/* Reset the ethernet controller over GPIO */
-	writel(0x1, IOMUXC_BASE_ADDR + 0x0ac);
+	//writel(0x1, IOMUXC_BASE_ADDR + 0x0ac);
+	writel(0x1, IOMUXC_BASE_ADDR + 0x0e8);
 
 	/* Enable VGEN3, VCAM, VAUDIO, VVIDEO, VSD regulators */
 	val = 0x49249;
@@ -702,7 +760,8 @@ static void setup_core_voltage_spi(void)
 	udelay(500);
 
 	reg = readl(GPIO2_BASE_ADDR + 0x0);
-	reg |= 0x4000;
+	//reg |= 0x4000;
+	reg |= 0x08000000;
 	writel(reg, GPIO2_BASE_ADDR + 0x0);
 
 	spi_pmic_free(slave);

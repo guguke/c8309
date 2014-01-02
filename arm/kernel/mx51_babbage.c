@@ -67,7 +67,7 @@
 #define BABBAGE_SD2_CD_2_5		(0*32 + 6)	/* GPIO_1_6 */
 #define BABBAGE_USBH1_HUB_RST		(0*32 + 7)	/* GPIO_1_7 */
 //#define BABBAGE_PMIC_INT		(0*32 + 8)	/* GPIO_1_8 */
-#define BABBAGE_PMIC_INT		(0*32 + 5)	/* GPIO_1_8 */
+#define BABBAGE_PMIC_INT		(0*32 + 5)	/* GPIO_1_5 */
 
 #define BABBAGE_USB_CLK_EN_B		(1*32 + 1)	/* GPIO_2_1 */
 #define BABBAGE_OSC_EN_B		(1*32 + 2)	/* GPIO_2_2 */
@@ -76,7 +76,7 @@
 #define BABBAGE_FM_PWR		(1*32 + 12)	/* GPIO_2_12 */
 #define BABBAGE_VGA_RESET		(1*32 + 13)	/* GPIO_2_13 */
 //#define BABBAGE_FEC_PHY_RESET		(1*32 + 14)	/* GPIO_2_14 */
-#define BABBAGE_FEC_PHY_RESET		(1*32 + 27)	/* GPIO_2_14 */
+#define BABBAGE_FEC_PHY_RESET		(1*32 + 27)	/* GPIO_2_27 */
 #define BABBAGE_FM_RESET		(1*32 + 15)	/* GPIO_2_15 */
 #define BABBAGE_AUDAMP_STBY		(1*32 + 17)	/* GPIO_2_17 */
 #define BABBAGE_POWER_KEY		(1*32 + 21)	/* GPIO_2_21 */
@@ -144,8 +144,13 @@ static struct pad_desc mx51babbage_pads[] = {
 	MX51_PAD_UART1_TXD__UART1_TXD,
 	MX51_PAD_UART1_RTS__UART1_RTS,
 	MX51_PAD_UART1_CTS__UART1_CTS,
+
 	MX51_PAD_UART2_RXD__UART2_RXD,
 	MX51_PAD_UART2_TXD__UART2_TXD,
+//#define MX51_PAD_UART3_RXD__UART3_RXD	IOMUX_PAD(0x630, 0x240, 1, 0x9f4, 4, MX51_UART3_PAD_CTRL)  
+//#define MX51_PAD_UART3_TXD__UART3_TXD	IOMUX_PAD(0x634, 0x244, 1, 0x0, 0, MX51_UART3_PAD_CTRL)
+	MX51_PAD_UART3_RXD__UART3_RXD,//	IOMUX_PAD(0x630, 0x240, 1, 0x9f4, 4, MX51_UART3_PAD_CTRL)  
+	MX51_PAD_UART3_TXD__UART3_TXD,//	IOMUX_PAD(0x634, 0x244, 1, 0x0, 0, MX51_UART3_PAD_CTRL)
 
 	/* USB HOST1 */
 	MX51_PAD_USBH1_STP__USBH1_STP,
@@ -168,7 +173,7 @@ static struct pad_desc mx51babbage_pads[] = {
 	MX51_PAD_GPIO_1_6__GPIO_1_6,
 	MX51_PAD_GPIO_1_7__GPIO_1_7,
 	MX51_PAD_GPIO_1_8__GPIO_1_8,
-	MX51_PAD_UART3_RXD__GPIO_1_22,
+	//MX51_PAD_UART3_RXD__GPIO_1_22,
 
 	MX51_PAD_EIM_D17__GPIO_2_1,
 	MX51_PAD_EIM_D18__GPIO_2_2,
@@ -178,7 +183,7 @@ static struct pad_desc mx51babbage_pads[] = {
 	MX51_PAD_EIM_A17__GPIO_2_11,
 	MX51_PAD_EIM_A18__GPIO_2_12,
 	MX51_PAD_EIM_A19__GPIO_2_13,
-	MX51_PAD_EIM_A20__GPIO_2_14,
+	//MX51_PAD_EIM_A20__GPIO_2_14,
 	MX51_PAD_EIM_A21__GPIO_2_15,
 	MX51_PAD_EIM_A22__GPIO_2_16,
 	MX51_PAD_EIM_A23__GPIO_2_17,
@@ -567,15 +572,15 @@ static struct mtd_partition nand_flash_partitions[] = {
 	 .offset = 0,
 	 .size = 128 * 1024 * 1024},
 	{
-	 .name = "nand.rootfs128",
+	 .name = "nand.fs128",
 	 .offset = MTDPART_OFS_APPEND,
 	 .size = 128 * 1024 * 1024},
 	{
-	 .name = "nand.user256",
+	 .name = "nand.fs512",
 	 .offset = MTDPART_OFS_APPEND,
-	 .size = 256 * 1024 * 1024},
+	 .size = 512 * 1024 * 1024},
 	{
-	 .name = "nand.free512",
+	 .name = "nand.fs256",
 	 .offset = MTDPART_OFS_APPEND,
 	 .size = MTDPART_SIZ_FULL},
 };
@@ -633,7 +638,6 @@ static struct imx_nfc_platform_data imx_nfc_platform_data = {
 
 #endif /* i.MX MTD NAND Flash Controller */
 
-
 static struct resource mxcfb_resources[] = {
 	[0] = {
 	       .flags = IORESOURCE_MEM,
@@ -660,7 +664,6 @@ static int __init mxc_init_fb(void)
 {
 	if (!machine_is_mx51_babbage())
 		return 0;
-	else return 0;
 
 	/* DI0-LVDS */
 	gpio_set_value(BABBAGE_LVDS_POWER_DOWN, 0);
@@ -1199,6 +1202,7 @@ static int __init mxc_init_power_key(void)
 	return ret;
 }
 late_initcall(mxc_init_power_key);
+
 static void __init my_nand_io_init(void)
 {
 	int i, num;
@@ -1221,7 +1225,7 @@ static void __init mx51_babbage_io_init(void)
 {
 	mxc_iomux_v3_setup_multiple_pads(mx51babbage_pads,
 					ARRAY_SIZE(mx51babbage_pads));
-	//my_nand_io_init();
+	my_nand_io_init();
 
 	gpio_request(BABBAGE_PMIC_INT, "pmic-int");
 	gpio_request(BABBAGE_SD1_CD, "sdhc1-detect");
@@ -1285,7 +1289,7 @@ static void __init mx51_babbage_io_init(void)
 	/* power key */
 	gpio_request(BABBAGE_POWER_KEY, "power-key");
 	gpio_direction_input(BABBAGE_POWER_KEY);
-#if 1
+
 	if (cpu_is_mx51_rev(CHIP_REV_3_0) > 0) {
 		/* DVI_I2C_ENB = 0 tristates the DVI I2C level shifter */
 		gpio_request(BABBAGE_DVI_I2C_EN, "dvi-i2c-en");
@@ -1323,7 +1327,6 @@ static void __init mx51_babbage_io_init(void)
 		struct pad_desc onewire = MX51_PAD_OWIRE_LINE__OWIRE_LINE;
 		mxc_iomux_v3_setup_pad(&onewire);
 	}
-#endif
 }
 
 /*!
@@ -1363,22 +1366,22 @@ static void __init mxc_board_init(void)
 	mxc_register_device(&mx51_lpmode_device, NULL);
 	mxc_register_device(&busfreq_device, NULL);
 	mxc_register_device(&sdram_autogating_device, NULL);
-	mxc_register_device(&mxc_dvfs_core_device, &dvfs_core_data);
-	mxc_register_device(&mxc_dvfs_per_device, &dvfs_per_data);
+	//mxc_register_device(&mxc_dvfs_core_device, &dvfs_core_data);
+	//mxc_register_device(&mxc_dvfs_per_device, &dvfs_per_data);
 	mxc_register_device(&mxc_iim_device, NULL);
-	mxc_register_device(&mxc_pwm1_device, NULL);
-	mxc_register_device(&mxc_pwm1_backlight_device,
-		&mxc_pwm_backlight_data);
-	mxc_register_device(&mxc_keypad_device, &keypad_plat_data);
-	mxc_register_device(&mxcsdhc1_device, &mmc1_data);
-	mxc_register_device(&mxcsdhc2_device, &mmc2_data);
-	mxc_register_device(&mxc_ssi1_device, NULL);
-	mxc_register_device(&mxc_ssi2_device, NULL);
-	mxc_register_device(&mxc_ssi3_device, NULL);
-	mxc_register_device(&mxc_alsa_spdif_device, &mxc_spdif_data);
+	//mxc_register_device(&mxc_pwm1_device, NULL);
+	//mxc_register_device(&mxc_pwm1_backlight_device,
+	//	&mxc_pwm_backlight_data);
+	//mxc_register_device(&mxc_keypad_device, &keypad_plat_data);
+	//mxc_register_device(&mxcsdhc1_device, &mmc1_data);
+	//mxc_register_device(&mxcsdhc2_device, &mmc2_data);
+	//mxc_register_device(&mxc_ssi1_device, NULL);
+	//mxc_register_device(&mxc_ssi2_device, NULL);
+	//mxc_register_device(&mxc_ssi3_device, NULL);
+	//mxc_register_device(&mxc_alsa_spdif_device, &mxc_spdif_data);
 	mxc_register_device(&mxc_fec_device, NULL);
-	mxc_register_device(&mxc_v4l2_device, NULL);
-	mxc_register_device(&mxc_v4l2out_device, NULL);
+	//mxc_register_device(&mxc_v4l2_device, NULL);
+	//mxc_register_device(&mxc_v4l2out_device, NULL);
 
 #if defined(CONFIG_MTD_NAND_IMX_NFC) || defined(CONFIG_MTD_NAND_IMX_NFC_MODULE)
 	mxc_register_device(&imx_nfc_device, &imx_nfc_platform_data);
@@ -1395,7 +1398,7 @@ static void __init mxc_board_init(void)
 		/* BB2.0 */
 		spi_register_board_info(mxc_spi_nor_device,
 					ARRAY_SIZE(mxc_spi_nor_device));
-#if 1
+
 	i2c_register_board_info(0, mxc_i2c0_board_info,
 				ARRAY_SIZE(mxc_i2c0_board_info));
 	i2c_register_board_info(1, mxc_i2c1_board_info,
@@ -1408,7 +1411,7 @@ static void __init mxc_board_init(void)
 	}
 	i2c_register_board_info(3, mxc_i2c_hs_board_info,
 				ARRAY_SIZE(mxc_i2c_hs_board_info));
-#endif
+
 	pm_power_off = mxc_power_off;
 
 	if (cpu_is_mx51_rev(CHIP_REV_1_1) == 2) {

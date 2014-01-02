@@ -821,6 +821,7 @@ static struct mii_bus *fec_enet_mii_init(struct platform_device *pdev)
 		err = -ENOMEM;
 		goto err_out;
 	}
+	printk(KERN_ERR " %s p:%s === mii probe == 4\n",__func__,__builtin_return_address(0));
 
 	fep->mii_bus->name = "fec_enet_mii_bus";
 	fep->mii_bus->read = fec_enet_mdio_read;
@@ -835,6 +836,7 @@ static struct mii_bus *fec_enet_mii_init(struct platform_device *pdev)
 		err = -ENOMEM;
 		goto err_out_free_mdiobus;
 	}
+	printk(KERN_ERR " %s === mii probe == 3\n",__func__);
 
 	for (i = 0; i < PHY_MAX_ADDR; i++)
 		fep->mii_bus->irq[i] = PHY_POLL;
@@ -844,6 +846,8 @@ static struct mii_bus *fec_enet_mii_init(struct platform_device *pdev)
 	if (mdiobus_register(fep->mii_bus))
 		goto err_out_free_mdio_irq;
 
+	printk(KERN_ERR " %s === mii probe == 1\n",__func__);
+
 	return fep->mii_bus;
 
 err_out_free_mdio_irq:
@@ -851,6 +855,7 @@ err_out_free_mdio_irq:
 err_out_free_mdiobus:
 	mdiobus_free(fep->mii_bus);
 err_out:
+	printk(KERN_ERR " %s === mii probe == 2\n",__func__);
 	return ERR_PTR(err);
 }
 
@@ -1420,6 +1425,7 @@ fec_probe(struct platform_device *pdev)
 	int i, irq, ret = 0;
 	struct resource *r;
 
+	printk(KERN_ERR " === fec_probe\n");
 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (!r)
 		return -ENXIO;
@@ -1456,6 +1462,7 @@ fec_probe(struct platform_device *pdev)
 	if (pdata && !is_valid_ether_addr(fec_mac_default))
 		memcpy(fec_mac_default, pdata->mac, sizeof(fec_mac_default));
 
+	printk(KERN_ERR " === fec_probe == 1\n");
 	/* This device has up to three irqs on some platforms */
 	for (i = 0; i < 3; i++) {
 		irq = platform_get_irq(pdev, i);
@@ -1491,6 +1498,7 @@ fec_probe(struct platform_device *pdev)
 	 * (3) bootloader set the FEC mac register
 	 */
 
+	printk(KERN_ERR " === fec_probe == 2\n");
 	if (pdata && !is_valid_ether_addr(fec_mac_default) &&
 		pdata->mac && is_valid_ether_addr(pdata->mac))
 		memcpy(fec_mac_default, pdata->mac,
@@ -1509,6 +1517,7 @@ fec_probe(struct platform_device *pdev)
 	} else {
 		fep->mii_bus = fec_mii_bus;
 	}
+	printk(KERN_ERR " === fec_probe == 3\n");
 
 	if (fec_ptp_malloc_priv(&(fep->ptp_priv))) {
 		if (fep->ptp_priv) {
@@ -1524,9 +1533,11 @@ fec_probe(struct platform_device *pdev)
 	}
 
 	ret = register_netdev(ndev);
+	printk(KERN_ERR " === fec_probe == 4\n");
 	if (ret)
 		goto failed_register;
 
+	printk(KERN_ERR " === fec_probe == 5\n");
 	clk_disable(fep->clk);
 
 	return 0;

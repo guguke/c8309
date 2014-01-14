@@ -99,7 +99,6 @@
 
 #define CONFIG_CMD_CLOCK
 #define CONFIG_REF_CLK_FREQ CONFIG_MX51_HCLK_FREQ
-
 /*
  * FUSE Configs
  * */
@@ -218,7 +217,7 @@
  * Miscellaneous configurable options
  */
 #define CONFIG_SYS_LONGHELP		/* undef to save memory */
-#define CONFIG_SYS_PROMPT		"v008 > "
+#define CONFIG_SYS_PROMPT		"v009 > "
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_SYS_CBSIZE		256	/* Console I/O Buffer Size */
 /* Print Buffer Size */
@@ -226,6 +225,7 @@
 #define CONFIG_SYS_MAXARGS	16	/* max number of command args */
 #define CONFIG_SYS_BARGSIZE CONFIG_SYS_CBSIZE /* Boot Argument Buffer Size */
 
+#define CONFIG_SYS_ALT_MEMTEST		1
 #define CONFIG_SYS_MEMTEST_START	0	/* memtest works on */
 #define CONFIG_SYS_MEMTEST_END		0x10000
 

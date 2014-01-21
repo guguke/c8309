@@ -1,0 +1,642 @@
+error: reboot in 2 hours
+
+U-Boot 2009.08 (Dec 31 2013 - 16:00:34)
+
+CPU:   Freescale i.MX51 family 3.0V at 800 MHz
+mx51 pll1: 800MHz
+mx51 pll2: 665MHz
+mx51 pll3: 216MHz
+ipg clock     : 66500000Hz
+ipg per clock : 665000000Hz
+uart clock    : 54000000Hz
+cspi clock    : 54000000Hz
+axi_a clock   : 166250000Hz
+axi_b clock   : 133000000Hz
+emi_slow clock: 83125000Hz
+ddr clock     : 166250000Hz
+esdhc clock   : 216000000Hz
+Board: MX51 BABBAGE 3.0 [POR]
+Boot Device: NAND
+DRAM:  256 MB
+NAND:  Manufacturer      : Samsung (0xec)
+Device Code       : 0xd3
+Cell Technology   : SLC
+Chip Size         : 1 GiB
+Pages per Block   : 64
+Page Geometry     : 2048+64
+ECC Strength      : 4 bits
+ECC Size          : 512 B
+Data Setup Time   : 25 ns
+Data Hold Time    : 15 ns
+Address Setup Time: 35 ns
+GPMI Sample Delay : 6 ns
+tREA              : Unknown
+tRLOH             : Unknown
+tRHOH             : Unknown
+Description       : K9K8G08UXM, K9NBG08U5A, K9WAG08U1A
+Bad block table found at page 524224, version 0x01
+Bad block table found at page 524160, version 0x01
+1024 MiB
+In:    serial
+Out:   serial
+Err:   serial
+ === PMIC Mode: SPI
+Net:   got MAC address from IIM: f2:10:00:00:00:00
+FEC0 [PRIME]
+Hit any key to stop autoboot:  0 
+
+NAND read: device 0 offset 0x100000, size 0x300000
+ 3145728 bytes read: OK
+
+NAND read: device 0 offset 0x400000, size 0xa00000
+ 10485760 bytes read: OK
+## Booting kernel from Legacy Image at 93000000 ...
+   Image Name:   Linux-2.6.35.3-433-g0fae922
+   Image Type:   ARM Linux Kernel Image (uncompressed)
+   Data Size:    2593616 Bytes =  2.5 MB
+   Load Address: 90008000
+   Entry Point:  90008000
+   Verifying Checksum ... OK
+## Loading init Ramdisk from Legacy Image at 93400000 ...
+   Image Name:   uboot ext2 ramdisk rootfs
+   Image Type:   ARM Linux RAMDisk Image (gzip compressed)
+   Data Size:    5954321 Bytes =  5.7 MB
+   Load Address: 00000000
+   Entry Point:  00000000
+   Verifying Checksum ... OK
+   Loading Kernel Image ... OK
+OK
+
+Starting kernel ...
+
+Uncompressing Linux... done, booting the kernel.
+Linux version 2.6.35.3-433-g0fae922 (arm@localhost.localdomain) (gcc version 4.4.4 (4.4.4_09.06.2010) ) #76 PREEMPT Tue Dec 31 17:24:30 EST 2013
+CPU: ARMv7 Processor [412fc085] revision 5 (ARMv7), cr=10c53c7f
+CPU: VIPT nonaliasing data cache, VIPT nonaliasing instruction cache
+Machine: Freescale MX51 Babbage Board
+Memory policy: ECC disabled, Data cache writeback
+Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 65024
+Kernel command line: console=ttymxc0,115200 root=/dev/ram rw mem=256m
+PID hash table entries: 1024 (order: 0, 4096 bytes)
+Dentry cache hash table entries: 32768 (order: 5, 131072 bytes)
+Inode-cache hash table entries: 16384 (order: 4, 65536 bytes)
+Memory: 256MB = 256MB total
+Memory: 246108k/246108k available, 16036k reserved, 0K highmem
+Virtual kernel memory layout:
+    vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+    fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)
+    DMA     : 0xf9e00000 - 0xffe00000   (  96 MB)
+    vmalloc : 0x90800000 - 0xf4000000   (1592 MB)
+    lowmem  : 0x80000000 - 0x90000000   ( 256 MB)
+    pkmap   : 0x7fe00000 - 0x80000000   (   2 MB)
+    modules : 0x7f000000 - 0x7fe00000   (  14 MB)
+      .init : 0x80008000 - 0x80031000   ( 164 kB)
+      .text : 0x80031000 - 0x8073b000   (7208 kB)
+      .data : 0x80754000 - 0x8079bb60   ( 287 kB)
+SLUB: Genslabs=11, HWalign=32, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+Hierarchical RCU implementation.
+        RCU-based detection of stalled CPUs is disabled.
+        Verbose stalled-CPUs detection is disabled.
+NR_IRQS:368
+MXC GPIO hardware
+MXC IRQ initialized
+MXC_Early serial console at MMIO 0x73fbc000 (options '115200')
+bootconsole [ttymxc0] enabled
+Console: colour dummy device 80x30
+Calibrating delay loop... 799.53 BogoMIPS (lpj=3997696)
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 512
+CPU: Testing write buffer coherency: ok
+regulator: core version 0.5
+NET: Registered protocol family 16
+i.MX IRAM pool: 128 KB@0x90840000
+IRAM READY
+CPU is i.MX51 Revision 3.0
+mxc_gpu.0: failed to claim resource 5
+Using SDMA I.API
+MXC DMA API initialized
+IMX usb wakeup probe
+IMX usb wakeup probe
+bio: create slab <bio-0> at 0
+SCSI subsystem initialized
+CSPI: mxc_spi-0 probed
+MXC HS I2C driver
+IPU DMFC NORMAL mode: 1(0~1), 5B(4,5), 5F(6,7)
+Advanced Linux Sound Architecture Driver Version 1.0.23.
+mc13892 Rev 2.4 FinVer 2 detected
+Initializing regulators for Babbage.
+regulator: SW1: 600 <--> 1375 mV at 1050 mV 
+regulator: SW2: 900 <--> 1850 mV at 1225 mV 
+regulator: SW3: 1100 <--> 1850 mV at 1200 mV 
+regulator: SW4: 1100 <--> 1850 mV at 1800 mV 
+regulator: SWBST: 
+regulator: VIOHI: 
+regulator: VPLL: 1050 <--> 1800 mV at 1800 mV 
+regulator: VDIG: 1650 mV 
+regulator: VSD: 1800 <--> 3150 mV at 3150 mV 
+regulator: VUSB2: 2400 <--> 2775 mV at 2600 mV 
+regulator: VVIDEO: 2775 mV 
+regulator: VAUDIO: 2300 <--> 3000 mV at 3000 mV 
+regulator: VCAM: 2500 <--> 3000 mV at 2600 mV fast normal 
+regulator: VGEN1: 1200 mV 
+regulator: VGEN2: 1200 <--> 3150 mV at 3150 mV 
+ === set 1.8v 
+ === vgen3 enable !!!!!!!!!!!!!!!!!!!! 
+regulator: VGEN3: 1800 mV 
+regulator: VUSB: 
+regulator: GPO1: 
+regulator: GPO2: 
+regulator: GPO3: 
+regulator: GPO4: 
+Device spi1.0 probed
+Switching to clocksource mxc_timer1
+NET: Registered protocol family 2
+IP route cache hash table entries: 2048 (order: 1, 8192 bytes)
+TCP established hash table entries: 8192 (order: 4, 65536 bytes)
+TCP bind hash table entries: 8192 (order: 3, 32768 bytes)
+TCP: Hash tables configured (established 8192 bind 8192)
+TCP reno registered
+UDP hash table entries: 256 (order: 0, 4096 bytes)
+UDP-Lite hash table entries: 256 (order: 0, 4096 bytes)
+NET: Registered protocol family 1
+RPC: Registered udp transport module.
+RPC: Registered tcp transport module.
+RPC: Registered tcp NFSv4.1 backchannel transport module.
+Trying to unpack rootfs image as initramfs...
+rootfs image is not initramfs (no cpio magic); looks like an initrd
+Freeing initrd memory: 5812K
+LPMode driver module loaded
+Static Power Management for Freescale i.MX5
+PM driver module loaded
+sdram autogating driver module loaded
+Bus freq driver module loaded
+DI0 is primary
+/proc/led35 created
+DVFS driver module loaded
+i.MXC CPU frequency driver
+DVFS PER driver module loaded
+JFFS2 version 2.2. (NAND) © 2001-2006 Red Hat, Inc.
+msgmni has been set to 492
+alg: No test for stdrng (krng)
+cryptodev: driver loaded.
+io scheduler noop registered
+io scheduler deadline registered
+io scheduler cfq registered (default)
+fbcvt: 1024x768@60: CVT Name - .786M3
+mxc_ipu mxc_ipu: Channel already disabled 9
+mxc_ipu mxc_ipu: Channel already uninitialized 9
+IPU DMFC DP HIGH RESOLUTION: 1(0,1), 5B(2~5), 5F(6,7)
+Console: switching to colour frame buffer device 128x48
+tve: probe of tve.0 failed with error -1
+mxci2c_wait_writefifo:wait error
+sii9022 3-0039: SII9022: cound not find device
+regulator: get() with no identifier
+regulator: get() with no identifier
+regulator: get() with no identifier
+mxci2c_wait_writefifo:wait error
+Serial: MXC Internal UART driver
+mxcintuart.0: ttymxc0 at MMIO 0x73fbc000 (irq = 31) is a Freescale i.MX
+console [ttymxc0] enabled, bootconsole disabled
+console [ttymxc0] enabled, bootconsole disabled
+mxcintuart.1: ttymxc1 at MMIO 0x73fc0000 (irq = 32) is a Freescale i.MX
+mxcintuart.2: ttymxc2 at MMIO 0x7000c000 (irq = 33) is a Freescale i.MX
+brd: module loaded
+loop: module loaded
+MXC MTD nand Driver 3.0
+NAND device: Manufacturer ID: 0xec, Chip ID: 0xd3 (Samsung NAND 1GiB 3,3V 8-bit)
+RedBoot partition parsing not available
+Creating 4 MTD partitions on "NAND 1GiB 3,3V 8-bit":
+0x000000000000-0x000008000000 : "bootloader"
+0x000008000000-0x000010000000 : "nand.fs128"
+0x000010000000-0x000030000000 : "nand.fs512"
+0x000030000000-0x000040000000 : "nand.fs256"
+i.MX GPMI NFC
+vcan: Virtual CAN interface driver
+Freescale FlexCAN Driver 
+FEC Ethernet Driver
+fec: PHY @ 0x0, ID 0x0007c0f1 -- LAN8700
+mice: PS/2 mouse device common for all mice
+MXC keypad loaded
+mc13892 rtc probe start
+pmic_rtc pmic_rtc.1: rtc core: registered pmic_rtc as rtc0
+mc13892 rtc probe succeed
+i2c /dev entries driver
+IR NEC protocol handler initialized
+IR RC5(x) protocol handler initialized
+IR RC6 protocol handler initialized
+IR JVC protocol handler initialized
+IR Sony protocol handler initialized
+Linux video capture interface: v2.00
+APM Battery Driver
+MXC WatchDog Driver 2.0
+MXC Watchdog # 0 Timer: initial timeout 60 sec
+VPU initialized
+Cirrus Logic CS42888 ALSA SoC Codec Driver
+sgtl5000_hw_read: read reg error : Reg 0x00
+Device with ID register 0 is not a SGTL5000
+ALSA device list:
+  No soundcards found.
+TCP cubic registered
+NET: Registered protocol family 17
+can: controller area network core (rev 20090105 abi 8)
+NET: Registered protocol family 29
+can: raw protocol (rev 20090105)
+can: broadcast manager protocol (rev 20090105 t)
+VFP support v0.3: implementor 41 architecture 3 part 30 variant c rev 2
+regulator_init_complete: disabling VCAM
+regulator_init_complete: disabling VAUDIO
+regulator_init_complete: disabling VSD
+input: mxc_ts as /devices/virtual/input/input0
+mxc input touchscreen loaded
+pmic_rtc pmic_rtc.1: setting system clock to 2014-01-21 18:35:59 UTC (1390329359)
+RAMDISK: gzip image found at block 0
+VFS: Mounted root (ext2 filesystem) on device 1:0.
+Freeing init memory: 164K
+init started: BusyBox v1.15.0 ()
+starting pid 1085, tty '': '/etc/rc.d/rcS'
+Mounting /proc and /sys 
+Starting the hotplug events dispatcher udevd
+Synthesizing initial hotplug events
+Setting the hostname to freescale
+Mounting filesystems
+mount: mounting usbfs on /proc/bus/usb failed: No such file or directory
+Running sysctl
+Setting up networking on loopback device: 
+
+Warning: no IPADDR is set, please set this from the ltib
+config screen, or directly in /etc/rc.d/rc.conf.
+IP address setup bypassed
+
+Starting inetd: 
+=== rc.local start ===
+JFFS2 doesn't use OOB.
+Empty flash at 0x0706f81c ends at 0x07070000
+Empty flash at 0x07070820 ends at 0x07071000
+Empty flash at 0x0707181c ends at 0x07072000
+Empty flash at 0x07072820 ends at 0x07073000
+Empty flash at 0x0707381c ends at 0x07074000
+Empty flash at 0x07074820 ends at 0x07075000
+Empty flash at 0x0707581c ends at 0x07076000
+Empty flash at 0x07076820 ends at 0x07077000
+eth0: config: auto-negotiation on, 100FDX, 100HDX, 10FDX, 10HDX.
+/mnt/app/auto.bat: line 4: /mnt/app/ScoutDev/ScoutDev: not found
+starting pid 2060, tty '': '/sbin/getty -L ttymxc0 115200 vt100'
+
+arm-none-linux-gnueabi-gcc (4.4.4_09.06.2010) 4.4.4
+root filesystem built on Wed, 25 Dec 2013 17:40:58 -0500
+Freescale Semiconductor, Inc.
+
+freescale login: root
+login[2060]: root login on 'ttymxc0'
+
+
+BusyBox v1.15.0 () built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@freescale ~$ reboot
+starting pid 2063, tty '': '/etc/rc.d/rcS stop'
+Stopping inetd: 
+Terminated
+Unmounting filesystems
+umount: tmpfs busy - remounted read-only
+chown: /home/user/.rhosts: Read-only file system
+chown: /home/user: Read-only file system
+chown: /home/user: Read-only file system
+cat: can't open '/proc/devices': No such file or directory
+== rc.local stop ==
+umount: can't umount /mnt/app: Invalid argument
+The system is going down NOW!
+Sent SIGTERM to all processes
+Sent SIGKILL to all processesMXC Watchdog # 0 shutdown
+Restarting system.
+
+
+U-Boot 2009.08 (Dec 31 2013 - 16:00:34)
+
+CPU:   Freescale i.MX51 family 3.0V at 800 MHz
+mx51 pll1: 800MHz
+mx51 pll2: 665MHz
+mx51 pll3: 216MHz
+ipg clock     : 66500000Hz
+ipg per clock : 665000000Hz
+uart clock    : 54000000Hz
+cspi clock    : 54000000Hz
+axi_a clock   : 166250000Hz
+axi_b clock   : 133000000Hz
+emi_slow clock: 83125000Hz
+ddr clock     : 166250000Hz
+esdhc clock   : 216000000Hz
+Board: MX51 BABBAGE 3.0 [WDOG]
+Boot Device: NAND
+DRAM:  256 MB
+NAND:  Manufacturer      : Samsung (0xec)
+Device Code       : 0xd3
+Cell Technology   : SLC
+Chip Size         : 1 GiB
+Pages per Block   : 64
+Page Geometry     : 2048+64
+ECC Strength      : 4 bits
+ECC Size          : 512 B
+Data Setup Time   : 25 ns
+Data Hold Time    : 15 ns
+Address Setup Time: 35 ns
+GPMI Sample Delay : 6 ns
+tREA              : Unknown
+tRLOH             : Unknown
+tRHOH             : Unknown
+Description       : K9K8G08UXM, K9NBG08U5A, K9WAG08U1A
+Bad block table found at page 524224, version 0x01
+Bad block table found at page 524160, version 0x01
+1024 MiB
+In:    serial
+Out:   serial
+Err:   serial
+ === PMIC Mode: SPI
+Net:   got MAC address from IIM: f2:10:00:00:00:00
+FEC0 [PRIME]
+Hit any key to stop autoboot:  0 
+
+NAND read: device 0 offset 0x100000, size 0x300000
+ 3145728 bytes read: OK
+
+NAND read: device 0 offset 0x400000, size 0xa00000
+ 10485760 bytes read: OK
+## Booting kernel from Legacy Image at 93000000 ...
+   Image Name:   Linux-2.6.35.3-433-g0fae922
+   Image Type:   ARM Linux Kernel Image (uncompressed)
+   Data Size:    2593616 Bytes =  2.5 MB
+   Load Address: 90008000
+   Entry Point:  90008000
+   Verifying Checksum ... OK
+## Loading init Ramdisk from Legacy Image at 93400000 ...
+   Image Name:   uboot ext2 ramdisk rootfs
+   Image Type:   ARM Linux RAMDisk Image (gzip compressed)
+   Data Size:    5954321 Bytes =  5.7 MB
+   Load Address: 00000000
+   Entry Point:  00000000
+   Verifying Checksum ... OK
+   Loading Kernel Image ... OK
+OK
+
+Starting kernel ...
+
+Uncompressing Linux... done, booting the kernel.
+Linux version 2.6.35.3-433-g0fae922 (arm@localhost.localdomain) (gcc version 4.4.4 (4.4.4_09.06.2010) ) #76 PREEMPT Tue Dec 31 17:24:30 EST 2013
+CPU: ARMv7 Processor [412fc085] revision 5 (ARMv7), cr=10c53c7f
+CPU: VIPT nonaliasing data cache, VIPT nonaliasing instruction cache
+Machine: Freescale MX51 Babbage Board
+Memory policy: ECC disabled, Data cache writeback
+Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 65024
+Kernel command line: console=ttymxc0,115200 root=/dev/ram rw mem=256m
+PID hash table entries: 1024 (order: 0, 4096 bytes)
+Dentry cache hash table entries: 32768 (order: 5, 131072 bytes)
+Inode-cache hash table entries: 16384 (order: 4, 65536 bytes)
+Memory: 256MB = 256MB total
+Memory: 246108k/246108k available, 16036k reserved, 0K highmem
+Virtual kernel memory layout:
+    vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+    fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)
+    DMA     : 0xf9e00000 - 0xffe00000   (  96 MB)
+    vmalloc : 0x90800000 - 0xf4000000   (1592 MB)
+    lowmem  : 0x80000000 - 0x90000000   ( 256 MB)
+    pkmap   : 0x7fe00000 - 0x80000000   (   2 MB)
+    modules : 0x7f000000 - 0x7fe00000   (  14 MB)
+      .init : 0x80008000 - 0x80031000   ( 164 kB)
+      .text : 0x80031000 - 0x8073b000   (7208 kB)
+      .data : 0x80754000 - 0x8079bb60   ( 287 kB)
+SLUB: Genslabs=11, HWalign=32, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+Hierarchical RCU implementation.
+        RCU-based detection of stalled CPUs is disabled.
+        Verbose stalled-CPUs detection is disabled.
+NR_IRQS:368
+MXC GPIO hardware
+MXC IRQ initialized
+MXC_Early serial console at MMIO 0x73fbc000 (options '115200')
+bootconsole [ttymxc0] enabled
+Console: colour dummy device 80x30
+Calibrating delay loop... 799.53 BogoMIPS (lpj=3997696)
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 512
+CPU: Testing write buffer coherency: ok
+regulator: core version 0.5
+NET: Registered protocol family 16
+i.MX IRAM pool: 128 KB@0x90840000
+IRAM READY
+CPU is i.MX51 Revision 3.0
+mxc_gpu.0: failed to claim resource 5
+Using SDMA I.API
+MXC DMA API initialized
+IMX usb wakeup probe
+IMX usb wakeup probe
+bio: create slab <bio-0> at 0
+SCSI subsystem initialized
+CSPI: mxc_spi-0 probed
+MXC HS I2C driver
+IPU DMFC NORMAL mode: 1(0~1), 5B(4,5), 5F(6,7)
+Advanced Linux Sound Architecture Driver Version 1.0.23.
+mc13892 Rev 2.4 FinVer 2 detected
+Initializing regulators for Babbage.
+regulator: SW1: 600 <--> 1375 mV at 1050 mV 
+regulator: SW2: 900 <--> 1850 mV at 1225 mV 
+regulator: SW3: 1100 <--> 1850 mV at 1200 mV 
+regulator: SW4: 1100 <--> 1850 mV at 1800 mV 
+regulator: SWBST: 
+regulator: VIOHI: 
+regulator: VPLL: 1050 <--> 1800 mV at 1800 mV 
+regulator: VDIG: 1650 mV 
+regulator: VSD: 1800 <--> 3150 mV at 3150 mV 
+regulator: VUSB2: 2400 <--> 2775 mV at 2600 mV 
+regulator: VVIDEO: 2775 mV 
+regulator: VAUDIO: 2300 <--> 3000 mV at 3000 mV 
+regulator: VCAM: 2500 <--> 3000 mV at 2600 mV fast normal 
+regulator: VGEN1: 1200 mV 
+regulator: VGEN2: 1200 <--> 3150 mV at 3150 mV 
+ === set 1.8v 
+ === vgen3 enable !!!!!!!!!!!!!!!!!!!! 
+regulator: VGEN3: 1800 mV 
+regulator: VUSB: 
+regulator: GPO1: 
+regulator: GPO2: 
+regulator: GPO3: 
+regulator: GPO4: 
+Device spi1.0 probed
+Switching to clocksource mxc_timer1
+NET: Registered protocol family 2
+IP route cache hash table entries: 2048 (order: 1, 8192 bytes)
+TCP established hash table entries: 8192 (order: 4, 65536 bytes)
+TCP bind hash table entries: 8192 (order: 3, 32768 bytes)
+TCP: Hash tables configured (established 8192 bind 8192)
+TCP reno registered
+UDP hash table entries: 256 (order: 0, 4096 bytes)
+UDP-Lite hash table entries: 256 (order: 0, 4096 bytes)
+NET: Registered protocol family 1
+RPC: Registered udp transport module.
+RPC: Registered tcp transport module.
+RPC: Registered tcp NFSv4.1 backchannel transport module.
+Trying to unpack rootfs image as initramfs...
+rootfs image is not initramfs (no cpio magic); looks like an initrd
+Freeing initrd memory: 5812K
+LPMode driver module loaded
+Static Power Management for Freescale i.MX5
+PM driver module loaded
+sdram autogating driver module loaded
+Bus freq driver module loaded
+DI0 is primary
+/proc/led35 created
+DVFS driver module loaded
+i.MXC CPU frequency driver
+DVFS PER driver module loaded
+JFFS2 version 2.2. (NAND) © 2001-2006 Red Hat, Inc.
+msgmni has been set to 492
+alg: No test for stdrng (krng)
+cryptodev: driver loaded.
+io scheduler noop registered
+io scheduler deadline registered
+io scheduler cfq registered (default)
+fbcvt: 1024x768@60: CVT Name - .786M3
+mxc_ipu mxc_ipu: Channel already disabled 9
+mxc_ipu mxc_ipu: Channel already uninitialized 9
+IPU DMFC DP HIGH RESOLUTION: 1(0,1), 5B(2~5), 5F(6,7)
+Console: switching to colour frame buffer device 128x48
+tve: probe of tve.0 failed with error -1
+mxci2c_wait_writefifo:wait error
+sii9022 3-0039: SII9022: cound not find device
+regulator: get() with no identifier
+regulator: get() with no identifier
+regulator: get() with no identifier
+mxci2c_wait_writefifo:wait error
+Serial: MXC Internal UART driver
+mxcintuart.0: ttymxc0 at MMIO 0x73fbc000 (irq = 31) is a Freescale i.MX
+console [ttymxc0] enabled, bootconsole disabled
+console [ttymxc0] enabled, bootconsole disabled
+mxcintuart.1: ttymxc1 at MMIO 0x73fc0000 (irq = 32) is a Freescale i.MX
+mxcintuart.2: ttymxc2 at MMIO 0x7000c000 (irq = 33) is a Freescale i.MX
+brd: module loaded
+loop: module loaded
+mxc_dataflash spi1.1: JEDEC id 000000 not handled
+MXC MTD nand Driver 3.0
+NAND device: Manufacturer ID: 0xec, Chip ID: 0xd3 (Samsung NAND 1GiB 3,3V 8-bit)
+RedBoot partition parsing not available
+Creating 4 MTD partitions on "NAND 1GiB 3,3V 8-bit":
+0x000000000000-0x000008000000 : "bootloader"
+0x000008000000-0x000010000000 : "nand.fs128"
+0x000010000000-0x000030000000 : "nand.fs512"
+0x000030000000-0x000040000000 : "nand.fs256"
+i.MX GPMI NFC
+vcan: Virtual CAN interface driver
+Freescale FlexCAN Driver 
+FEC Ethernet Driver
+fec: PHY @ 0x0, ID 0x0007c0f1 -- LAN8700
+mice: PS/2 mouse device common for all mice
+MXC keypad loaded
+mc13892 rtc probe start
+pmic_rtc pmic_rtc.1: rtc core: registered pmic_rtc as rtc0
+mc13892 rtc probe succeed
+i2c /dev entries driver
+IR NEC protocol handler initialized
+IR RC5(x) protocol handler initialized
+IR RC6 protocol handler initialized
+IR JVC protocol handler initialized
+IR Sony protocol handler initialized
+Linux video capture interface: v2.00
+APM Battery Driver
+MXC WatchDog Driver 2.0
+MXC Watchdog # 0 Timer: initial timeout 60 sec
+VPU initialized
+Cirrus Logic CS42888 ALSA SoC Codec Driver
+sgtl5000_hw_read: read reg error : Reg 0x00
+Device with ID register 0 is not a SGTL5000
+ALSA device list:
+  No soundcards found.
+TCP cubic registered
+NET: Registered protocol family 17
+can: controller area network core (rev 20090105 abi 8)
+NET: Registered protocol family 29
+can: raw protocol (rev 20090105)
+can: broadcast manager protocol (rev 20090105 t)
+VFP support v0.3: implementor 41 architecture 3 part 30 variant c rev 2
+regulator_init_complete: disabling VCAM
+regulator_init_complete: disabling VAUDIO
+regulator_init_complete: disabling VSD
+input: mxc_ts as /devices/virtual/input/input0
+mxc input touchscreen loaded
+pmic_rtc pmic_rtc.1: setting system clock to 2014-01-21 18:36:39 UTC (1390329399)
+RAMDISK: gzip image found at block 0
+VFS: Mounted root (ext2 filesystem) on device 1:0.
+Freeing init memory: 164K
+init started: BusyBox v1.15.0 ()
+starting pid 1085, tty '': '/etc/rc.d/rcS'
+Mounting /proc and /sys 
+Starting the hotplug events dispatcher udevd
+Synthesizing initial hotplug events
+Setting the hostname to freescale
+Mounting filesystems
+mount: mounting usbfs on /proc/bus/usb failed: No such file or directory
+Running sysctl
+Setting up networking on loopback device: 
+
+Warning: no IPADDR is set, please set this from the ltib
+config screen, or directly in /etc/rc.d/rc.conf.
+IP address setup bypassed
+
+Starting inetd: 
+=== rc.local start ===
+JFFS2 doesn't use OOB.
+Empty flash at 0x0706f81c ends at 0x07070000
+Empty flash at 0x07070820 ends at 0x07071000
+Empty flash at 0x0707181c ends at 0x07072000
+Empty flash at 0x07072820 ends at 0x07073000
+Empty flash at 0x0707381c ends at 0x07074000
+Empty flash at 0x07074820 ends at 0x07075000
+Empty flash at 0x0707581c ends at 0x07076000
+Empty flash at 0x07076820 ends at 0x07077000
+eth0: config: auto-negotiation on, 100FDX, 100HDX, 10FDX, 10HDX.
+/mnt/app/auto.bat: line 4: /mnt/app/ScoutDev/ScoutDev: not found
+starting pid 2062, tty '': '/sbin/getty -L ttymxc0 115200 vt100'
+
+arm-none-linux-gnueabi-gcc (4.4.4_09.06.2010) 4.4.4
+root filesystem built on Wed, 25 Dec 2013 17:40:58 -0500
+Freescale Semiconductor, Inc.
+
+freescale login: root
+login[2062]: root login on 'ttymxc0'
+
+
+BusyBox v1.15.0 () built-in shell (ash)
+Enter 'help' for a list of built-in commands.
+
+root@freescale ~$ ps -A
+  PID USER       VSZ STAT COMMAND
+    1 root      2144 S    init       
+    2 root         0 SW   [kthreadd]
+    3 root         0 SW   [ksoftirqd/0]
+    4 root         0 SW   [events/0]
+    5 root         0 SW   [khelper]
+    8 root         0 SW   [async/mgr]
+    9 root         0 SW   [pm]
+   56 root         0 DW   [usb_wakeup thre]
+   57 root         0 DW   [usb_wakeup thre]
+  134 root         0 SW   [sync_supers]
+  136 root         0 SW   [bdi-default]
+  138 root         0 SW   [kblockd/0]
+  148 root         0 RW   [mxc_spi.0]
+  185 root         0 DW   [pmic-event-thre]
+  248 root         0 SW   [rpciod/0]
+  266 root         0 SW   [kswapd0]
+  314 root         0 SW   [aio/0]
+  326 root         0 SW   [nfsiod]
+  332 root         0 SW   [crypto/0]
+  940 root         0 SW   [kapmd]
+ 1005 root         0 SW   [mtdblock0]
+ 1010 root         0 SW   [mtdblock1]
+ 1015 root         0 SW   [mtdblock2]
+ 1020 root         0 SW   [mtdblock3]
+ 1049 root         0 SW   [kconservative/0]
+ 1083 root         0 SW   [mxc_ts]
+ 1084 root         0 SW   [flush-1:0]
+ 1094 root      1768 S <  udevd --daemon 
+ 2045 root      2220 S    /usr/sbin/inetd 
+ 2057 root         0 SWN  [jffs2_gcd_mtd1]
+ 2062 root      2148 S    -sh 
+ 2063 root      2148 R    ps -A 
+root@freescale ~$ 

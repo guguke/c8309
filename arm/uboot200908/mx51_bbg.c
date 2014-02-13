@@ -668,6 +668,9 @@ static void setup_core_voltage_spi(void)
 		puts(" board not rev 2.0\n");
 		pmic_reg(slave, 48, 0x0023807B, 1);
 	}
+	val = pmic_reg(slave, 13, 0, 0);
+	val = (val & (~0x00300000)) | 0x00c00000;
+	pmic_reg(slave, 13, val, 1);
 
 	/* power up the system first */
 	pmic_reg(slave, 34, 0x00200000, 1);

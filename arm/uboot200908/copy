@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cp mx51_bbg.h uboot/include/configs/mx51_bbg.h
+cp mx51_bbg.c uboot/board/freescale/mx51_bbg/mx51_bbg.c

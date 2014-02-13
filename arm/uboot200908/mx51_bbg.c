@@ -660,8 +660,14 @@ static void setup_core_voltage_spi(void)
 	 * Set the charge regulator output voltage as 4.2V by default
 	 * according to MC13892 spec
 	 */
-	if (is_board_rev(BOARD_REV_2_0))
+	if (is_board_rev(BOARD_REV_2_0)){
+		puts(" board rev 2.0\n");
 		pmic_reg(slave, 48, 0x0023807B, 1);
+	}
+	else{
+		puts(" board not rev 2.0\n");
+		pmic_reg(slave, 48, 0x0023807B, 1);
+	}
 
 	/* power up the system first */
 	pmic_reg(slave, 34, 0x00200000, 1);

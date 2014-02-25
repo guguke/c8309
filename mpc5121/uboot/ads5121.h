@@ -27,7 +27,9 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
+#define DEBUG 1
 #define CONFIG_ADS5121 1
+#define CONFIG_ADS5121_REV2 1
 /*
  * Memory map for the ADS5121 board:
  *
@@ -138,6 +140,7 @@
 #define MDDRC_SYS_CFG_RUN		~(0x10000000)
 #ifdef CONFIG_ADS5121_REV2
 #define MDDRC_SYS_CFG_MICRON		0xF8604A00
+#define MDDRC_SYS_CFG_MICRON_RUN	0xF8604A00
 #define MDDRC_TIME_CFG1_MICRON		0x54EC1168
 #define MDDRC_TIME_CFG2_MICRON		0x35210864
 #else
@@ -261,7 +264,8 @@ extern void ads5121_fsl_nfc_board_cs(int);
 #define CONFIG_SYS_SRAM_BASE		0x30000000
 #define CONFIG_SYS_SRAM_SIZE		0x00020000	/* 128 KB */
 
-#define CONFIG_SYS_CS0_CFG		0x05059310	/* ALE active low, data size 4bytes */
+#define CONFIG_SYS_CS0_CFG		0x0           /* ALE active low, data size 4bytes */
+//#define CONFIG_SYS_CS0_CFG		0x05059010	/* ALE active low, data size 4bytes */
 #define CONFIG_SYS_CS2_CFG		0x05059010	/* ALE active low, data size 1byte */
 #define CONFIG_SYS_CS_ALETIMING	0x00000005	/* Use alternative CS timing for CS0 and CS2 */
 
@@ -290,7 +294,7 @@ extern void ads5121_fsl_nfc_board_cs(int);
 /*
  * Serial console configuration
  */
-#define CONFIG_SYS_CONSOLE_INFO_QUIET 1
+//#define CONFIG_SYS_CONSOLE_INFO_QUIET 1
 #define CONFIG_PSC_CONSOLE	3	/* console is on PSC3 */
 #if CONFIG_PSC_CONSOLE != 3
 #error CONFIG_PSC_CONSOLE must be 3

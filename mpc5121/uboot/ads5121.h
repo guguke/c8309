@@ -29,7 +29,6 @@
 
 #define DEBUG 1
 #define CONFIG_ADS5121 1
-#define CONFIG_ADS5121_REV2 1
 /*
  * Memory map for the ADS5121 board:
  *
@@ -88,7 +87,7 @@
 #ifdef CONFIG_ADS5121_REV2
 #define CONFIG_SYS_DDR_SIZE		256		/* MB */
 #else
-#define CONFIG_SYS_DDR_SIZE		512		/* MB */
+#define CONFIG_SYS_DDR_SIZE		256//512		/* MB */
 #endif
 #define CONFIG_SYS_DDR_BASE		0x00000000	/* DDR is system memory*/
 #define CONFIG_SYS_SDRAM_BASE		CONFIG_SYS_DDR_BASE
@@ -140,14 +139,19 @@
 #define MDDRC_SYS_CFG_RUN		~(0x10000000)
 #ifdef CONFIG_ADS5121_REV2
 #define MDDRC_SYS_CFG_MICRON		0xF8604A00
-#define MDDRC_SYS_CFG_MICRON_RUN	0xF8604A00
+#define MDDRC_SYS_CFG_MICRON_RUN	0xE8604A00
 #define MDDRC_TIME_CFG1_MICRON		0x54EC1168
 #define MDDRC_TIME_CFG2_MICRON		0x35210864
 #else
-#define MDDRC_SYS_CFG_MICRON	 	0xFA804A00
-#define MDDRC_SYS_CFG_MICRON_RUN	0xEA804A00
-#define MDDRC_TIME_CFG1_MICRON		0x68EC1168
-#define MDDRC_TIME_CFG2_MICRON		0x34310864
+//80009000: ea804ac0 06183d2e 68ec1189 35290860    ..J...=.h...5).`
+#define MDDRC_SYS_CFG_MICRON	 	0xFA804AC0
+#define MDDRC_SYS_CFG_MICRON_RUN	0xEA804AC0
+#define MDDRC_TIME_CFG1_MICRON		0x68EC1189
+#define MDDRC_TIME_CFG2_MICRON		0x35290860
+//#define MDDRC_SYS_CFG_MICRON	 	0xFA804A00
+//#define MDDRC_SYS_CFG_MICRON_RUN	0xEA804A00
+//#define MDDRC_TIME_CFG1_MICRON		0x68EC1168
+//#define MDDRC_TIME_CFG2_MICRON		0x34310864
 #endif
 #define MDDRC_SYS_CFG_ELPIDA	 	0xFA802B00
 #define MDDRC_SYS_CFG_ELPIDA_RUN	0xEA802B00
@@ -204,6 +208,7 @@
 #undef CONFIG_BKUP_FLASH
 #define CONFIG_SYS_FLASH_CFI				/* use the Common Flash Interface */
 #define CONFIG_FLASH_CFI_DRIVER			/* use the CFI driver */
+#define CONFIG_BKUP_FLASH 1
 #ifdef CONFIG_BKUP_FLASH
 #define CONFIG_SYS_FLASH_BASE		0xFF800000	/* start of FLASH   */
 #define CONFIG_SYS_FLASH_SIZE		0x00800000	/* max flash size in bytes */
@@ -264,8 +269,9 @@ extern void ads5121_fsl_nfc_board_cs(int);
 #define CONFIG_SYS_SRAM_BASE		0x30000000
 #define CONFIG_SYS_SRAM_SIZE		0x00020000	/* 128 KB */
 
-#define CONFIG_SYS_CS0_CFG		0x0           /* ALE active low, data size 4bytes */
-//#define CONFIG_SYS_CS0_CFG		0x05059010	/* ALE active low, data size 4bytes */
+#define CONFIG_SYS_CS0_CFG		0x0	/* ALE active low, data size 1bytes */
+//#define CONFIG_SYS_CS0_CFG		0x05059010	/* ALE active low, data size 1bytes */
+//#define CONFIG_SYS_CS0_CFG		0x05059310	/* ALE active low, data size 4bytes */
 #define CONFIG_SYS_CS2_CFG		0x05059010	/* ALE active low, data size 1byte */
 #define CONFIG_SYS_CS_ALETIMING	0x00000005	/* Use alternative CS timing for CS0 and CS2 */
 

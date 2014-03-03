@@ -691,7 +691,7 @@ relocate_code:
 
 in_ram:
 #if 0
-	lis	r0, 0x80000000@h
+	lis	r0, 0x80000000@h           /* not work led5121   */
 	ori	r0, r0, 0x80000000@l
 	lis	r3, 0x00020000@h
 	ori	r3, r3, 0x00020000@l

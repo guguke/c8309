@@ -209,12 +209,16 @@
 #define CONFIG_SYS_FLASH_CFI				/* use the Common Flash Interface */
 #define CONFIG_FLASH_CFI_DRIVER			/* use the CFI driver */
 #define CONFIG_BKUP_FLASH 1
+#define CONFIG_SYS_FLASH_BASE		0xFFF00000	/* start of FLASH   */
+#define CONFIG_SYS_FLASH_SIZE		0x00080000	/* max flash size in bytes */
+#if 0
 #ifdef CONFIG_BKUP_FLASH
 #define CONFIG_SYS_FLASH_BASE		0xFF800000	/* start of FLASH   */
 #define CONFIG_SYS_FLASH_SIZE		0x00800000	/* max flash size in bytes */
 #else
 #define CONFIG_SYS_FLASH_BASE		0xFC000000	/* start of FLASH   */
 #define CONFIG_SYS_FLASH_SIZE		0x04000000	/* max flash size in bytes */
+#endif
 #endif
 #define CONFIG_SYS_FLASH_USE_BUFFER_WRITE
 #define CONFIG_SYS_MAX_FLASH_BANKS	1		/* number of banks */
@@ -269,10 +273,11 @@ extern void ads5121_fsl_nfc_board_cs(int);
 #define CONFIG_SYS_SRAM_BASE		0x30000000
 #define CONFIG_SYS_SRAM_SIZE		0x00020000	/* 128 KB */
 
-#define CONFIG_SYS_CS0_CFG		0x0	/* ALE active low, data size 1bytes */
+#define CONFIG_SYS_CS0_CFG		0x00201000	/* ALE active low, data size 1bytes */
 //#define CONFIG_SYS_CS0_CFG		0x05059010	/* ALE active low, data size 1bytes */
 //#define CONFIG_SYS_CS0_CFG		0x05059310	/* ALE active low, data size 4bytes */
-#define CONFIG_SYS_CS2_CFG		0x05059010	/* ALE active low, data size 1byte */
+#define CONFIG_SYS_CS2_CFG		0x00201000	/* ALE active low, data size 1byte */
+//#define CONFIG_SYS_CS2_CFG		0x05059010	/* ALE active low, data size 1byte */
 #define CONFIG_SYS_CS_ALETIMING	0x00000005	/* Use alternative CS timing for CS0 and CS2 */
 
 /* Use SRAM for initial stack */

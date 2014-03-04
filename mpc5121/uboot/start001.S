@@ -190,6 +190,34 @@ _end_of_vectors:
 boot_cold:
 	/* Save msr contents */
 	mfmsr	r5
+
+	lis	r4, 0xff40a000@h
+	ori	r4, r4, 0xff40a000@l
+	lis	r3, 0x00000180@h
+	ori	r3, r3, 0x00000180@l
+	stw	r3, 0x0000028c(r4)
+
+	lis	r4, 0xff400000@h
+	ori	r4, r4, 0xff400000@l
+	lis	r3, 0x00020000@h
+	ori	r3, r3, 0x00020000@l
+	stw	r3, 0x00001100(r4)
+
+	lis	r4, 0xff400000@h
+	ori	r4, r4, 0xff400000@l
+	lis	r3, 0x00000000@h
+	ori	r3, r3, 0x00000000@l
+	stw	r3, 0x00001108(r4)
+#if 1
+	lis r4, 0x0ff@h            /* led5121 */
+	ori r4, r4, 0x0ff@l
+	lis r3, 0x0ffff@h
+	ori r3, r3, 0x0ffff@l
+1:	addi r3, r3, -1
+    cmpwi 7,r3,1
+	bne 7,1b
+
+#endif
 	/* Set IMMR area to our preferred location */
 	lis	r4, CONFIG_DEFAULT_IMMR@h
 	lis	r3, CONFIG_SYS_IMMR@h
@@ -200,6 +228,13 @@ boot_cold:
 	/* Initialise the machine */
 	bl	cpu_early_init
 
+#if 0
+	lis	r4, 0x80000000@h           /* works led5121 */
+	ori	r4, r4, 0x80000000@l
+	lis	r3, 0x00020000@h
+	ori	r3, r3, 0x00020000@l
+	stw	r3, 0x00001108(r4)
+#endif
 	/*
 	 * Set up Local Access Windows:
 	 *
@@ -240,6 +275,15 @@ boot_cold:
 	lis     r4, CONFIG_SYS_CS0_CFG@h
 	ori     r4, r4, CONFIG_SYS_CS0_CFG@l
 	stw     r4, CS0_CONFIG(r3)
+
+#if 0
+	lis	r4, 0x80000000@h     /*  works led5121 */
+	ori	r4, r4, 0x80000000@l
+	lis	r5, 0x00020000@h
+	ori	r5, r5, 0x00020000@l
+	stw	r5, 0x00001108(r4)
+#endif
+
 #ifdef CONFIG_ADS5125 /* CS2 FUNC MUX must be done before CS is enabled */
 	lis     r4, (CONFIG_SYS_IOCTRL_ADDR)@h
 	ori     r4, r4, (CONFIG_SYS_IOCTRL_ADDR)@l
@@ -249,12 +293,25 @@ boot_cold:
 	li	r5, IOCTRL_MUX_PSC9
 	stb	r5, IO_CTRL_I2C1_SCL(r4)
 	stb	r5, IO_CTRL_I2C1_SDA(r4)
-
+#endif
+#if 0
+	lis	r4, 0x80000000@h     /*  works led5121 */
+	ori	r4, r4, 0x80000000@l
+	lis	r5, 0x00020000@h
+	ori	r5, r5, 0x00020000@l
+	stw	r5, 0x00001108(r4)
 #endif
 	/* Master enable all CS's */
 	lis	r4, CS_CTRL_ME@h
 	ori	r4, r4, CS_CTRL_ME@l
 	stw	r4, CS_CTRL(r3)
+#if 1
+	lis	r4, 0x80000000@h     /* doesn't work led5121 */
+	ori	r4, r4, 0x80000000@l
+	lis	r5, 0x00020000@h
+	ori	r5, r5, 0x00020000@l
+	stw	r5, 0x00001108(r4)
+#endif
 
 	lis	r4, (CONFIG_SYS_MONITOR_BASE)@h
 	ori	r4, r4, (CONFIG_SYS_MONITOR_BASE)@l
@@ -263,6 +320,13 @@ boot_cold:
 	blr
 
 in_flash:
+#if 0
+	lis	r1, 0x80000000@h         /* doesn't work  led5121 */
+	ori	r1, r1, 0x80000000@l
+	lis	r0, 0x00020000@h
+	ori	r0, r0, 0x00020000@l
+	stw	r0, 0x00001108(r1)
+#endif
 	lis	r1, (CONFIG_SYS_INIT_RAM_ADDR + CONFIG_SYS_GBL_DATA_OFFSET)@h
 	ori	r1, r1, (CONFIG_SYS_INIT_RAM_ADDR + CONFIG_SYS_GBL_DATA_OFFSET)@l
 
@@ -282,6 +346,13 @@ in_flash:
 	/* run low-level CPU init code (in Flash) */
 	bl	cpu_init_f
 
+#if 0
+	lis	r4, 0x80000000@h                /* doesn't work led5121 */
+	ori	r4, r4, 0x80000000@l
+	lis	r3, 0x00020000@h
+	ori	r3, r3, 0x00020000@l
+	stw	r3, 0x00001108(r4)
+#endif
 	/* r3: BOOTFLAG */
 	mr	r3, r21
 	/* run 1st part of board init code (in Flash) */
@@ -363,6 +434,13 @@ cpu_early_init:
 	SYNC
 	mtspr	SRR1, r3			/* Mirror current MSR state in SRR1 */
 
+#if 0
+	lis	r4, 0x80000000@h                  /* works led5121 */
+	ori	r4, r4, 0x80000000@l
+	lis	r3, 0x00020000@h
+	ori	r3, r3, 0x00020000@l
+	stw	r3, 0x00001108(r4)
+#endif
 	lis	r3, CONFIG_SYS_IMMR@h
 
 #if defined(CONFIG_WATCHDOG)
@@ -595,6 +673,13 @@ relocate_code:
 	blt	6b
 7:	sync			/* Wait for all icbi to complete on bus	*/
 	isync
+#if 0
+	lis	r0, 0x80000000@h
+	ori	r0, r0, 0x80000000@l
+	lis	r3, 0x00020000@h
+	ori	r3, r3, 0x00020000@l
+	stw	r3, 0x00001108(r0)
+#endif
 
 /*
  * We are done. Do not return, instead branch to second part of board
@@ -605,6 +690,13 @@ relocate_code:
 	blr
 
 in_ram:
+#if 0
+	lis	r0, 0x80000000@h           /* not work led5121   */
+	ori	r0, r0, 0x80000000@l
+	lis	r3, 0x00020000@h
+	ori	r3, r3, 0x00020000@l
+	stw	r3, 0x00001108(r0)
+#endif
 	/*
 	 * Relocation Function, r14 point to got2+0x8000
 	 *

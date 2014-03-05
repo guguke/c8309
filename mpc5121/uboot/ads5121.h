@@ -212,7 +212,7 @@
 #define PHYS_FLASH_2_SIZE	0x00080000 /* 512KB (one chip, 8bit access) */
 
 #undef CONFIG_BKUP_FLASH
-//#define CONFIG_SYS_FLASH_CFI				/* use the Common Flash Interface */
+#define CONFIG_SYS_FLASH_CFI				/* use the Common Flash Interface */
 //#define CONFIG_FLASH_CFI_DRIVER			/* use the CFI driver */
 #define CONFIG_SYS_FLASH_BASE		0xFFF00000	/* start of FLASH   */
 #define CONFIG_SYS_FLASH_SIZE		0x00080000	/* max flash size in bytes */
@@ -226,11 +226,13 @@
 #endif
 #endif
 #define CONFIG_SYS_FLASH_USE_BUFFER_WRITE
-#define CONFIG_SYS_MAX_FLASH_BANKS	2		/* number of banks */
+#define CONFIG_SYS_MAX_FLASH_BANKS	1		/* number of banks */
 #define CONFIG_SYS_FLASH_BANKS_LIST	{CONFIG_SYS_FLASH_BASE}
 #define CONFIG_SYS_MAX_FLASH_SECT	256		/* max sectors per device */
 
 #undef CONFIG_SYS_FLASH_CHECKSUM
+
+#define FLASH_BASE0_PRELIM      CONFIG_SYS_FLASH_BASE  /* FLASH bank #0        */
 
 /*
  * NAND FLASH
@@ -386,6 +388,12 @@ extern void ads5121_fsl_nfc_board_cs(int);
 #define CONFIG_MII		1	/* MII PHY management		*/
 #define CONFIG_FEC_AN_TIMEOUT	1
 #define CONFIG_HAS_ETH0
+
+#define CONFIG_RTL8139
+#define _IO_BASE	    0x00000000
+/* This macro is used by RTL8139 but not defined in PPC architecture */
+#define KSEG1ADDR(x)	    (x)
+#define CONFIG_HAS_ETH1
 
 /*
  * Environment

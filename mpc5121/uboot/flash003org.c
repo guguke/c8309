@@ -28,9 +28,9 @@
  */
 
 #include <common.h>
-//#include <mpc8xx.h>
-//#include <galileo/gt64260R.h>
-//#include <galileo/memory.h>
+#include <mpc8xx.h>
+#include <galileo/gt64260R.h>
+#include <galileo/memory.h>
 #include "intel_flash.h"
 
 #define FLASH_ROM       0xFFFD       /* unknown flash type                   */
@@ -88,7 +88,7 @@ flash_init (void)
 		printf ("## Unknown FLASH at %08lx: Size = 0x%08lx = %ld MB\n",
 			base, size_b0, size_b0<<20);
 	}
-#if 0           /* cyx    */
+
 	base = memoryGetDeviceBaseAddress(CONFIG_SYS_EXTRA_FLASH_DEVICE);
 	for(i=1;i<CONFIG_SYS_MAX_FLASH_BANKS;i++) {
 	    unsigned long size = flash_get_size(CONFIG_SYS_EXTRA_FLASH_WIDTH, (vu_long *)base, &flash_info[i]);
@@ -109,7 +109,7 @@ flash_init (void)
 	    size_b1+=size;
 	    base+=size;
 	}
-#endif
+
 #if CONFIG_SYS_MONITOR_BASE >= CONFIG_SYS_FLASH_BASE
 	/* monitor protection ON by default */
 	flash_protect(FLAG_PROTECT_SET,

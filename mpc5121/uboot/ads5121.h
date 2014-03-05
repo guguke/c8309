@@ -205,10 +205,15 @@
 /*
  * NOR FLASH on the Local Bus
  */
+#define PHYS_FLASH_1		0xfff00000 /* Flash Bank #1 */
+#define PHYS_FLASH_1_SIZE	0x00080000 /* 2 MB (one chip, 8bit access) */
+
+#define PHYS_FLASH_2		0xfff00000 /* Flash Bank #2 */
+#define PHYS_FLASH_2_SIZE	0x00080000 /* 512KB (one chip, 8bit access) */
+
 #undef CONFIG_BKUP_FLASH
-#define CONFIG_SYS_FLASH_CFI				/* use the Common Flash Interface */
-#define CONFIG_FLASH_CFI_DRIVER			/* use the CFI driver */
-#define CONFIG_BKUP_FLASH 1
+//#define CONFIG_SYS_FLASH_CFI				/* use the Common Flash Interface */
+//#define CONFIG_FLASH_CFI_DRIVER			/* use the CFI driver */
 #define CONFIG_SYS_FLASH_BASE		0xFFF00000	/* start of FLASH   */
 #define CONFIG_SYS_FLASH_SIZE		0x00080000	/* max flash size in bytes */
 #if 0
@@ -221,7 +226,7 @@
 #endif
 #endif
 #define CONFIG_SYS_FLASH_USE_BUFFER_WRITE
-#define CONFIG_SYS_MAX_FLASH_BANKS	1		/* number of banks */
+#define CONFIG_SYS_MAX_FLASH_BANKS	2		/* number of banks */
 #define CONFIG_SYS_FLASH_BANKS_LIST	{CONFIG_SYS_FLASH_BASE}
 #define CONFIG_SYS_MAX_FLASH_SECT	256		/* max sectors per device */
 
@@ -273,11 +278,8 @@ extern void ads5121_fsl_nfc_board_cs(int);
 #define CONFIG_SYS_SRAM_BASE		0x30000000
 #define CONFIG_SYS_SRAM_SIZE		0x00020000	/* 128 KB */
 
-#define CONFIG_SYS_CS0_CFG		0x00201000	/* ALE active low, data size 1bytes */
-//#define CONFIG_SYS_CS0_CFG		0x05059010	/* ALE active low, data size 1bytes */
-//#define CONFIG_SYS_CS0_CFG		0x05059310	/* ALE active low, data size 4bytes */
-#define CONFIG_SYS_CS2_CFG		0x00201000	/* ALE active low, data size 1byte */
-//#define CONFIG_SYS_CS2_CFG		0x05059010	/* ALE active low, data size 1byte */
+#define CONFIG_SYS_CS0_CFG		0x05051010	/* ALE active low, data size 1bytes */
+#define CONFIG_SYS_CS2_CFG		0x05059010	/* ALE active low, data size 1byte */
 #define CONFIG_SYS_CS_ALETIMING	0x00000005	/* Use alternative CS timing for CS0 and CS2 */
 
 /* Use SRAM for initial stack */
@@ -305,7 +307,7 @@ extern void ads5121_fsl_nfc_board_cs(int);
 /*
  * Serial console configuration
  */
-//#define CONFIG_SYS_CONSOLE_INFO_QUIET 1
+#define CONFIG_SYS_CONSOLE_INFO_QUIET 1
 #define CONFIG_PSC_CONSOLE	3	/* console is on PSC3 */
 #if CONFIG_PSC_CONSOLE != 3
 #error CONFIG_PSC_CONSOLE must be 3
@@ -458,6 +460,9 @@ extern void ads5121_fsl_nfc_board_cs(int);
 #define CONFIG_SYS_MAXARGS	16		/* max number of command args */
 #define CONFIG_SYS_BARGSIZE	CONFIG_SYS_CBSIZE	/* Boot Argument Buffer Size */
 #define CONFIG_SYS_HZ		1000		/* decrementer freq: 1ms ticks */
+/* timeout values are in ticks */
+#define CONFIG_SYS_FLASH_ERASE_TOUT	(4*CONFIG_SYS_HZ) /* Timeout for Flash Erase */
+#define CONFIG_SYS_FLASH_WRITE_TOUT	(2*CONFIG_SYS_HZ) /* Timeout for Flash Write */
 
 /*
  * For booting Linux, the board info and command line data

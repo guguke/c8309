@@ -1120,16 +1120,22 @@ void board_init_r (gd_t *id, ulong dest_addr)
 	}
 	else {
 		puts ("Net:   ");
+#ifdef CONFIG_MPC512x_FEC
 		eth_initialize (bd);
-		pci_eth_init(bd);
+#else
+		pci_eth_init(bd);          // rtl8139 init
+#endif  
 	};
 #else
 #if defined(CONFIG_NET_MULTI)
 	WATCHDOG_RESET ();
 	puts ("Net:   ");
 #endif
+#ifdef CONFIG_MPC512x_FEC
 	eth_initialize (bd);
-	pci_eth_init(bd);
+#else
+	pci_eth_init(bd);          // rtl8139 init
+#endif  
 #endif
 #endif
 

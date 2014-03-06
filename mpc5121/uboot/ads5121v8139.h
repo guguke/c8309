@@ -382,7 +382,7 @@ extern void ads5121_fsl_nfc_board_cs(int);
 /*
  * Ethernet configuration
  */
-#if 1            //   1: eth0 = rtl8139
+#if 0
 #define CONFIG_MPC512x_FEC	1
 //#define CONFIG_NET_MULTI
 #define CONFIG_PHY_ADDR		0x1

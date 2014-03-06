@@ -382,18 +382,22 @@ extern void ads5121_fsl_nfc_board_cs(int);
 /*
  * Ethernet configuration
  */
+#if 0
 #define CONFIG_MPC512x_FEC	1
 #define CONFIG_NET_MULTI
 #define CONFIG_PHY_ADDR		0x1
 #define CONFIG_MII		1	/* MII PHY management		*/
 #define CONFIG_FEC_AN_TIMEOUT	1
+#endif
+#define CONFIG_MII
+#define CONFIG_NET_MULTI
 #define CONFIG_HAS_ETH0
 
 #define CONFIG_RTL8139
 #define _IO_BASE	    0x00000000
 /* This macro is used by RTL8139 but not defined in PPC architecture */
 #define KSEG1ADDR(x)	    (x)
-#define CONFIG_HAS_ETH1
+//#define CONFIG_HAS_ETH1
 
 /*
  * Environment
@@ -430,6 +434,8 @@ extern void ads5121_fsl_nfc_board_cs(int);
 #define CONFIG_CMD_FUSE
 #define CONFIG_CMD_IDE
 #define CONFIG_CMD_EXT2
+
+#define CONFIG_CMD_NET
 
 #if defined(CONFIG_PCI)
 #define CONFIG_CMD_PCI

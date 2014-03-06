@@ -5,3 +5,4 @@ cp ads5121.h uboot/include/configs/ads5121.h
 #cp serial.c uboot/cpu/mpc512x/serial.c
 #cp cpu_init.c uboot/cpu/mpc512x/cpu_init.c
 cp flash.c uboot/board/ads5121/flash.c
+cp board.c uboot/lib_ppc/board.c

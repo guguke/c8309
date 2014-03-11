@@ -293,7 +293,7 @@ extern void ads5121_fsl_nfc_board_cs(int);
 #define CONFIG_SYS_INIT_SP_OFFSET	CONFIG_SYS_GBL_DATA_OFFSET
 
 #define CONFIG_SYS_MONITOR_BASE	TEXT_BASE		/* Start of monitor */
-#define CONFIG_SYS_MONITOR_LEN		(512 * 1024)		/* Reserve 512 kB for Mon */
+#define CONFIG_SYS_MONITOR_LEN		(384 * 1024)		/* Reserve 512 kB for Mon */
 #ifdef	CONFIG_FSL_DIU_FB
 #define CONFIG_SYS_MALLOC_LEN		(6 * 1024 * 1024)	/* Reserved for malloc */
 #else
@@ -382,7 +382,7 @@ extern void ads5121_fsl_nfc_board_cs(int);
 /*
  * Ethernet configuration
  */
-#if 1            //   1: eth0 = rtl8139
+#if 0            // 1: FEC  0: eth0 = rtl8139
 #define CONFIG_MPC512x_FEC	1
 //#define CONFIG_NET_MULTI
 #define CONFIG_PHY_ADDR		0x1
@@ -404,17 +404,20 @@ extern void ads5121_fsl_nfc_board_cs(int);
  */
 #define CONFIG_ENV_IS_IN_FLASH	1
 /* This has to be a multiple of the Flash sector size */
-#define CONFIG_ENV_ADDR		(CONFIG_SYS_MONITOR_BASE + CONFIG_SYS_MONITOR_LEN)
-#define CONFIG_ENV_SIZE		0x2000
+//#define CONFIG_ENV_ADDR		(CONFIG_SYS_MONITOR_BASE + CONFIG_SYS_MONITOR_LEN)
+#define CONFIG_ENV_ADDR		0xfff60000
+#define CONFIG_ENV_SIZE		0x10000
 #ifdef CONFIG_BKUP_FLASH
-#define CONFIG_ENV_SECT_SIZE	0x20000	/* one sector (256K) for env */
+#define CONFIG_ENV_SECT_SIZE	0x10000	/* one sector (256K) for env */
 #else
-#define CONFIG_ENV_SECT_SIZE	0x40000	/* one sector (256K) for env */
+#define CONFIG_ENV_SECT_SIZE	0x10000	/* one sector (256K) for env */
 #endif
 
+#if 0
 /* Address and size of Redundant Environment Sector	*/
 #define CONFIG_ENV_ADDR_REDUND	(CONFIG_ENV_ADDR + CONFIG_ENV_SECT_SIZE)
 #define CONFIG_ENV_SIZE_REDUND	(CONFIG_ENV_SIZE)
+#endif
 
 #define CONFIG_LOADS_ECHO	1	/* echo on for serial download */
 #define CONFIG_SYS_LOADS_BAUD_CHANGE	1	/* allow baudrate change */
@@ -461,7 +464,7 @@ extern void ads5121_fsl_nfc_board_cs(int);
  */
 #define CONFIG_SYS_LONGHELP			/* undef to save memory */
 #define CONFIG_SYS_LOAD_ADDR	0x2000000	/* default load address */
-#define CONFIG_SYS_PROMPT	"=> "		/* Monitor Command Prompt */
+#define CONFIG_SYS_PROMPT	"v100> "		/* Monitor Command Prompt */
 
 #ifdef CONFIG_CMD_KGDB
 	#define CONFIG_SYS_CBSIZE	1024	/* Console I/O Buffer Size */
@@ -577,6 +580,10 @@ extern void ads5121_fsl_nfc_board_cs(int);
 		"era ${u-boot_addr} +${filesize};"			\
 		"cp.b ${u-boot_addr_r} ${u-boot_addr} ${filesize}\0"	\
 	"upd=run load update\0"						\
+	"ipaddr=192.168.2.88\0"        \
+	"ethaddr=00:11:22:33:44:55\0"                  \
+	"serverip=192.168.2.24\0"               \
+	"bootargs=root=/dev/ram rw ramdisk_size=70000 console=ttyPSC0,115200\0"     \
 	""
 
 #define CONFIG_BOOTCOMMAND	"run flash_jffs2"

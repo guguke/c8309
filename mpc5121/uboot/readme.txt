@@ -12,3 +12,5 @@ uboot/board/ads5121/flash.c
 uboot/board/evb64260/flash.c flash003org.c
 
 uboot/lib_ppc/board.c add rtl8139
+uboot/drivers/mtd/nand/fsl_nfc_nand.c // nand write size mismatch,
+compile:2048 , reset config words:512

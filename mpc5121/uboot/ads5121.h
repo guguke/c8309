@@ -238,6 +238,8 @@
  * NAND FLASH
  * drivers/mtd/nand/mpc5121_mpc.c (rev 2 silicon/rev 4 boards only)
  */
+#define CONFIG_MTD_DEBUG
+#define CONFIG_MTD_DEBUG_VERBOSE 0
 #define CONFIG_NAND_FSL_NFC
 #ifdef CONFIG_NAND_FSL_NFC
 #ifdef CONFIG_NAND_SPL
@@ -249,7 +251,7 @@
 /*
  * The flash on ADS5121 board is two flash chips in one package
  */
-#define CONFIG_SYS_MAX_NAND_DEVICE	2
+#define CONFIG_SYS_MAX_NAND_DEVICE	1
 #define NAND_MAX_CHIPS		CONFIG_SYS_MAX_NAND_DEVICE
 #define CONFIG_SYS_NAND_SELECT_DEVICE	1
 /*
@@ -258,7 +260,7 @@
 #define CONFIG_FSL_NFC_WIDTH 1
 #define CONFIG_FSL_NFC_WRITE_SIZE 2048
 #define CONFIG_FSL_NFC_SPARE_SIZE 64
-#define CONFIG_FSL_NFC_CHIPS 2
+#define CONFIG_FSL_NFC_CHIPS 1
 
 #ifndef __ASSEMBLY__
 /*
@@ -280,7 +282,8 @@ extern void ads5121_fsl_nfc_board_cs(int);
 #define CONFIG_SYS_SRAM_BASE		0x30000000
 #define CONFIG_SYS_SRAM_SIZE		0x00020000	/* 128 KB */
 
-#define CONFIG_SYS_CS0_CFG		0x05051010	/* ALE active low, data size 1bytes */
+//#define CONFIG_SYS_CS0_CFG		0x05051010	/* ALE active low, data size 1bytes */
+#define CONFIG_SYS_CS0_CFG		0x00201000	/* ALE active low, data size 1bytes */
 #define CONFIG_SYS_CS2_CFG		0x05059010	/* ALE active low, data size 1byte */
 #define CONFIG_SYS_CS_ALETIMING	0x00000005	/* Use alternative CS timing for CS0 and CS2 */
 
@@ -382,7 +385,7 @@ extern void ads5121_fsl_nfc_board_cs(int);
 /*
  * Ethernet configuration
  */
-#if 0            // 1: FEC  0: eth0 = rtl8139
+#if 1            // 1: FEC  0: eth0 = rtl8139     ==board.c==
 #define CONFIG_MPC512x_FEC	1
 //#define CONFIG_NET_MULTI
 #define CONFIG_PHY_ADDR		0x1

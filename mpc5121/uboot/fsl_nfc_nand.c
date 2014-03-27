@@ -696,11 +696,12 @@ static int fsl_nfc_get_hw_config(struct nand_chip *this)
 			"compiled for %d, "
 			"size from reset configuration word is %d\n",
 			CONFIG_FSL_NFC_SPARE_SIZE, sparesize);
-		return -1;
+		//return -1;
 	}
 
-	priv->sparesize = sparesize;
+	//priv->sparesize = sparesize;
 	//priv->writesize = writesize;
+	priv->sparesize = CONFIG_FSL_NFC_SPARE_SIZE;
 	priv->writesize = CONFIG_FSL_NFC_WRITE_SIZE;
 	priv->width = width;
 	return 0;

@@ -10,7 +10,8 @@ static const char *const evval[3] = { "RELEASED", "PRESSED ", "REPEATED"
 int main(void)
 {
     const char *dev =
-	"/dev/input/by-path/platform-i8042-serio-0-event-kbd";
+        "/dev/input/by-id/usb-_USB_Keyboard-event-kbd";
+	//"/dev/input/by-path/platform-i8042-serio-0-event-kbd";
     struct input_event ev;
     ssize_t n;
     int fd;
@@ -49,3 +50,5 @@ int main(void)
     //fprintf(stderr, "%s.\n", strerror(errno));
     return EXIT_FAILURE;
 }
+//lrwxrwxrwx 1 root root 9 2014-04-16 13:32 /dev/input/by-id/usb-_USB_Keyboard-event-kbd -> ../event1
+

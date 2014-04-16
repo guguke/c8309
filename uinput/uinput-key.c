@@ -24,6 +24,7 @@ main(void)
     fd = open("/dev/input/uinput", O_WRONLY | O_NONBLOCK);
     if(fd < 0)
         die("error: open");
+    sleep(1);
 
     if(ioctl(fd, UI_SET_EVBIT, EV_KEY) < 0)
         die("error: ioctl");
@@ -57,6 +58,7 @@ main(void)
     if(write(fd, &uidev, sizeof(uidev)) < 0)
         die("error: write");
 
+    sleep(1);
     if(ioctl(fd, UI_DEV_CREATE) < 0)
         die("error: ioctl");
 

@@ -1437,10 +1437,6 @@ EXIT_SUCCESS : EXIT_FAILURE);
 
 	/* Start Mongoose */
 	ctx = mg_start(&mongoose_callback, NULL, (const char **) options);
-	callbacks.begin_request = begin_request_handler;
-
-	//multicast_rcv("226.1.1.1",4321,0,pRcv,pErr);
-
 	for (i = 0; options[i] != NULL; i++) {
 		free(options[i]);
 	}

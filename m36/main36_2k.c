@@ -1597,6 +1597,7 @@ static void save_config(HWND hDlg, FILE *fp) {
 			fprintf(fp, "%s %s\n", name, value);
 		}
 	}
+	my_save_config();
 }
 
 static BOOL CALLBACK DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lP) {

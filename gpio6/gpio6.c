@@ -70,6 +70,22 @@ static char procfs_buffer[PROCFS_MAX_SIZE];
  */
 static unsigned long procfs_buffer_size = 0;
 
+long int mpc83xx_gpio6_init(void)
+{
+#define SPCR_OFFSET	0x00000110
+#define SPCR_TBEN	0x00400000
+	__be32 __iomem *spcr = ioremap(get_immrbase() + SPCR_OFFSET, 4);
+	__be32 tmp;
+
+	tmp = in_be32(spcr);
+	out_be32(spcr, tmp | SPCR_TBEN);
+
+	iounmap(spcr);
+
+	return 0;
+}
+
+
 /** 
  * This function is called then the /proc file is read
  *

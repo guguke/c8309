@@ -72,6 +72,7 @@ static struct proc_dir_entry *Our_Proc_File;
  *
  */
 static char procfs_buffer[PROCFS_MAX_SIZE];
+static char ascii_tbl[]="0123456789ABCDEF";
 
 /**
  * The size of the buffer
@@ -107,6 +108,7 @@ procfile_read(char *buffer,
         int ret;
         
         //printk(KERN_INFO "procfile_read (/proc/%s) called\n", PROCFS_NAME);
+		v=get_gpio6();
         
         if (offset > 0) {
                 /* we have finished to read, return 0 */
@@ -115,18 +117,19 @@ procfile_read(char *buffer,
                 /* fill the buffer, return the buffer size */
 			    procfs_buffer[0]='0';
 			    procfs_buffer[1]='x';
-			    procfs_buffer[2]='0';
-			    procfs_buffer[3]='1';
-			    procfs_buffer[4]='2';
-			    procfs_buffer[5]='3';
-			    procfs_buffer[6]='4';
-			    procfs_buffer[7]='5';
-			    procfs_buffer[8]='6';
-			    procfs_buffer[9]='7';
-			    procfs_buffer[10]=0;
+			    procfs_buffer[2]=ascii_tbl[(v>>28)&0x0ff];
+			    procfs_buffer[2]=ascii_tbl[(v>>24)&0x0ff];
+			    procfs_buffer[2]=ascii_tbl[(v>>20)&0x0ff];
+			    procfs_buffer[2]=ascii_tbl[(v>>16)&0x0ff];
+			    procfs_buffer[2]=ascii_tbl[(v>>12)&0x0ff];
+			    procfs_buffer[2]=ascii_tbl[(v>>8)&0x0ff];
+			    procfs_buffer[2]=ascii_tbl[(v>>8)&0x0ff];
+			    procfs_buffer[2]=ascii_tbl[v&0x0ff];
+			    procfs_buffer[10]='\r';
+			    procfs_buffer[11]=0;
 
-                memcpy(buffer, procfs_buffer, 11/*procfs_buffer_size*/);
-                ret = 11/*procfs_buffer_size*/;
+                memcpy(buffer, procfs_buffer, 12/*procfs_buffer_size*/);
+                ret = 12/*procfs_buffer_size*/;
         }
 
         return ret;

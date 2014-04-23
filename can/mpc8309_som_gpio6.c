@@ -55,6 +55,8 @@ static void __init mpc8309_som_setup_arch(void)
 	/* Set I/O configuration for FlexCAN - CAN1 */
 	clrsetbits_be32(immap + MPC83XX_SICRL_OFFS, MPC8309_SICRL_CAN1_MASK,
 			MPC8309_SICRL_CAN1);
+	clrsetbits_be32(immap + MPC83XX_SICRL_OFFS, MPC8309_SICRL_GPIOA_MASK,
+			MPC8309_SICRL_GPIOA);
 #if 1
 	clrsetbits_be32(immap + MPC83XX_SICRL_OFFS, MPC8309_SICRL_CAN2_MASK,
 			MPC8309_SICRL_CAN2);

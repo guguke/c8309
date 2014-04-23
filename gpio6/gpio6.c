@@ -81,9 +81,9 @@ static unsigned long procfs_buffer_size = 0;
 
 long int mpc83xx_gpio6_init(void)
 {
-#define SPCR_OFFSET	0x00000110
-#define SPCR_TBEN	0x00400000
-	__be32 __iomem *spcr = ioremap(get_immrbase() + SPCR_OFFSET, 4);
+#define GP1DAT_OFFSET	0x00000c08
+#define GP1DAT_MASK		0xfc000000
+	__be32 __iomem *spcr = ioremap(get_immrbase() + GP1DAT_OFFSET, 4);
 	__be32 tmp;
 
 	tmp = in_be32(spcr);
@@ -91,7 +91,7 @@ long int mpc83xx_gpio6_init(void)
 
 	iounmap(spcr);
 
-	return 0;
+	return tmp;
 }
 
 

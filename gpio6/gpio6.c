@@ -79,7 +79,7 @@ static char procfs_buffer[PROCFS_MAX_SIZE];
  */
 static unsigned long procfs_buffer_size = 0;
 
-long int mpc83xx_gpio6_init(void)
+long int get_gpio6(void)
 {
 #define GP1DAT_OFFSET	0x00000c08
 #define GP1DAT_MASK		0xfc000000
@@ -87,7 +87,7 @@ long int mpc83xx_gpio6_init(void)
 	__be32 tmp;
 
 	tmp = in_be32(spcr);
-	out_be32(spcr, tmp | SPCR_TBEN);
+	//out_be32(spcr, tmp | SPCR_TBEN);
 
 	iounmap(spcr);
 
@@ -113,8 +113,20 @@ procfile_read(char *buffer,
                 ret  = 0;
         } else {
                 /* fill the buffer, return the buffer size */
-                memcpy(buffer, procfs_buffer, 2/*procfs_buffer_size*/);
-                ret = 2/*procfs_buffer_size*/;
+			    procfs_buffer[0]='0';
+			    procfs_buffer[1]='x';
+			    procfs_buffer[2]='0';
+			    procfs_buffer[3]='1';
+			    procfs_buffer[4]='2';
+			    procfs_buffer[5]='3';
+			    procfs_buffer[6]='4';
+			    procfs_buffer[7]='5';
+			    procfs_buffer[8]='6';
+			    procfs_buffer[9]='7';
+			    procfs_buffer[10]=0;
+
+                memcpy(buffer, procfs_buffer, 11/*procfs_buffer_size*/);
+                ret = 11/*procfs_buffer_size*/;
         }
 
         return ret;

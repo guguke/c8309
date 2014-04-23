@@ -107,13 +107,15 @@ procfile_read(char *buffer,
 {
         int ret;
         
-        //printk(KERN_INFO "procfile_read (/proc/%s) called\n", PROCFS_NAME);
+        printk(KERN_INFO "procfile_read (/proc/%s) called\n", PROCFS_NAME);
 		v=get_gpio6();
         
         if (offset > 0) {
+        printk(KERN_INFO "0 procfile_read (/proc/%s) called\n", PROCFS_NAME);
                 /* we have finished to read, return 0 */
                 ret  = 0;
         } else {
+        printk(KERN_INFO "1 procfile_read (/proc/%s) called\n", PROCFS_NAME);
                 /* fill the buffer, return the buffer size */
 			    procfs_buffer[0]='0';
 			    procfs_buffer[1]='x';

@@ -2,6 +2,15 @@
 #include <linux/kernel.h> /* We're doing kernel work */
 #include <linux/proc_fs.h>        /* Necessary because we use the proc fs */
 #include <asm/uaccess.h>  /* for copy_from_user */
+
+#include <linux/stddef.h>
+
+#include <asm/io.h>
+#include <asm/hw_irq.h>
+#include <sysdev/fsl_soc.h>
+
+#include "mpc83xx.h"
+
 #if 0
 #include <linux/slab.h>
 #include <linux/types.h>
@@ -181,3 +190,6 @@ void cleanup_module()
 
 module_init(init_module);
 module_exit(cleanup_module);
+
+
+

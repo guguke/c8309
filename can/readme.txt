@@ -1,3 +1,6 @@
+2014.04.23
+  mpc8309_som_gpio.c   <== mpc8309_som.c      
+    add gpio0-5 multiplex config
 2013.05.14
   mpc830x_drv.c
     irq share

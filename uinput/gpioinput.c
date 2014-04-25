@@ -2,23 +2,41 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/time.h>
+#include <fcntl.h>
+#include <linux/input.h>
+
 
 typedef void (*sighandler_t)(int);
 static int gi=0;
 int gpio0=0,gpio1=0,gpio2=0;
-int key6[]={30,31,32,33,34,35};
-
+int key6[]={KEY_LEFT,KEY_RIGHT,KEY_UP,KEY_DOWN,KEY_ENTER,KEY_ESC};
+//int key6[]={30,31,32,33,34,35};
+/*
+ press 32      up
+ release 32
+ press 30        left
+ release 30
+ press 31         right
+ release 31
+ press 33         donw
+ release 33
+ press 34           enter
+ release 34
+ press 35           esc
+ release 35
+*/
 // press 1:press 0:release
 void keyevent(int key,int press)
 {
 	if(press) printf(" press %d\n",key);
 	else printf(" release %d\n",key);
 
+	gi++;
 	return;
 }
 void key1(int n)
 {
-	int i0,i1;i2;
+	int i0,i1,i2;
 	i0=(gpio0>>(31-n))&1;
 	i1=(gpio1>>(31-n))&1;
 	i2=(gpio2>>(31-n))&1;
@@ -56,8 +74,8 @@ void foo(int theint)
 	gpio2=gpio;
 
 	keyinput();
-    printf("0x%08x alarm :%d  time: %d %d \n",gpio,gi,(int)tv.tv_sec,(int)tv.tv_usec);
-    gi++;
+    //printf("0x%08x alarm :%d  time: %d %d \n",gpio,gi,(int)tv.tv_sec,(int)tv.tv_usec);
+    //gi++;
 
 	return;
 }
@@ -68,9 +86,11 @@ int main(int argc,char *argv[])
     struct timeval v={0,300000};
     struct timeval iv={0,300000};
     struct itimerval my_timer={iv,v};
-	int ms=30;
+	int ms=40;
     FILE *fp;
 
+	printf(" usage: ./gpioinput\n");
+	printf(" usage: ./gpioinput 50         gpio scan timer: 50ms (default:40ms)\n");
 	if(argc>1){
 		ms=atoi(argv[1]);
 	}

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <signal.h>
 #include <sys/time.h>
 
@@ -34,7 +35,7 @@ int main(int argc,char *argv[])
 	iv.tv_sec=0;
 	iv.tv_usec=ms*1000;
 	my_timer.it_interval=iv;
-	my_timer.it_val=v;
+	my_timer.it_value=v;
 
     setitimer(ITIMER_REAL,&my_timer,0);
     signal(SIGALRM,(sighandler_t)foo);

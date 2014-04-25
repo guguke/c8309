@@ -3,9 +3,13 @@
 #include <signal.h>
 #include <sys/time.h>
 #include <fcntl.h>
+#include <string.h>
+#include <unistd.h>
+#include <errno.h>
 #include <linux/input.h>
+#include <linux/uinput.h>
 
-
+int fduinput;
 typedef void (*sighandler_t)(int);
 static int gi=0;
 int gpio0=0,gpio1=0,gpio2=0;
@@ -13,23 +17,98 @@ int key6[]={KEY_LEFT,KEY_RIGHT,KEY_UP,KEY_DOWN,KEY_ENTER,KEY_ESC};
 //int key6[]={30,31,32,33,34,35};
 /*
  press 32      up
- release 32
  press 30        left
- release 30
  press 31         right
- release 31
  press 33         donw
- release 33
  press 34           enter
- release 34
  press 35           esc
- release 35
 */
+
+int init_gpiokey(void)
+{
+    //int                    fd;
+    struct uinput_user_dev uidev;
+    struct input_event     ev;
+    int                    dx, dy;
+    int                    i;
+
+    fduinput = open("/dev/input/uinput", O_WRONLY | O_NONBLOCK);
+    if(fduinput < 0) return -1;
+    sleep(1);
+
+    if(ioctl(fduinput, UI_SET_EVBIT, EV_KEY) < 0) return -2;
+    if(ioctl(fduinput, UI_SET_KEYBIT, BTN_LEFT) < 0) return -3;
+    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_L) < 0) return -4;
+    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_S) < 0) return -4;
+    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_UP) < 0) return -4;
+    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_LEFT) < 0) return -4;
+    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_RIGHT) < 0) return -4;
+    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_DONW) < 0) return -5;
+    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_ESC) < 0) return -4;
+    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_ENTER) < 0) return -6;
+    if(ioctl(fduinput, UI_SET_EVBIT, EV_SYN) < 0) return -7;
+
+	//ret = ioctl(fd, UI_SET_KEYBIT, KEY_D);
+
+    //if(ioctl(fd, UI_SET_EVBIT, EV_REL) < 0)         die("error: ioctl");
+    //if(ioctl(fd, UI_SET_RELBIT, REL_X) < 0)         die("error: ioctl");
+    //if(ioctl(fd, UI_SET_RELBIT, REL_Y) < 0)         die("error: ioctl");
+
+    memset(&uidev, 0, sizeof(uidev));
+    snprintf(uidev.name, UINPUT_MAX_NAME_SIZE, "uinput-gpio");
+    uidev.id.bustype = BUS_USB;
+    uidev.id.vendor  = 0x1;
+    uidev.id.product = 0x1;
+    uidev.id.version = 1;
+
+    if(write(fduinput, &uidev, sizeof(uidev)) < 0) return -8;
+
+    sleep(1);
+    if(ioctl(fduinput, UI_DEV_CREATE) < 0) return -9;
+
+
+    //if(ioctl(fd, UI_DEV_DESTROY) < 0)         die("error: ioctl");
+
+    //close(fd);
+
+    return 0;
+}
+
+
+
 // press 1:press 0:release
 void keyevent(int key,int press)
 {
-	if(press) printf(" press %d\n",key);
-	else printf(" release %d\n",key);
+    struct input_event     ev;
+
+	if(press){
+		//printf(" press %d\n",key);
+	//else printf(" release %d\n",key);
+		memset(&ev, 0, sizeof(struct input_event));
+		ev.type = EV_SYN;
+		ev.code = 0;
+		ev.value = 0;
+		write(fd, &ev, sizeof(struct input_event));
+
+		memset(&ev, 0, sizeof(struct input_event));
+		ev.type = EV_KEY;
+		ev.code = key;
+		ev.value = 1;
+		write(fd, &ev, sizeof(struct input_event));
+	}
+	else{
+		memset(&ev, 0, sizeof(struct input_event));
+		ev.type = EV_SYN;
+		ev.code = 0;
+		ev.value = 0;
+		write(fd, &ev, sizeof(struct input_event));
+
+		memset(&ev, 0, sizeof(struct input_event));
+		ev.type = EV_KEY;
+		ev.code = key;
+		ev.value = 0;
+		write(fd, &ev, sizeof(struct input_event));
+	}
 
 	gi++;
 	return;
@@ -91,6 +170,10 @@ int main(int argc,char *argv[])
 
 	printf(" usage: ./gpioinput\n");
 	printf(" usage: ./gpioinput 50         gpio scan timer: 50ms (default:40ms)\n");
+	if(init_gpiokey()<0) {
+		printf(" open uinput dev error\n");
+		return -1;
+	}
 	if(argc>1){
 		ms=atoi(argv[1]);
 	}
@@ -110,7 +193,9 @@ int main(int argc,char *argv[])
     setitimer(ITIMER_REAL,&my_timer,0);
     signal(SIGALRM,(sighandler_t)foo);
     for(;gi<20;)i=5;
-    //printf("hello world\n");
+
+    ioctl(fduinput, UI_DEV_DESTROY);
+	close(fduinput);
     return 0;
 }
 

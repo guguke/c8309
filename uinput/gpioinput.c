@@ -18,12 +18,24 @@ foo(int theint)
     gi++;
 }
 
-int main()
+int main(int argc,char *argv[])
 {
     int i;
     struct timeval v={0,300000};
     struct timeval iv={0,300000};
     struct itimerval my_timer={iv,v};
+	int ms=30;
+
+	if(argc>1){
+		ms=atoi(argv[1]);
+	}
+	v.tv_sec=0;
+	v.tv_usec=ms*1000;
+	iv.tv_sec=0;
+	iv.tv_usec=ms*1000;
+	my_timer.it_interval=iv;
+	my_timer.it_val=v;
+
     setitimer(ITIMER_REAL,&my_timer,0);
     signal(SIGALRM,(sighandler_t)foo);
     for(;gi<20;)i=5;

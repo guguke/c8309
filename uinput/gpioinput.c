@@ -40,12 +40,13 @@ int init_gpiokey(void)
     if(ioctl(fduinput, UI_SET_KEYBIT, BTN_LEFT) < 0) return -3;
     if(ioctl(fduinput, UI_SET_KEYBIT, KEY_L) < 0) return -4;
     if(ioctl(fduinput, UI_SET_KEYBIT, KEY_S) < 0) return -4;
-    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_UP) < 0) return -4;
-    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_LEFT) < 0) return -4;
-    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_RIGHT) < 0) return -4;
-    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_DONW) < 0) return -5;
-    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_ESC) < 0) return -4;
-    if(ioctl(fduinput, UI_SET_KEYBIT, KEY_ENTER) < 0) return -6;
+	for(i=0;i<6;i++) ioctl(fduinput, UI_SET_KEYBIT, key6[i]);
+    //if(ioctl(fduinput, UI_SET_KEYBIT, KEY_UP) < 0) return -4;
+    //if(ioctl(fduinput, UI_SET_KEYBIT, KEY_LEFT) < 0) return -4;
+    //if(ioctl(fduinput, UI_SET_KEYBIT, KEY_RIGHT) < 0) return -4;
+    //if(ioctl(fduinput, UI_SET_KEYBIT, KEY_DOWN) < 0) return -5;
+    //if(ioctl(fduinput, UI_SET_KEYBIT, KEY_ESC) < 0) return -4;
+    //if(ioctl(fduinput, UI_SET_KEYBIT, KEY_ENTER) < 0) return -6;
     if(ioctl(fduinput, UI_SET_EVBIT, EV_SYN) < 0) return -7;
 
 	//ret = ioctl(fd, UI_SET_KEYBIT, KEY_D);
@@ -88,26 +89,26 @@ void keyevent(int key,int press)
 		ev.type = EV_SYN;
 		ev.code = 0;
 		ev.value = 0;
-		write(fd, &ev, sizeof(struct input_event));
+		write(fduinput, &ev, sizeof(struct input_event));
 
 		memset(&ev, 0, sizeof(struct input_event));
 		ev.type = EV_KEY;
 		ev.code = key;
 		ev.value = 1;
-		write(fd, &ev, sizeof(struct input_event));
+		write(fduinput, &ev, sizeof(struct input_event));
 	}
 	else{
 		memset(&ev, 0, sizeof(struct input_event));
 		ev.type = EV_SYN;
 		ev.code = 0;
 		ev.value = 0;
-		write(fd, &ev, sizeof(struct input_event));
+		write(fduinput, &ev, sizeof(struct input_event));
 
 		memset(&ev, 0, sizeof(struct input_event));
 		ev.type = EV_KEY;
 		ev.code = key;
 		ev.value = 0;
-		write(fd, &ev, sizeof(struct input_event));
+		write(fduinput, &ev, sizeof(struct input_event));
 	}
 
 	gi++;

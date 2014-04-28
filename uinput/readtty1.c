@@ -25,7 +25,7 @@
 int main()
 {
 	int fd;
-	int n,i;
+	int n,i,j;
 	char buf[10];
 	struct termios termdata;
 	//struct vt_mode vtMode;
@@ -60,10 +60,12 @@ int main()
 	ioctl(fd, VT_SETMODE, &vtMode);
 #endif
 	for(i=0;;){//for(i=0;i<5;){
-		n=read(fd,buf,1);
-		if(n==1){
+		n=read(fd,buf,10);
+		if(n>0){
 			i++;
-			printf(" read tty1(%d): 0x%02x\n",i,buf[0]);
+			printf(" read tty1(%d): ",i);
+			for(j=0;j<n;j++)printf(" 0x%02x ",buf[j]&0x0ff);
+			printf("\n");
 		}
 	}
 	return 0;

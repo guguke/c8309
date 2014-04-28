@@ -11,7 +11,7 @@
 
 int fduinput;
 typedef void (*sighandler_t)(int);
-static int gi=0;
+//static int gi=0;
 int gpio0=0,gpio1=0,gpio2=0;
 int key6[]={KEY_LEFT,KEY_RIGHT,KEY_UP,KEY_DOWN,KEY_ENTER,KEY_ESC};
 //int key6[]={30,31,32,33,34,35};
@@ -82,7 +82,7 @@ void keyevent(int key,int press)
 {
     struct input_event     ev;
 
-	printf(" key press ================\n");
+	printf(" key press ===\n");
 	if(press){
 		//printf(" press %d\n",key);
 	//else printf(" release %d\n",key);
@@ -162,7 +162,7 @@ void foo(int theint)
 
 int main(int argc,char *argv[])
 {
-    int i;
+    //int i;
     struct timeval v={0,300000};
     struct timeval iv={0,300000};
     struct itimerval my_timer={iv,v};

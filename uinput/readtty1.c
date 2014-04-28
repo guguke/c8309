@@ -28,7 +28,7 @@ int main()
 	int n,i;
 	char buf[10];
 	struct termios termdata;
-	struct vt_mode vtMode;
+	//struct vt_mode vtMode;
 
 	fd=open("/dev/tty1",O_RDONLY|O_NDELAY,0);
 	if(fd<0){
@@ -59,11 +59,11 @@ int main()
 	vtMode.acqsig = VTACQSIG;
 	ioctl(fd, VT_SETMODE, &vtMode);
 #endif
-	for(;;){//for(i=0;i<5;){
+	for(i=0;;){//for(i=0;i<5;){
 		n=read(fd,buf,1);
 		if(n==1){
-			printf(" read tty1: 0x%02x\n",buf[0]);
 			i++;
+			printf(" read tty1(%d): 0x%02x\n",i,buf[0]);
 		}
 	}
 	return 0;

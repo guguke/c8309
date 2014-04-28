@@ -1,0 +1,5 @@
+#!/bin/sh
+cp gpioinput.c ltib/rpm/BUILD/helloworld-1.1/
+cp readtty1.c ltib/rpm/BUILD/helloworld-1.1/
+ls -l ltib/rpm/BUILD/helloworld-1.1/
+

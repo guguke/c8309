@@ -28,8 +28,8 @@ int init_gpiokey(void)
 {
     //int                    fd;
     struct uinput_user_dev uidev;
-    struct input_event     ev;
-    int                    dx, dy;
+    //struct input_event     ev;
+    //int                    dx, dy;
     int                    i;
 
     fduinput = open("/dev/input/uinput", O_WRONLY | O_NONBLOCK);
@@ -82,6 +82,7 @@ void keyevent(int key,int press)
 {
     struct input_event     ev;
 
+	printf(" key press ================\n");
 	if(press){
 		//printf(" press %d\n",key);
 	//else printf(" release %d\n",key);
@@ -111,7 +112,6 @@ void keyevent(int key,int press)
 		write(fduinput, &ev, sizeof(struct input_event));
 	}
 
-	gi++;
 	return;
 }
 void key1(int n)
@@ -193,7 +193,7 @@ int main(int argc,char *argv[])
 	
     setitimer(ITIMER_REAL,&my_timer,0);
     signal(SIGALRM,(sighandler_t)foo);
-    for(;gi<20;)i=5;
+    for(;;);
 
     ioctl(fduinput, UI_DEV_DESTROY);
 	close(fduinput);

@@ -49,7 +49,7 @@ int main()
 	cfsetospeed(&termdata, 9600);
 	tcsetattr(fd, TCSANOW, &termdata);
 
-
+#if 0
 	//struct vt_mode vtMode;
 	ioctl(fd, VT_GETMODE, &vtMode);
 
@@ -58,7 +58,7 @@ int main()
 	vtMode.relsig = VTRELSIG;
 	vtMode.acqsig = VTACQSIG;
 	ioctl(fd, VT_SETMODE, &vtMode);
-
+#endif
 	for(;;){//for(i=0;i<5;){
 		n=read(fd,buf,1);
 		if(n==1){

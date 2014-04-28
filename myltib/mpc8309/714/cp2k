@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cp mpc8309som.dts linux/arch/powerpc/boot/dts/mpc8309som.dts
+

@@ -82,10 +82,8 @@ void keyevent(int key,int press)
 {
     struct input_event     ev;
 
-	printf(" key press ===\n");
+	//printf(" key press ===\n");
 	if(press){
-		//printf(" press %d\n",key);
-	//else printf(" release %d\n",key);
 		memset(&ev, 0, sizeof(struct input_event));
 		ev.type = EV_SYN;
 		ev.code = 0;

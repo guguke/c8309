@@ -113,26 +113,38 @@
                 read-only;
                 label = "DTB-NAND";
             };
-            ramdisk@200000 {
-                reg = <0x200000 0x400000>;
-                label = "Ramdisk-NAND";
+            ramdisk30@200000 {
+                reg = <0x200000 0x1e00000>;
+                label = "ramdisk30-NAND";
             };
-            reserved@600000 {
-                reg = <0x600000 0x600000>;
-                label = "Reserved-NAND";
+            ramdisk32@2000000 {
+                reg = <0x2000000 0x2000000>;
+                label = "ramdisk32-NAND";
             };
-            kernel@c00000 {
-                reg = <0xc00000 0x1600000>;
+            ramdisk64@4000000 {
+                reg = <0x4000000 0x4000000>;
                 read-only;
-                label = "Kernel-NAND";
+                label = "ramdisk64-NAND";
             };
-            fs@2200000 {
-                reg = <0x2200000 0x10000000>;
-                label = "JFFS2-NAND";
+            user-data@8000000 {
+                reg = <0x8000000 0x8000000>;
+                label = "user-data-NAND";
             };
-            fs@12200000 {
-                reg = <0x12200000 0x8000000>;
-                label = "JFFS2-NAND128";
+            nand-root@10000000 {
+                reg = <0x10000000 0x10000000>;
+                label = "root-NAND";
+            };
+            nand-root-bak@20000000 {
+                reg = <0x20000000 0x10000000>;
+                label = "root-bak-NAND";
+            };
+            user-data-1@30000000 {
+                reg = <0x30000000 0x8000000>;
+                label = "user-data-1-NAND";
+            };
+            user-data-2@38000000 {
+                reg = <0x38000000 0x8000000>;
+                label = "user-data-2-NAND";
             };
         };
     };
@@ -184,6 +196,36 @@
             device_type = "serial";
             compatible = "ns16550";
             reg = <0x4500 0x100>;
+            clock-frequency = <133333333>;
+            interrupts = <9 0x8>;
+            interrupt-parent = <&ipic>;
+        };
+
+        serial1: serial@4600 {
+            cell-index = <1>;
+            device_type = "serial";
+            compatible = "ns16550";
+            reg = <0x4600 0x100>;
+            clock-frequency = <133333333>;
+            interrupts = <9 0x8>;
+            interrupt-parent = <&ipic>;
+        };
+
+        serial2: serial@4900 {
+            cell-index = <2>;
+            device_type = "serial";
+            compatible = "ns16550";
+            reg = <0x4900 0x100>;
+            clock-frequency = <133333333>;
+            interrupts = <9 0x8>;
+            interrupt-parent = <&ipic>;
+        };
+
+        serial3: serial@4a00 {
+            cell-index = <3>;
+            device_type = "serial";
+            compatible = "ns16550";
+            reg = <0x4a00 0x100>;
             clock-frequency = <133333333>;
             interrupts = <9 0x8>;
             interrupt-parent = <&ipic>;
@@ -245,43 +287,13 @@
         ranges = <0x0 0xD8000000 0x04000000>;
         reg = <0xD8000000 0x04000000>;
            
-        serial1: serial@000000 {
-            cell-index = <1>;
-            device_type = "serial";
-            compatible = "ns16550";
-            reg = <0x000000 0x8>;
-            clock-frequency = <12000000>;
-            my-frequency = <24000000>;
-            interrupts = <48 0x8>; 
-            interrupt-parent = <&ipic>; 
-        };   
-        serial2: serial@080000 {
-           cell-index = <2>;
-           device_type = "serial";
-           compatible = "ns16550";
-           reg = <0x080000 0x8>;
-           clock-frequency = <12000000>;
-           my-frequency = <24000000>;
-           interrupts = <48 0x8>; 
-           interrupt-parent = <&ipic>; 
-        };                 
-        serial3: serial@100000 {
-            cell-index = <3>;
-            device_type = "serial";
-            compatible = "ns16550";
-            reg = <0x100000 0x8>;
-            clock-frequency = <12000000>;
-            my-frequency = <24000000>;
-            interrupts = <48 0x8>; //??
-            interrupt-parent = <&ipic>; //??
-        };   
         serial4: serial@200000 {
             cell-index = <4>;
             device_type = "serial";
             compatible = "ns16550";
             reg = <0x200000 0x8>;
             clock-frequency = <12000000>;
-            my-frequency = <24000000>;
+            my-frequency = <12000000>;
             interrupts = <48 0x8>; //??
             interrupt-parent = <&ipic>; //??
         };                      
@@ -291,7 +303,7 @@
             compatible = "ns16550";
             reg = <0x280000 0x8>;
             clock-frequency = <12000000>;
-            my-frequency = <24000000>;
+            my-frequency = <12000000>;
             interrupts = <48 0x8>; //??
             interrupt-parent = <&ipic>; //??
         };                      
@@ -301,7 +313,7 @@
             compatible = "ns16550";
             reg = <0x300000 0x8>;
             clock-frequency = <12000000>;
-            my-frequency = <24000000>;
+            my-frequency = <12000000>;
             interrupts = <48 0x8>; //??
             interrupt-parent = <&ipic>; //??
         };                      
@@ -311,17 +323,7 @@
             compatible = "ns16550";
             reg = <0x380000 0x8>;
             clock-frequency = <12000000>;
-            my-frequency = <24000000>;
-            interrupts = <48 0x8>; //??
-            interrupt-parent = <&ipic>; //??
-        };                      
-        serial8: serial@180000 {
-            cell-index = <8>;
-            device_type = "serial";
-            compatible = "ns16550";
-            reg = <0x180000 0x8>;
-            clock-frequency = <12000000>;
-            my-frequency = <24000000>;
+            my-frequency = <12000000>;
             interrupts = <48 0x8>; //??
             interrupt-parent = <&ipic>; //??
         };                      

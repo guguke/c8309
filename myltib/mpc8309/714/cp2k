@@ -7,4 +7,5 @@ cp legacy_serial.c linux/arch/powerpc/kernel/legacy_serial.c
 cp mpc830x_drv.c linux/drivers/net/can/flexcan/mpc830x_drv.c
 cp mpc83xx.h linux/arch/powerpc/platforms/83xx/mpc83xx.h
 cp mpc8309_som.c linux/arch/powerpc/platforms/83xx/mpc8309_som.c
+cp gpio6.c linux/arch/powerpc/platforms/83xx/gpio6.c
 

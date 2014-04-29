@@ -2,3 +2,9 @@
 
 cp mpc8309som.dts linux/arch/powerpc/boot/dts/mpc8309som.dts
 
+cp 8250.c linux/drivers/serial/8250.c
+cp legacy_serial.c linux/arch/powerpc/kernel/legacy_serial.c
+cp mpc830x_drv.c linux/drivers/net/can/flexcan/mpc830x_drv.c
+cp mpc83xx.h linux/arch/powerpc/platforms/83xx/mpc83xx.h
+cp mpc8309_som.c linux/arch/powerpc/platforms/83xx/mpc8309_som.c
+

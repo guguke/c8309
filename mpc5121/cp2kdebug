@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# cp mpc5121ads_cpld.c linux/arch/powerpc/platforms/512x/mpc5121ads_cpld.c
+# cp mpc5121_ads.c linux/arch/powerpc/platforms/512x/mpc5121_ads.c
+cp 8139too.c linux/drivers/net/8139too.c
+cp mpc5121adsrev4.dts linux/arch/powerpc/boot/dts/mpc5121adsrev4.dts
+cp pci.c linux/arch/powerpc/platforms/512x/pci.c
+cp mpc5121_pscgpio.c linux/arch/powerpc/platforms/512x/mpc5121_pscgpio.c
+cp manage.c linux/kernel/irq/manage.c
+cp irq.c linux/arch/powerpc/kernel/irq.c
+cp pci_32.c linux/arch/powerpc/kernel/pci_32.c
+cp pci-common.c linux/arch/powerpc/kernel/pci-common.c
+cp prom_parse.c linux/arch/powerpc/kernel/prom_parse.c
+cp rtc-pcf8563.c linux/drivers/rtc/rtc-pcf8563.c

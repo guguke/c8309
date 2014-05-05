@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cp mpc5121adsrev4.dts linux/arch/powerpc/boot/dts/mpc5121adsrev4.dts
+cp prom_parse.c linux/arch/powerpc/kernel/prom_parse.c
+cp rtc-pcf8563.c linux/drivers/rtc/rtc-pcf8563.c

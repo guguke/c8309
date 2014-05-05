@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cp mpc5121adsrev4.dts linux/arch/powerpc/boot/dts/mpc5121adsrev4.dts

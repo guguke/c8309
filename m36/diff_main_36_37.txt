@@ -1,0 +1,79 @@
+--- m36/main.c	2014-04-19 14:21:51.000000000 -0400
++++ m37/main.c	2014-04-19 14:22:09.000000000 -0400
+@@ -105,9 +105,6 @@
+     fprintf(stderr, "  -%s %s (default: \"%s\")\n",
+             names[i], names[i + 1], names[i + 2] == NULL ? "" : names[i + 2]);
+   }
+-  fprintf(stderr, "\nSee  http://code.google.com/p/mongoose/wiki/MongooseManual"
+-          " for more details.\n");
+-  fprintf(stderr, "Example:\n  mongoose -s cert.pem -p 80,443s -d no\n");
+   exit(EXIT_FAILURE);
+ }
+ 
+@@ -255,12 +252,18 @@
+     (void) fclose(fp);
+   }
+ 
+-  // Handle command line flags. They override config file and default settings.
+-  for (i = cmd_line_opts_start; argv[i] != NULL; i += 2) {
+-    if (argv[i][0] != '-' || argv[i + 1] == NULL) {
+-      show_usage_and_exit();
++  // If we're under MacOS and started by launchd, then the second
++  // argument is process serial number, -psn_.....
++  // In this case, don't process arguments at all.
++  if (argv[1] == NULL || memcmp(argv[1], "-psn_", 5) != 0) {
++    // Handle command line flags.
++    // They override config file and default settings.
++    for (i = cmd_line_opts_start; argv[i] != NULL; i += 2) {
++      if (argv[i][0] != '-' || argv[i + 1] == NULL) {
++        show_usage_and_exit();
++      }
++      set_option(options, &argv[i][1], argv[i + 1]);
+     }
+-    set_option(options, &argv[i][1], argv[i + 1]);
+   }
+ }
+ 
+@@ -269,17 +272,14 @@
+            mg_version());
+ }
+ 
+-static void *mongoose_callback(enum mg_event ev, struct mg_connection *conn) {
+-  if (ev == MG_EVENT_LOG) {
+-    printf("%s\n", (const char *) mg_get_request_info(conn)->ev_data);
+-  }
+-
+-  // Returning NULL marks request as not handled, signalling mongoose to
+-  // proceed with handling it.
+-  return NULL;
++static int log_message(const struct mg_connection *conn, const char *message) {
++  (void) conn;
++  printf("%s\n", message);
++  return 0;
+ }
+ 
+ static void start_mongoose(int argc, char *argv[]) {
++  struct mg_callbacks callbacks;
+   char *options[MAX_OPTIONS];
+   int i;
+ 
+@@ -305,7 +305,9 @@
+   signal(SIGINT, signal_handler);
+ 
+   /* Start Mongoose */
+-  ctx = mg_start(&mongoose_callback, NULL, (const char **) options);
++  memset(&callbacks, 0, sizeof(callbacks));
++  callbacks.log_message = &log_message;
++  ctx = mg_start(&callbacks, NULL, (const char **) options);
+   for (i = 0; options[i] != NULL; i++) {
+     free(options[i]);
+   }
+@@ -807,7 +809,7 @@
+ - (void) openBrowser {
+   [[NSWorkspace sharedWorkspace]
+     openURL:[NSURL URLWithString:
+-      [NSString stringWithUTF8String:"http://www.yahoo.com"]]];
++      [NSString stringWithUTF8String:get_url_to_first_open_port(ctx)]]];
+ }
+ - (void) editConfig {
+   create_config_file(config_file);

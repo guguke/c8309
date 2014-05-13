@@ -6,5 +6,7 @@ cp ads5121.h uboot/include/configs/ads5121.h
 #cp serial.c uboot/cpu/mpc512x/serial.c
 #cp cpu_init.c uboot/cpu/mpc512x/cpu_init.c
 cp flash.c uboot/board/ads5121/flash.c
+cp intel_flash.c uboot/board/ads5121/intel_flash.c
+cp intel_flash.h uboot/board/ads5121/intel_flash.h
 cp board.c uboot/lib_ppc/board.c
 cp fsl_nfc_nand.c uboot/drivers/mtd/nand/fsl_nfc_nand.c

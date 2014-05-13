@@ -386,11 +386,14 @@ extern void ads5121_fsl_nfc_board_cs(int);
  * Ethernet configuration
  */
 #if 1            // 1: FEC  0: eth0 = rtl8139     ==board.c==
+#define CONFIG_SYS_PROMPT	"v103.fec> "		/* Monitor Command Prompt */
 #define CONFIG_MPC512x_FEC	1
 //#define CONFIG_NET_MULTI
 #define CONFIG_PHY_ADDR		0x1
 //#define CONFIG_MII		1	/* MII PHY management		*/
 #define CONFIG_FEC_AN_TIMEOUT	1
+#else
+#define CONFIG_SYS_PROMPT	"v100.8139> "		/* Monitor Command Prompt */
 #endif
 #define CONFIG_MII		1	/* MII PHY management		*/
 #define CONFIG_NET_MULTI
@@ -467,7 +470,7 @@ extern void ads5121_fsl_nfc_board_cs(int);
  */
 #define CONFIG_SYS_LONGHELP			/* undef to save memory */
 #define CONFIG_SYS_LOAD_ADDR	0x2000000	/* default load address */
-#define CONFIG_SYS_PROMPT	"v100> "		/* Monitor Command Prompt */
+//#define CONFIG_SYS_PROMPT	"v100> "		/* Monitor Command Prompt */
 
 #ifdef CONFIG_CMD_KGDB
 	#define CONFIG_SYS_CBSIZE	1024	/* Console I/O Buffer Size */
@@ -576,6 +579,7 @@ extern void ads5121_fsl_nfc_board_cs(int);
 		"tftp ${fdt_addr_r} ${fdtfile};"			\
 		"run ramargs addip addtty;"				\
 		"bootm ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr_r}\0"\
+	"flash_jffs2=run cmdmtd3\0"				\
 	"flash_jffs2=run jffs2args addtty;"				\
 		"bootm ${kernel_addr} - ${fdt_addr}\0"			\
 	"load=tftp ${u-boot_addr_r} ${u-boot}\0"			\
@@ -583,10 +587,29 @@ extern void ads5121_fsl_nfc_board_cs(int);
 		"era ${u-boot_addr} +${filesize};"			\
 		"cp.b ${u-boot_addr_r} ${u-boot_addr} ${filesize}\0"	\
 	"upd=run load update\0"						\
-	"ipaddr=192.168.2.88\0"        \
+	"ipaddr=192.168.1.88\0"        \
 	"ethaddr=00:11:22:33:44:55\0"                  \
-	"serverip=192.168.2.24\0"               \
-	"bootargs=root=/dev/ram rw ramdisk_size=70000 console=ttyPSC0,115200\0"     \
+	"serverip=192.168.1.24\0"               \
+	"bootargs=root=/dev/ram rw ramdisk_size=140000 console=ttyPSC0,115200\0"     \
+	"setargsmtd3=setenv bootargs root=/dev/mtdblock3 rw rootfstype=jffs2 console=ttyPSC0,115200\0"     \
+	"setargsmtd4=setenv bootargs root=/dev/mtdblock4 rw rootfstype=jffs2 console=ttyPSC0,115200\0"     \
+	"cmdmtd3=nand read 600000 200000 200000;"   \
+              "nand read 880000 100000 20000;"      \
+              "run setargsmtd3;"                    \
+              "bootm 600000 - 880000\0"             \
+	"cmdmtd4=nand read 600000 200000 200000;"   \
+              "nand read 880000 100000 20000;"      \
+              "run setargsmtd4;"                    \
+              "bootm 600000 - 880000\0"             \
+	"tftp2nand=nand erase 100000 20000;"        \
+              "tftp 1000000 mpc5121/dtbnand;"       \
+              "nand write 1000000 100000 20000;"    \
+              "nand erase 200000 200000;"           \
+              "tftp 1000000 mpc5121/unand;"         \
+              "nand write 1000000 200000 200000;"   \
+              "nand erase 10000000 10000000;"       \
+              "tftp 1000000 mpc5121/fsnand;"        \
+              "nand write 1000000 10000000 ${filesize}\0"  \
 	""
 
 #define CONFIG_BOOTCOMMAND	"run flash_jffs2"

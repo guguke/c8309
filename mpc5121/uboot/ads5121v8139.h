@@ -238,6 +238,8 @@
  * NAND FLASH
  * drivers/mtd/nand/mpc5121_mpc.c (rev 2 silicon/rev 4 boards only)
  */
+#define CONFIG_MTD_DEBUG
+#define CONFIG_MTD_DEBUG_VERBOSE 0
 #define CONFIG_NAND_FSL_NFC
 #ifdef CONFIG_NAND_FSL_NFC
 #ifdef CONFIG_NAND_SPL
@@ -249,7 +251,7 @@
 /*
  * The flash on ADS5121 board is two flash chips in one package
  */
-#define CONFIG_SYS_MAX_NAND_DEVICE	2
+#define CONFIG_SYS_MAX_NAND_DEVICE	1
 #define NAND_MAX_CHIPS		CONFIG_SYS_MAX_NAND_DEVICE
 #define CONFIG_SYS_NAND_SELECT_DEVICE	1
 /*
@@ -258,7 +260,7 @@
 #define CONFIG_FSL_NFC_WIDTH 1
 #define CONFIG_FSL_NFC_WRITE_SIZE 2048
 #define CONFIG_FSL_NFC_SPARE_SIZE 64
-#define CONFIG_FSL_NFC_CHIPS 2
+#define CONFIG_FSL_NFC_CHIPS 1
 
 #ifndef __ASSEMBLY__
 /*
@@ -280,7 +282,8 @@ extern void ads5121_fsl_nfc_board_cs(int);
 #define CONFIG_SYS_SRAM_BASE		0x30000000
 #define CONFIG_SYS_SRAM_SIZE		0x00020000	/* 128 KB */
 
-#define CONFIG_SYS_CS0_CFG		0x05051010	/* ALE active low, data size 1bytes */
+//#define CONFIG_SYS_CS0_CFG		0x05051010	/* ALE active low, data size 1bytes */
+#define CONFIG_SYS_CS0_CFG		0x00201000	/* ALE active low, data size 1bytes */
 #define CONFIG_SYS_CS2_CFG		0x05059010	/* ALE active low, data size 1byte */
 #define CONFIG_SYS_CS_ALETIMING	0x00000005	/* Use alternative CS timing for CS0 and CS2 */
 
@@ -293,7 +296,7 @@ extern void ads5121_fsl_nfc_board_cs(int);
 #define CONFIG_SYS_INIT_SP_OFFSET	CONFIG_SYS_GBL_DATA_OFFSET
 
 #define CONFIG_SYS_MONITOR_BASE	TEXT_BASE		/* Start of monitor */
-#define CONFIG_SYS_MONITOR_LEN		(512 * 1024)		/* Reserve 512 kB for Mon */
+#define CONFIG_SYS_MONITOR_LEN		(384 * 1024)		/* Reserve 512 kB for Mon */
 #ifdef	CONFIG_FSL_DIU_FB
 #define CONFIG_SYS_MALLOC_LEN		(6 * 1024 * 1024)	/* Reserved for malloc */
 #else
@@ -382,12 +385,15 @@ extern void ads5121_fsl_nfc_board_cs(int);
 /*
  * Ethernet configuration
  */
-#if 0
+#if 0            // 1: FEC  0: eth0 = rtl8139     ==board.c==
+#define CONFIG_SYS_PROMPT	"v103.fec> "		/* Monitor Command Prompt */
 #define CONFIG_MPC512x_FEC	1
 //#define CONFIG_NET_MULTI
 #define CONFIG_PHY_ADDR		0x1
 //#define CONFIG_MII		1	/* MII PHY management		*/
 #define CONFIG_FEC_AN_TIMEOUT	1
+#else
+#define CONFIG_SYS_PROMPT	"v103.8139> "		/* Monitor Command Prompt */
 #endif
 #define CONFIG_MII		1	/* MII PHY management		*/
 #define CONFIG_NET_MULTI
@@ -404,17 +410,20 @@ extern void ads5121_fsl_nfc_board_cs(int);
  */
 #define CONFIG_ENV_IS_IN_FLASH	1
 /* This has to be a multiple of the Flash sector size */
-#define CONFIG_ENV_ADDR		(CONFIG_SYS_MONITOR_BASE + CONFIG_SYS_MONITOR_LEN)
-#define CONFIG_ENV_SIZE		0x2000
+//#define CONFIG_ENV_ADDR		(CONFIG_SYS_MONITOR_BASE + CONFIG_SYS_MONITOR_LEN)
+#define CONFIG_ENV_ADDR		0xfff60000
+#define CONFIG_ENV_SIZE		0x10000
 #ifdef CONFIG_BKUP_FLASH
-#define CONFIG_ENV_SECT_SIZE	0x20000	/* one sector (256K) for env */
+#define CONFIG_ENV_SECT_SIZE	0x10000	/* one sector (256K) for env */
 #else
-#define CONFIG_ENV_SECT_SIZE	0x40000	/* one sector (256K) for env */
+#define CONFIG_ENV_SECT_SIZE	0x10000	/* one sector (256K) for env */
 #endif
 
+#if 0
 /* Address and size of Redundant Environment Sector	*/
 #define CONFIG_ENV_ADDR_REDUND	(CONFIG_ENV_ADDR + CONFIG_ENV_SECT_SIZE)
 #define CONFIG_ENV_SIZE_REDUND	(CONFIG_ENV_SIZE)
+#endif
 
 #define CONFIG_LOADS_ECHO	1	/* echo on for serial download */
 #define CONFIG_SYS_LOADS_BAUD_CHANGE	1	/* allow baudrate change */
@@ -461,7 +470,7 @@ extern void ads5121_fsl_nfc_board_cs(int);
  */
 #define CONFIG_SYS_LONGHELP			/* undef to save memory */
 #define CONFIG_SYS_LOAD_ADDR	0x2000000	/* default load address */
-#define CONFIG_SYS_PROMPT	"=> "		/* Monitor Command Prompt */
+//#define CONFIG_SYS_PROMPT	"v100> "		/* Monitor Command Prompt */
 
 #ifdef CONFIG_CMD_KGDB
 	#define CONFIG_SYS_CBSIZE	1024	/* Console I/O Buffer Size */
@@ -570,6 +579,7 @@ extern void ads5121_fsl_nfc_board_cs(int);
 		"tftp ${fdt_addr_r} ${fdtfile};"			\
 		"run ramargs addip addtty;"				\
 		"bootm ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr_r}\0"\
+	"flash_jffs2=run cmdmtd3\0"				\
 	"flash_jffs2=run jffs2args addtty;"				\
 		"bootm ${kernel_addr} - ${fdt_addr}\0"			\
 	"load=tftp ${u-boot_addr_r} ${u-boot}\0"			\
@@ -577,6 +587,29 @@ extern void ads5121_fsl_nfc_board_cs(int);
 		"era ${u-boot_addr} +${filesize};"			\
 		"cp.b ${u-boot_addr_r} ${u-boot_addr} ${filesize}\0"	\
 	"upd=run load update\0"						\
+	"ipaddr=192.168.1.88\0"        \
+	"ethaddr=00:11:22:33:44:55\0"                  \
+	"serverip=192.168.1.24\0"               \
+	"bootargs=root=/dev/ram rw ramdisk_size=140000 console=ttyPSC0,115200\0"     \
+	"setargsmtd3=setenv bootargs root=/dev/mtdblock3 rw rootfstype=jffs2 console=ttyPSC0,115200\0"     \
+	"setargsmtd4=setenv bootargs root=/dev/mtdblock4 rw rootfstype=jffs2 console=ttyPSC0,115200\0"     \
+	"cmdmtd3=nand read 600000 200000 200000;"   \
+              "nand read 880000 100000 20000;"      \
+              "run setargsmtd3;"                    \
+              "bootm 600000 - 880000\0"             \
+	"cmdmtd4=nand read 600000 200000 200000;"   \
+              "nand read 880000 100000 20000;"      \
+              "run setargsmtd4;"                    \
+              "bootm 600000 - 880000\0"             \
+	"tftp2nand=nand erase 100000 20000;"        \
+              "tftp 1000000 mpc5121/dtbnand;"       \
+              "nand write 1000000 100000 20000;"    \
+              "nand erase 200000 200000;"           \
+              "tftp 1000000 mpc5121/unand;"         \
+              "nand write 1000000 200000 200000;"   \
+              "nand erase 10000000 10000000;"       \
+              "tftp 1000000 mpc5121/fsnand;"        \
+              "nand write 1000000 10000000 ${filesize}\0"  \
 	""
 
 #define CONFIG_BOOTCOMMAND	"run flash_jffs2"

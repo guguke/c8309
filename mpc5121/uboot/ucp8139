@@ -1,5 +1,5 @@
 #!/bin/bash
-#cp Makefile uboot/board/ads5121/Makefile
+cp Makefile uboot/board/ads5121/Makefile
 cp ads5121.c uboot/board/ads5121/ads5121.c
 cp ads5121v8139.h uboot/include/configs/ads5121.h
 #cp start.S uboot/cpu/mpc512x/start.S

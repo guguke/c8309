@@ -1,4 +1,5 @@
 
+!!!!!!!!!!!!!! change uboot/board/ads5121/Makefile , add flash.o intel_flash.o !!!!!
 flash001.c // evb ??? 
 flash003v1.c // board/evb64260/flash.c works
 

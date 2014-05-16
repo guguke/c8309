@@ -1,3 +1,8 @@
+20140515:
+  dir grs: general run silent, 
+        build vc2005, .net framework 2.0
+  dir gr : run normal, not silent
+
 com0com ver 3.0.0  2013.07.14
 file changed:
 cncport.inf

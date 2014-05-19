@@ -3,6 +3,7 @@
         build vc2005, .net framework 2.0
   dir gr : run normal, not silent
 
+file install0.nsi == install.nsi.v0
 com0com ver 3.0.0  2013.07.14
 file changed:
 cncport.inf

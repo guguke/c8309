@@ -35,6 +35,7 @@ int main(array<System::String ^> ^args)
 
 	try {
 		if (setupc->Start()) {
+#if 0
 			for (;;) {
 				String ^line = setupc->StandardOutput->ReadLine();         // block when no output
 				//MessageBox::Show(line,"read 1");
@@ -44,7 +45,6 @@ int main(array<System::String ^> ^args)
 				//Array::Resize(lines, lines->Length + 1);
 				//lines[lines->Length - 1] = line->Trim();
 			}
-
 			setupc->WaitForExit();
 
 			/*
@@ -57,6 +57,7 @@ int main(array<System::String ^> ^args)
 			*/
 
 			setupc->Close();
+#endif
 		}
 	}
 	catch (Exception ^e) {

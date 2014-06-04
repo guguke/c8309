@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# could not attach to PHY , error
+cp fs_enet-main.c linux/drivers/net/fs_enet/fs_enet-main.c
+

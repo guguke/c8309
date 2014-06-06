@@ -100,13 +100,19 @@ struct phy_device * get_phy_device(struct mii_bus *bus, int addr)
 	u32 phy_id;
 	struct phy_device *dev = NULL;
 
+	printk(KERN_ERR " === mydebug (%s) 000 addr:%d\n",__FUNCTION__,addr);
+	//printk(KERN_ERR " === mydebug (%s) phy_reg:%08x phy_id:%08x\n",__FUNCTION__,phy_reg,phy_id);
 	/* Grab the bits from PHYIR1, and put them
 	 * in the upper half */
 	phy_reg = bus->read(bus, addr, MII_PHYSID1);
 
+	printk(KERN_ERR " === mydebug (%s) 001\n",__FUNCTION__);
+	printk(KERN_ERR " === mydebug (%s) phy_reg:%08x phy_id:%08x\n",__FUNCTION__,phy_reg,phy_id);
 	if (phy_reg < 0)
 		return ERR_PTR(phy_reg);
 
+	printk(KERN_ERR " === mydebug (%s) 002\n",__FUNCTION__);
+	printk(KERN_ERR " === mydebug (%s) phy_reg:%08x phy_id:%08x\n",__FUNCTION__,phy_reg,phy_id);
 	phy_id = (phy_reg & 0xffff) << 16;
 
 	/* Grab the bits from PHYIR2, and put them in the lower half */
@@ -115,12 +121,16 @@ struct phy_device * get_phy_device(struct mii_bus *bus, int addr)
 	if (phy_reg < 0)
 		return ERR_PTR(phy_reg);
 
+	printk(KERN_ERR " === mydebug (%s) 003\n",__FUNCTION__);
+	printk(KERN_ERR " === mydebug (%s) phy_reg:%08x phy_id:%08x\n",__FUNCTION__,phy_reg,phy_id);
 	phy_id |= (phy_reg & 0xffff);
 
 	/* If the phy_id is all Fs, there is no device there */
 	if (0xffffffff == phy_id)
 		return NULL;
 
+	printk(KERN_ERR " === mydebug (%s) 004\n",__FUNCTION__);
+	printk(KERN_ERR " === mydebug (%s) phy_reg:%08x phy_id:%08x\n",__FUNCTION__,phy_reg,phy_id);
 	dev = phy_device_create(bus, addr, phy_id);
 
 	return dev;
@@ -228,7 +238,7 @@ struct phy_device *phy_attach(struct net_device *dev,
 	struct phy_device *phydev;
 	struct device *d;
 
-	printk(KERN_ERR " == phy attach 100\n");
+	printk(KERN_ERR " == phy attach 100 phy_id:%s\n",phy_id);
 	/* Search the list of PHY devices on the mdio bus for the
 	 * PHY with the requested name */
 	d = bus_find_device(bus, NULL, (void *)phy_id, phy_compare_id);

@@ -2,4 +2,11 @@
 
 # could not attach to PHY , error
 cp fs_enet-main.c linux/drivers/net/fs_enet/fs_enet-main.c
-
+# phy_connect()
+cp phy_device.c linux/drivers/net/phy/phy_device.c
+# bus_find_device() 
+cp bus.c linux/drivers/base/bus.c
+cp mdio_bus.c linux/drivers/net/phy/mdio_bus.c
+cp phy.c linux/drivers/net/phy/phy.c
+cp fixed.c linux/drivers/net/phy/fixed.c
+cp mii-fec.c linux/drivers/net/fs_enet/mii-fec.c

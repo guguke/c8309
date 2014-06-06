@@ -330,7 +330,7 @@ struct device * bus_find_device(struct bus_type *bus,
 	struct klist_iter i;
 	struct device *dev;
 
-	printk(KERN_ERR "%s: == mydebug 000\n", __FUNCTION__);
+	printk(KERN_ERR "%s: == mydebug 000 data:%s\n", __FUNCTION__,data);
 	if (!bus)
 		return NULL;
 	printk(KERN_ERR "%s: == mydebug 001\n", __FUNCTION__);
@@ -339,8 +339,10 @@ struct device * bus_find_device(struct bus_type *bus,
 			     (start ? &start->knode_bus : NULL));
 	printk(KERN_ERR "%s: == mydebug 002\n", __FUNCTION__);
 	while ((dev = next_device(&i)))
-		if (match(dev, data) && get_device(dev))
+		if (match(dev, data) && get_device(dev)){
+	                printk(KERN_ERR "%s: == mydebug 003\n", __FUNCTION__);
 			break;
+        }
 	klist_iter_exit(&i);
 	return dev;
 }

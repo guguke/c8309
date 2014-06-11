@@ -115,7 +115,7 @@ static int fs_enet_fec_mii_read(struct mii_bus *bus , int phy_id, int location)
 	fec_t __iomem *fecp = fec->fecp;
 	int i, ret = -1;
 
-        phy_id=0;
+        //phy_id=0;
 	//printk(KERN_ERR" == mydebug %s , 000 phy_id:%d location:%d\n", __FUNCTION__,phy_id,location);
 	if ((in_be32(&fecp->fec_r_cntrl) & FEC_RCNTRL_MII_MODE) == 0)
 		fs_enet_fec_mii_reset(bus);
@@ -175,6 +175,7 @@ static void __devinit add_phy(struct mii_bus *bus, struct device_node *np)
 
 	id = *data;
 	bus->phy_mask &= ~(1 << id);
+        printk(" == mydebug function: %s, id:%d\n",__FUNCTION__,id);
 
 	irq = of_irq_to_resource(np, 0, NULL);
 	if (irq != NO_IRQ)
@@ -190,7 +191,7 @@ static int __devinit fs_enet_mdio_probe(struct of_device *ofdev,
 	struct fec_info *fec;
 	int ret = -ENOMEM, i;
 
-        printk(" == mydebug %s, mdio_probe\n",__FUNCTION__);
+        printk(" == mydebug function: %s, mdio_probe\n",__FUNCTION__);
 	new_bus = kzalloc(sizeof(struct mii_bus), GFP_KERNEL);
 	if (!new_bus)
 		goto out;

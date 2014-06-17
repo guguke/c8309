@@ -1,0 +1,17 @@
+
+_BEGIN_
+  --create-filter=escparse,com,parse
+  --create-filter=pin2con,com,connect: --connect=dcd
+  --create-filter=pinmap,com,pinmap:--rts=cts --dtr=dsr
+  --create-filter=linectl,com,lc:--br=local --lc=local
+  --add-filters=0:com
+  --create-filter=telnet,tcp,telnet: --comport=client
+  --create-filter=pinmap,tcp,pinmap:--rts=cts --dtr=dsr --break=break
+  --create-filter=linectl,tcp,lc:--br=remote --lc=remote
+  --add-filters=1:tcp
+  --octs=off
+  \\.\CNCB1
+  --use-driver=tcp
+  28.54.49.9:3001
+_END_
+

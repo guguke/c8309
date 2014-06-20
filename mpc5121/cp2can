@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cp mscan.c linux/drivers/net/can/mscan/mscan.c
+cp dev.c linux/net/can/dev.c
+cp mpc52xx_can.c linux/drivers/net/can/mscan/mpc52xx_can.c

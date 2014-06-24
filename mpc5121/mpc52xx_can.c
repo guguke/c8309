@@ -107,7 +107,7 @@ static int __devinit mpc52xx_can_probe(struct platform_device *pdev)
 		/* update clock rate for mpc5121e rev2 chip */
 		if (port_clk){
 			pdata->clock_frq = clk_get_rate(port_clk);
-                        printk("   == func:(%s)    pdata->clock_frq:%d \n",__FUNCTION__,pdata->clock_frq); 
+                        printk("   == func:(%s) ( if type MPC512X_MSCAN )   pdata->clock_frq:%d \n",__FUNCTION__,pdata->clock_frq); 
                 }
 
 		/* enable clock for mscan module */
@@ -116,8 +116,8 @@ static int __devinit mpc52xx_can_probe(struct platform_device *pdev)
 
 	can->can_sys_clock = pdata->clock_frq;
         printk("   == func:(%s)    can_sys_clock:%d \n",__FUNCTION__,can->can_sys_clock);
-	//can->can_sys_clock = 90000000;
-        printk("   == func:(%s)    can_sys_clock:%d \n",__FUNCTION__,can->can_sys_clock);
+	//can->can_sys_clock = 66666666;
+        printk("   == func:(%s)    can_sys_clock:%d ==  pdata->clock_src:0x%08x\n",__FUNCTION__,can->can_sys_clock,pdata->clock_src);
 
 	platform_set_drvdata(pdev, dev);
 
@@ -235,6 +235,8 @@ unsigned int fsl_find_ipb_freq(struct device_node *node)
 	if (node)
 		of_node_put(node);
 
+        if(p_ipb_freq) printk("   == func:(%s)    *p_ipb_freq:%d  \n",__FUNCTION__,*p_ipb_freq);      // no output
+        else printk("   == func:(%s)    == no p_ipb_freq  \n",__FUNCTION__);      // no output
 	return p_ipb_freq ? *p_ipb_freq : 0;
 }
 
@@ -292,9 +294,14 @@ static int __init mpc52xx_of_to_pdev(void)
 		}
 
 		pdata.clock_src = MSCAN_CLKSRC_BUS;
+		//pdata.clock_src = 0;
 		pdata.cpu_type = type;
+		if (pdata.cpu_type == MPC512x_MSCAN){
+                    pdata.clock_src=0;
+                    printk("   == func:(%s)   cpu type: 512x \n",__FUNCTION__);      // no output
+                }
 		pdata.clock_frq = fsl_find_ipb_freq(np);
-                printk("   == func:(%s)    pdata->clock_frq:%d \n",__FUNCTION__,pdata.clock_frq);      // no output
+                printk("   == func:(%s)    pdata->clock_frq:%d     clock_src:0x%08x \n",__FUNCTION__,pdata.clock_frq,pdata.clock_src);      // no output
 
 		if (pdata.cpu_type == MPC512x_MSCAN) {
 			port = (int *)of_get_property(np, "cell-index", NULL);
@@ -319,6 +326,7 @@ static int __init mpc52xx_of_to_pdev(void)
 
 int __init mpc52xx_can_init(void)
 {
+	printk(KERN_INFO "=========================== %s initializing\n", mpc52xx_can_driver.driver.name);
 	mpc52xx_of_to_pdev();
 	printk(KERN_INFO "%s initializing\n", mpc52xx_can_driver.driver.name);
 	return platform_driver_register(&mpc52xx_can_driver);

@@ -111,6 +111,7 @@ static int mscan_set_mode(struct net_device *dev, u8 mode)
 
 	if (mode != MSCAN_NORMAL_MODE) {
 		canctl1 = in_8(&regs->canctl1);
+	        printk(" == == mydebug %s) mode != ..  canctl1:0x%02x\n", __FUNCTION__,canctl1);
 		if ((mode & MSCAN_SLPRQ) && (canctl1 & MSCAN_SLPAK) == 0) {
 			out_8(&regs->canctl0,
 			      in_8(&regs->canctl0) | MSCAN_SLPRQ);
@@ -141,6 +142,7 @@ static int mscan_set_mode(struct net_device *dev, u8 mode)
 
 	} else {
 		canctl1 = in_8(&regs->canctl1);
+	        printk(" == == mydebug %s) else(mode !=) ..  canctl1:0x%02x\n", __FUNCTION__,canctl1);
 		if (canctl1 & (MSCAN_SLPAK | MSCAN_INITAK)) {
 			out_8(&regs->canctl0, in_8(&regs->canctl0) &
 			      ~(MSCAN_SLPRQ | MSCAN_INITRQ));
@@ -597,6 +599,8 @@ static int mscan_open(struct net_device *dev)
 		return ret;
 	}
 
+	printk(" == == mydebug %s) mscan_open  in_8(&regs->canctl1):0x%02x\n", __FUNCTION__,in_8(&regs->canctl1));
+
 	INIT_LIST_HEAD(&priv->tx_head);
 	/* acceptance mask/acceptance code (accept everything) */
 	out_be16(&regs->canidar1_0, 0);
@@ -649,12 +653,14 @@ int register_mscandev(struct net_device *dev, int clock_src)
 	u8 ctl1;
 
 	ctl1 = in_8(&regs->canctl1);
+	printk(" == == mydebug %s) ctl1:0x%02x   clock_src:0x%02x  MSCAN_CLKSRC:0x%02x\n", __FUNCTION__,ctl1,clock_src,MSCAN_CLKSRC);
 	if (clock_src)
 		ctl1 |= MSCAN_CLKSRC;
 	else
 		ctl1 &= ~MSCAN_CLKSRC;
 
 	ctl1 |= MSCAN_CANE;
+	printk(" == == mydebug %s) before out)  ctl1:0x%02x\n", __FUNCTION__,ctl1);
 	out_8(&regs->canctl1, ctl1);
 	udelay(100);
 

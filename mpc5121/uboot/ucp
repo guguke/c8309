@@ -10,3 +10,6 @@ cp intel_flash.c uboot/board/ads5121/intel_flash.c
 cp intel_flash.h uboot/board/ads5121/intel_flash.h
 cp board.c uboot/lib_ppc/board.c
 cp fsl_nfc_nand.c uboot/drivers/mtd/nand/fsl_nfc_nand.c
+#  NFC_DIV
+cp cpu_init.c uboot/cpu/mpc512x/cpu_init.c
+cp mpc512x.h uboot/include/mpc512x.h

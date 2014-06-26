@@ -196,6 +196,10 @@
 #define SCFR1_PCI_DIV_MASK		0x00700000
 #define SCFR1_PCI_DIV_SHIFT		20
 
+#define SCFR1_NFC_DIV			0x4
+#define SCFR1_NFC_DIV_MASK		0x00000700
+#define SCFR1_NFC_DIV_SHIFT		8
+
 /* SCFR2 System Clock Frequency Register 2
  */
 #define SCFR2_SYS_DIV			0xFC000000

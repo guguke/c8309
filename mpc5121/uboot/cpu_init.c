@@ -69,6 +69,8 @@ void cpu_init_f (volatile immap_t * im)
 	ips_div = im->clk.scfr[0];
 	ips_div &= ~(SCFR1_IPS_DIV_MASK);
 	ips_div |= SCFR1_IPS_DIV << SCFR1_IPS_DIV_SHIFT;
+	ips_div &= ~(SCFR1_NFC_DIV_MASK);
+	ips_div |= SCFR1_NFC_DIV << SCFR1_NFC_DIV_SHIFT;
 	im->clk.scfr[0] = ips_div;
 
 	/*

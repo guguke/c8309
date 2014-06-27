@@ -386,7 +386,8 @@ extern void ads5121_fsl_nfc_board_cs(int);
  * Ethernet configuration
  */
 #if 1            // 1: FEC  0: eth0 = rtl8139     ==board.c==
-#define CONFIG_SYS_PROMPT	"v103.fec> "		/* Monitor Command Prompt */
+#define CONFIG_SYS_PROMPT	"v104.fec> "		/* Monitor Command Prompt */
+//                                   ver 104 : NFC_DIV: 3==>4 
 #define CONFIG_MPC512x_FEC	1
 //#define CONFIG_NET_MULTI
 #define CONFIG_PHY_ADDR		0x1

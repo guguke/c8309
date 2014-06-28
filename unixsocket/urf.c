@@ -13,7 +13,7 @@ int main(int argc,char *argv[])
 	struct sockaddr_un server_address; 
 	struct sockaddr_un client_address; 
 	int bytes_received, bytes_sent, address_length, integer_buffer;
-	socklen_t address_length;
+	//socklen_t address_length;
 	char buf[200];
 
 	printf(" usage: urf name_unix_socket\n");

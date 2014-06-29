@@ -87,12 +87,12 @@ int main(int argc,char *argv[])
 	len = strlen(buf);
 	nn = 1;
 
-	printf(" usage: udp_broadcast_send ip_addr port times msg_send \n"):
-	printf(" usage: udp_broadcast_send \n"):
-	printf(" usage: udp_broadcast_send 127.255.255.255 \n"):
-	printf(" usage: udp_broadcast_send 127.255.255.255 9010 \n"):
-	printf(" usage: udp_broadcast_send 127.255.255.255 9010 5 \n"):
-	printf(" usage: udp_broadcast_send 127.255.255.255 9010 5 msg.send.msg.send \n"):
+	printf(" usage: udp_broadcast_send ip_addr port times msg_send \n");
+	printf(" usage: udp_broadcast_send \n");
+	printf(" usage: udp_broadcast_send 127.255.255.255 \n");
+	printf(" usage: udp_broadcast_send 127.255.255.255 9010 \n");
+	printf(" usage: udp_broadcast_send 127.255.255.255 9010 5 \n");
+	printf(" usage: udp_broadcast_send 127.255.255.255 9010 5 msg.send.msg.send \n");
 
 	switch(argc){
 	case 5:

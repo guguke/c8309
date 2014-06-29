@@ -18,7 +18,7 @@ Paul Krzyzanowski
 //#define BUFSIZE 2048
 
 //int main(int argc, char **argv)
-int udp_broadcast_recv(char *paddr,int nport,char buf,int bufsize)
+int udp_broadcast_recv(char *paddr,int nport,char *buf,int bufsize,int nn)
 {
 	struct sockaddr_in myaddr;	/* our address */
 	struct sockaddr_in remaddr;	/* remote address */
@@ -28,6 +28,7 @@ int udp_broadcast_recv(char *paddr,int nport,char buf,int bufsize)
 	//unsigned char buf[BUFSIZE];	/* receive buffer */
 	int n;
 	int so_broadcast=1;
+        int i;
 
 	/* create a UDP socket */
 	if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -57,7 +58,7 @@ int udp_broadcast_recv(char *paddr,int nport,char buf,int bufsize)
 	}
 
 	printf("waiting on port %d\n", nport);
-	for(;;){
+	for(i=0;i<nn;){
 		recvlen = recvfrom(fd, buf, bufsize, 0, (struct sockaddr *)&remaddr, &addrlen);
 		printf("received %d bytes\n", recvlen);
 		if (recvlen > 0) {
@@ -65,7 +66,7 @@ int udp_broadcast_recv(char *paddr,int nport,char buf,int bufsize)
 			printf("received message: ");
 			for(n=0;n<recvlen;n++) printf(" %02x",0x0ff & buf[n]);
 			printf("\n");
-			break;
+			i++;
 		}
 	}
 	close(fd);
@@ -77,16 +78,21 @@ int main(int argc,char *argv[])
 	int nport;
 	char buf[2000];
 	int bufsize=1000;
+        int nn;
 
 	strcpy(addr,"127.255.255.255");
 	nport=9010;
+        nn=1;
 
-	printf(" usage: udp_broadcast_recv ip_addr port \n");
+	printf(" usage: udp_broadcast_recv ip_addr port times\n");
 	printf("        udp_broadcast_recv \n");
 	printf("        udp_broadcast_recv 127.255.255.255 \n");
 	printf("        udp_broadcast_recv 127.255.255.255 9010 \n");
+	printf("        udp_broadcast_recv 127.255.255.255 9010 10\n");
 
 	switch(argc){
+	case 4:
+		nn=atoi(argv[3]);
 	case 3:
 		nport=atoi(argv[2]);
 	case 2:
@@ -96,7 +102,7 @@ int main(int argc,char *argv[])
 	}
 	printf(" udp broadcast recv :   ip:%s  port:%d \n",addr,nport);
 
-	udp_broadcast_recv(addr,nport,buf,bufsize);
+	udp_broadcast_recv(addr,nport,buf,bufsize,nn);
 	return 0;
 }
 

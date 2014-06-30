@@ -41,6 +41,7 @@ int udp_broadcast_send(char *server,int nport,char *buf,int len,int nn)
 	myaddr.sin_family = AF_INET;
 	myaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	myaddr.sin_port = htons(0);
+        printf(" sender port : %d \n", ntohs(myaddr.sin_port));
 
 	if (bind(fd, (struct sockaddr *)&myaddr, sizeof(myaddr)) < 0) {
 		perror("bind failed");
@@ -56,6 +57,7 @@ int udp_broadcast_send(char *server,int nport,char *buf,int len,int nn)
 	memset((char *) &remaddr, 0, sizeof(remaddr));
 	remaddr.sin_family = AF_INET;
 	remaddr.sin_port = htons(nport);
+
 	if (inet_aton(server, &remaddr.sin_addr)==0) {
 		fprintf(stderr, "inet_aton() failed\n");
 		close(fd);

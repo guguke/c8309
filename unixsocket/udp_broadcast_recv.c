@@ -29,6 +29,7 @@ int udp_broadcast_recv(char *paddr,int nport,char *buf,int bufsize,int nn)
 	int n;
 	int so_broadcast=1;
         int i;
+        char ip[100];
 
 	/* create a UDP socket */
 	if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -62,6 +63,10 @@ int udp_broadcast_recv(char *paddr,int nport,char *buf,int bufsize,int nn)
 		recvlen = recvfrom(fd, buf, bufsize, 0, (struct sockaddr *)&remaddr, &addrlen);
 		printf("received %d bytes\n", recvlen);
 		if (recvlen > 0) {
+                        ip[0]=0;
+                        inet_ntop(AF_INET,&remaddr.sin_addr,ip,90);
+                        printf(" recv from : ip:%s  port:%d \n",ip,ntohs(remaddr.sin_port));
+
 			//buf[recvlen] = 0;
 			printf("received message: ");
 			for(n=0;n<recvlen;n++) printf(" %02x",0x0ff & buf[n]);

@@ -1,3 +1,6 @@
+20140701
+  thread_hello.c    linux thread example, 
+      gcc thread_hello.c -pthread
 20140630
   f.c fork() example
   tcps.c tcp socket example, fork(), wait (rm zombie) , echo server

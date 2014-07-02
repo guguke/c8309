@@ -186,8 +186,8 @@ int main(int argc, char *argv[ ])
 					perror("Server-send() error 1 lol!");
 					return -7;
 				}
-#endif
 			}
+#endif
 			close(new_fd);
 			printf(" == fork end \n");
 			return 0;

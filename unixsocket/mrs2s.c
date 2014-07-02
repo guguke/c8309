@@ -38,6 +38,8 @@ int main(int argc, char *argv[ ])
 	struct sigaction sa;
 	int yes = 1;
 	int numCli;
+	char buf[300];
+	int n1;
 
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)	{
 		perror("Server-socket() error lol!");
@@ -96,14 +98,15 @@ int main(int argc, char *argv[ ])
 			/* child doesn¡¯t need the listener */
 			close(sockfd);
 
-			if(send(new_fd, "This is a test string from server!\n", 37, 0) == -1){
-				perror("Server-send() error 1 lol!");
-				return -7;
-			}
-			sleep(5);
-			if(send(new_fd, "This is a test string from server!\n", 37, 0) == -1){
-				perror("Server-send() error 2 lol!");
-				return -7;
+			for(n1=0;n1<3;n1++){
+				len=read(new_fd,buf,200);
+				if(len<0)continue;
+				buf[len]=0;
+				printf(" recv from client(%d) : %s \n",n1,buf);
+				if(send(new_fd, buf,len, 0) == -1){
+					perror("Server-send() error 1 lol!");
+					return -7;
+				}
 			}
 			close(new_fd);
 			printf(" == fork end \n");

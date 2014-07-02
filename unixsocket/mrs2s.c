@@ -21,6 +21,7 @@
 void sigchld_handler(int s)
 {
 	while(wait(NULL) > 0);
+	printf("     sigchld exit \n");
 }
 
 int main(int argc, char *argv[ ])
@@ -79,7 +80,7 @@ int main(int argc, char *argv[ ])
 	else 		printf("Server-sigaction() is OK...\n");
 
 	/* accept() loop */
-	for(numCli=1;numCli<3;)	{
+	for(numCli=1;numCli<4;)	{
 		sin_size = sizeof(struct sockaddr_in);
 		if((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size)) == -1)		{
 			perror("Server-accept() error");

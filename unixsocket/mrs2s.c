@@ -79,7 +79,7 @@ int main(int argc, char *argv[ ])
 	else 		printf("Server-sigaction() is OK...\n");
 
 	/* accept() loop */
-	for(numCli=1;;)	{
+	for(numCli=1;numCli<3;)	{
 		sin_size = sizeof(struct sockaddr_in);
 		if((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size)) == -1)		{
 			perror("Server-accept() error");
@@ -96,10 +96,16 @@ int main(int argc, char *argv[ ])
 			close(sockfd);
 
 			if(send(new_fd, "This is a test string from server!\n", 37, 0) == -1){
-				perror("Server-send() error lol!");
+				perror("Server-send() error 1 lol!");
+				return -7;
+			}
+			sleep(5);
+			if(send(new_fd, "This is a test string from server!\n", 37, 0) == -1){
+				perror("Server-send() error 2 lol!");
 				return -7;
 			}
 			close(new_fd);
+			printf(" == fork end \n");
 			return 0;
 		}
 		else 			printf("Server-send is OK...!\n");
@@ -109,6 +115,8 @@ int main(int argc, char *argv[ ])
 		printf("Server-new socket, new_fd closed successfully...\n");
 	}
 
+	close(sockfd);
+	printf("  main exit \n");
 	return 0;
 
 }

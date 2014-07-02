@@ -39,6 +39,7 @@ int main(int argc, char *argv[ ])
 	int yes = 1;
 	int numCli;
 	char buf[300];
+	int len;
 	int n1;
 
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)	{

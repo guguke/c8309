@@ -51,7 +51,7 @@ int udp_broadcast_init(char *paddr,int nport)
 	//myaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	if(inet_aton(paddr,&myaddr.sin_addr)==0){
 		printf("  inet_aton() failed\n");
-		close(fd);
+		close(gUDPfd);
 		return -2;
 	}
 	myaddr.sin_port = htons(nport);
@@ -98,9 +98,8 @@ void* waitUDP(void *arg)
 	char ip[100];
 	struct sockaddr_in remaddr;	/* remote address */
 	socklen_t addrlen = sizeof(remaddr);		/* length of addresses */
-	int i;
 
-	unsigned long i = 0;
+	int i = 0;
 	pthread_t id = pthread_self();
 
 	strcpy(buf,"alskjd asl das dfas df asdf asd fas  \n");

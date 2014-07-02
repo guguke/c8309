@@ -61,7 +61,7 @@ int udp_broadcast_init(char *paddr,int nport)
 	// use SO_REUSEADDR not SO_REUSEPORT
 	if(-1 == setsockopt(gUDPfd,SOL_SOCKET,SO_REUSEADDR,&so_broadcast,sizeof so_broadcast)) fprintf(stderr," setsockopt REUSEADDR error\n");
 
-	if (bind(fd, (struct sockaddr *)&myaddr, sizeof(myaddr)) < 0) {
+	if (bind(gUDPfd, (struct sockaddr *)&myaddr, sizeof(myaddr)) < 0) {
 		printf(" bind failed");
 		return -3;
 	}
@@ -100,6 +100,7 @@ void* waitUDP(void *arg)
 	socklen_t addrlen = sizeof(remaddr);		/* length of addresses */
 
 	int i = 0;
+	int n;
 	pthread_t id = pthread_self();
 
 	strcpy(buf,"alskjd asl das dfas df asdf asd fas  \n");

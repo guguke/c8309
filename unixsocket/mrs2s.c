@@ -13,7 +13,8 @@
 #include <signal.h>
 
 /* listen on sock_fd, new connection on new_fd */
-int sockfd, new_fd;    // to global
+int new_fd;    // to global
+int gUDPfd;
 
 /* the port users will be connecting to */
 #define MYPORT 3490
@@ -24,10 +25,80 @@ int sockfd, new_fd;    // to global
 pthread_t tid[2];
 int ret1,ret2;
 
+// 127.255.255.255 9010 
+int udp_broadcast_init(char *paddr,int nport)
+{
+	struct sockaddr_in myaddr;	/* our address */
+	//struct sockaddr_in remaddr;	/* remote address */
+	//socklen_t addrlen = sizeof(remaddr);		/* length of addresses */
+	int recvlen;			/* # bytes received */
+	//int fd;				/* our socket */    //  ==> global udpfd
+	//unsigned char buf[BUFSIZE];	/* receive buffer */
+	int n;
+	int so_broadcast=1;
+	int i;
+	//char ip[100];
+
+	/* create a UDP socket */
+	if ((gUDPfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+		perror("cannot create socket\n");
+		return -1;
+	}
+
+	/* bind the socket to any valid IP address and a specific port */
+	memset((char *)&myaddr, 0, sizeof(myaddr));
+	myaddr.sin_family = AF_INET;
+	//myaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	if(inet_aton(paddr,&myaddr.sin_addr)==0){
+		printf("  inet_aton() failed\n");
+		close(fd);
+		return -2;
+	}
+	myaddr.sin_port = htons(nport);
+	//myaddr.sin_port = htons(SERVICE_PORT);
+
+	//if(-1 == setsockopt(fd,SOL_SOCKET,SO_BROADCAST,&so_broadcast,sizeof so_broadcast)) fprintf(stderr," setsockopt BROADCAST error\n");
+	// use SO_REUSEADDR not SO_REUSEPORT
+	if(-1 == setsockopt(gUDPfd,SOL_SOCKET,SO_REUSEADDR,&so_broadcast,sizeof so_broadcast)) fprintf(stderr," setsockopt REUSEADDR error\n");
+
+	if (bind(fd, (struct sockaddr *)&myaddr, sizeof(myaddr)) < 0) {
+		printf(" bind failed");
+		return -3;
+	}
+
+	return 0;
+#if 0
+	printf("waiting on port %d\n", nport);
+	for(i=0;i<nn;){
+		recvlen = recvfrom(fd, buf, bufsize, 0, (struct sockaddr *)&remaddr, &addrlen);
+		printf("received %d bytes\n", recvlen);
+		if (recvlen > 0) {
+			ip[0]=0;
+			inet_ntop(AF_INET,&remaddr.sin_addr,ip,90);
+			printf(" recv from : ip:%s  port:%d \n",ip,ntohs(remaddr.sin_port));
+
+			//buf[recvlen] = 0;
+			printf("received message: ");
+			for(n=0;n<recvlen;n++) printf(" %02x",0x0ff & buf[n]);
+			printf("\n");
+			i++;
+		}
+	}
+	close(fd);
+	return recvlen;
+#endif
+}
+
+
 void* waitUDP(void *arg)
 {
 	int len;
-	char buf[300];
+	char buf[600];
+	int recvlen;
+	char ip[100];
+	struct sockaddr_in remaddr;	/* remote address */
+	socklen_t addrlen = sizeof(remaddr);		/* length of addresses */
+	int i;
 
 	unsigned long i = 0;
 	pthread_t id = pthread_self();
@@ -38,13 +109,29 @@ void* waitUDP(void *arg)
 	//if(len<0)continue;
 	//buf[len]=0;
 	//printf(" recv from client(%d) : %s \n",n1,buf);
+	udp_broadcast_init("127.255.255.255",9010);
 	for(i=0;i<3; i++){
-		if(send(new_fd, buf,len, 0) == -1){
-			perror("Server-send() error 1 lol!");
-			break;
+		len=500;
+		recvlen = recvfrom(gUDPfd, buf, len, 0, (struct sockaddr *)&remaddr, &addrlen);
+		printf("received %d bytes\n", recvlen);
+		if (recvlen > 0) {
+			ip[0]=0;
+			inet_ntop(AF_INET,&remaddr.sin_addr,ip,90);
+			printf(" recv from : ip:%s  port:%d \n",ip,ntohs(remaddr.sin_port));
+
+			//buf[recvlen] = 0;
+			printf("received message: ");
+			for(n=0;n<recvlen;n++) printf(" %02x",0x0ff & buf[n]);
+			printf("\n");
+
+			if(send(new_fd, buf,recvlen, 0) == -1){
+				perror("Server-send() error 1 lol!");
+			}
+
+			i++;
 		}
-		sleep(4);
 	}
+	close(gUDPfd);
 #if 0
 	for(i=0; i<(0x0FFFF);i++);
 
@@ -103,7 +190,8 @@ void sigchld_handler(int s)
 int main(int argc, char *argv[ ])
 {
 	/* listen on sock_fd, new connection on new_fd */
-	//int sockfd, new_fd;    // to global
+	//int sockfd;
+	int new_fd;    // to global
 
 	/* my address information */
 	struct sockaddr_in my_addr;

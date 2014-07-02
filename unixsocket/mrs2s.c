@@ -190,8 +190,8 @@ void sigchld_handler(int s)
 int main(int argc, char *argv[ ])
 {
 	/* listen on sock_fd, new connection on new_fd */
-	//int sockfd;
-	int new_fd;    // to global
+	int sockfd;
+	//int new_fd;    // to global
 
 	/* my address information */
 	struct sockaddr_in my_addr;

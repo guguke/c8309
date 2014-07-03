@@ -303,7 +303,7 @@ int main(int argc, char *argv[ ])
 				case 0:// send back
 					if(send(new_fd, outbuf,outlen, 0) == -1){
 						perror("Server-send() error 1 lol!");
-						retTcpSend = -1;
+						retTcpSend = -1;// connect break;
 					}
 					break;
 				default:

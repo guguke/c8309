@@ -90,11 +90,12 @@ int udp_broadcast_init(char *paddr,int nport)
 }
 
 
-void* waitUDP(void *arg)
+void* threadUDPr(void *arg)
 {
 	int len;
-	char buf[600];
-	int recvlen;
+	char buf[600],outbuf[600];
+	int recvlen,outlen;
+	int op;
 	char ip[100];
 	struct sockaddr_in remaddr;	/* remote address */
 	socklen_t addrlen = sizeof(remaddr);		/* length of addresses */
@@ -120,9 +121,21 @@ void* waitUDP(void *arg)
 			printf(" recv from : ip:%s  port:%d \n",ip,ntohs(remaddr.sin_port));
 
 			//buf[recvlen] = 0;
-			printf("received message: ");
-			for(n=0;n<recvlen;n++) printf(" %02x",0x0ff & buf[n]);
-			printf("\n");
+			//printf("received message: ");
+			//for(n=0;n<recvlen;n++) printf(" %02x",0x0ff & buf[n]);
+			//printf("\n");
+			op=udp2send(buf,recvlen,outbuf,&outlen);
+			switch(op){
+			case 0:// sendback
+				if(outlen>0){
+					if(send(new_fd, outbuf,outlen, 0) == -1){
+						perror("Server-send() error 1 lol!");
+					}
+				}
+				break;
+			default:
+				break;
+			}
 
 			if(send(new_fd, buf,recvlen, 0) == -1){
 				perror("Server-send() error 1 lol!");
@@ -156,10 +169,10 @@ int startUDPrecv(void)
 {
 	int i = 0;  
 	int err;
-	int *ptr[2];
+	//int *ptr[2];
 
 	//while(i < 2)	{
-		err = pthread_create(&(tid[i]), NULL, &waitUDP, NULL);
+		err = pthread_create(&(tid[i]), NULL, &threadUDPr, NULL);
 		if (err != 0)
 			printf("\ncan't create thread :[%s]", strerror(err));
 		else
@@ -167,7 +180,7 @@ int startUDPrecv(void)
 
 		//i++;
 	//}
-
+#if 0
 	pthread_join(tid[0], (void**)&(ptr[0]));
 	//pthread_join(tid[1], (void**)&(ptr[1]));
 
@@ -176,9 +189,23 @@ int startUDPrecv(void)
 	//printf("\n return value from second thread is [%d]\n", *ptr[1]);
 
 	printf(" end of startUDPrecv \n");
+#endif
+	return err;
+}
+int stopUDPrecv(void)
+{
+	int *ptr[2];
+
+	pthread_join(tid[0], (void**)&(ptr[0]));
+	//pthread_join(tid[1], (void**)&(ptr[1]));
+
+	if( ptr[0] != NULL )printf("\n return value from first thread is [%d]\n", *ptr[0]);
+	//printf(" main:  thread exit return null \n");
+	//printf("\n return value from second thread is [%d]\n", *ptr[1]);
+
+	printf(" end of stopUDPrecv \n");
 	return 0;
 }
-
 
 
 void sigchld_handler(int s)
@@ -202,9 +229,11 @@ int main(int argc, char *argv[ ])
 	struct sigaction sa;
 	int yes = 1;
 	int numCli;
-	char buf[300];
-	int len;
+	char buf[400],outbuf[400];
+	int len,outlen;
 	int n1;
+	int threadErr;
+	int retTcpSend;
 
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)	{
 		perror("Server-socket() error lol!");
@@ -263,19 +292,27 @@ int main(int argc, char *argv[ ])
 			/* child doesn¡¯t need the listener */
 			close(sockfd);
 
-			startUDPrecv();
-#if 0
-			for(n1=0;n1<3;n1++){
-				len=read(new_fd,buf,200);
+			threadErr=startUDPrecv();
+
+			for(n1=0,retTcp=0;n1<3 && retTcpSend>=0;n1++){
+				len=read(new_fd,buf,300);
 				if(len<0)continue;
-				buf[len]=0;
-				printf(" recv from client(%d) : %s \n",n1,buf);
-				if(send(new_fd, buf,len, 0) == -1){
-					perror("Server-send() error 1 lol!");
-					return -7;
+				op=tcp2send(buf,len,outbuf,&outlen);
+				switch(op){
+				case 0:// send back
+					if(send(new_fd, outbuf,outlen, 0) == -1){
+						perror("Server-send() error 1 lol!");
+						retTcpSend = -1;
+					}
+					break;
+				default:
+					break;
 				}
 			}
-#endif
+			pthread_cancel(tid[0]);
+			// kill UDP thread // stop UDPthread
+			if(threadErr!=0) stopUDPrecv();
+
 			close(new_fd);
 			printf(" == fork end \n");
 			return 0;

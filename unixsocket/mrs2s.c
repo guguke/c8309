@@ -234,6 +234,7 @@ int main(int argc, char *argv[ ])
 	int n1;
 	int threadErr;
 	int retTcpSend;
+	int op;
 
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)	{
 		perror("Server-socket() error lol!");
@@ -294,7 +295,7 @@ int main(int argc, char *argv[ ])
 
 			threadErr=startUDPrecv();
 
-			for(n1=0,retTcp=0;n1<3 && retTcpSend>=0;n1++){
+			for(n1=0,retTcpSend=0;n1<3 && retTcpSend>=0;n1++){
 				len=read(new_fd,buf,300);
 				if(len<0)continue;
 				op=tcp2send(buf,len,outbuf,&outlen);

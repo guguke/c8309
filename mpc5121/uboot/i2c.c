@@ -138,9 +138,9 @@ static int do_address (uchar chip, char rdwr_flag)
 		return -2;
 	}
 
-	if (status & I2C_RXAK) {
-		return -3;
-	}
+	//if (status & I2C_RXAK) {
+	//	return -3;
+	//}
 
 	return 0;
 }
@@ -159,9 +159,9 @@ static int send_bytes (uchar chip, char *buf, int len)
 			break;
 		}
 
-		if (status & I2C_RXAK) {
-			break;
-		}
+		//if (status & I2C_RXAK) {
+		//	break;
+		//}
 
 	}
 

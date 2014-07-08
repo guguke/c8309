@@ -14,4 +14,4 @@ cp fsl_nfc_nand.c uboot/drivers/mtd/nand/fsl_nfc_nand.c
 cp cpu_init.c uboot/cpu/mpc512x/cpu_init.c
 cp mpc512x.h uboot/include/mpc512x.h
 # i2c test , rm ack
-cp i2c.c uboot/cpu/mpc512x/i2c.c
+cp i2c000.c uboot/cpu/mpc512x/i2c.c

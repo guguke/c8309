@@ -1,3 +1,6 @@
+20140708
+i2c.c 
+rm i2c ack
 
 !!!!!!!!!!!!!! change uboot/board/ads5121/Makefile , add flash.o intel_flash.o !!!!!
 flash001.c // evb ??? 

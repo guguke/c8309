@@ -293,16 +293,26 @@ int main(int argc, char *argv[ ])
 			/* child doesn¡¯t need the listener */
 			close(sockfd);
 
+			// wait ser2net local udp, 
 			threadErr=startUDPrecv();
 
+			// recv from client , 
 			for(n1=0,retTcpSend=0;n1<3 && retTcpSend>=0;n1++){
 				len=read(new_fd,buf,300);
-				if(len<0)continue;
-				op=tcp2send(buf,len,outbuf,&outlen);
+				if(len<0){ 
+					printf(" read from client return error, break, kill thread, fork exit \n");
+					break;  // read error 
+					//continue;   // error should break 
+				}
+				else if(len==0){ // normal end of client socket connect 
+					printf(" client socket read return 0, end of the socket \n");
+					break;
+				}
+				op=tcp2send(buf,len,outbuf,&outlen);      // rcv2send 
 				switch(op){
 				case 0:// send back
 					if(send(new_fd, outbuf,outlen, 0) == -1){
-						perror("Server-send() error 1 lol!");
+						perror("   reply to client error , for break \n");
 						retTcpSend = -1;// connect break;
 					}
 					break;
@@ -318,11 +328,11 @@ int main(int argc, char *argv[ ])
 			printf(" == fork end \n");
 			return 0;
 		}
-		else 			printf("Server-send is OK...!\n");
+		else 			printf("  fork parent,              \n");
 
 		/* parent doesn¡¯t need this*/
 		close(new_fd);
-		printf("Server-new socket, new_fd closed successfully...\n");
+		printf("Server-new socket, new_fd closed successfully...    wait new client(%d) \n",numCli);
 	}
 
 	close(sockfd);

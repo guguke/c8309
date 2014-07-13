@@ -17,7 +17,7 @@ int new_fd;    // to global
 int gUDPfd;
 
 /* the port users will be connecting to */
-#define MYPORT 3490
+#define MYPORT 13500
 
 /* how many pending connections queue will hold */
 #define BACKLOG 10
@@ -230,11 +230,15 @@ int main(int argc, char *argv[ ])
 	int yes = 1;
 	int numCli;
 	char buf[400],outbuf[400];
-	int len,outlen;
+	int len,poutlen[10];
 	int n1;
 	int threadErr;
 	int retTcpSend;
 	int op;
+	int i;
+	char *p;
+
+	init_gd();///////////////// init global data
 
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)	{
 		perror("Server-socket() error lol!");
@@ -277,7 +281,7 @@ int main(int argc, char *argv[ ])
 	else 		printf("Server-sigaction() is OK...\n");
 
 	/* accept() loop */
-	for(numCli=1;numCli<4;)	{
+	for(numCli=1;numCli<3;)	{// numCli : for test
 		sin_size = sizeof(struct sockaddr_in);
 		if((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size)) == -1)		{
 			perror("Server-accept() error");
@@ -297,7 +301,7 @@ int main(int argc, char *argv[ ])
 			threadErr=startUDPrecv();
 
 			// recv from client , 
-			for(n1=0,retTcpSend=0;n1<3 && retTcpSend>=0;n1++){
+			for(n1=0,retTcpSend=0;retTcpSend>=0;n1++){// n1: no use 
 				len=read(new_fd,buf,300);
 				if(len<0){ 
 					printf(" read from client return error, break, kill thread, fork exit \n");
@@ -308,13 +312,43 @@ int main(int argc, char *argv[ ])
 					printf(" client socket read return 0, end of the socket \n");
 					break;
 				}
-				op=tcp2send(buf,len,outbuf,&outlen);      // rcv2send 
+
+				////////////////
+				printf(" recv tcp client, len:%d -0x- ",len);
+				for(i=0;i<len;i++) printf(" %02x",0x0ff & buf[i]);
+				printf(" \n");
+
+				op=tcp2send(buf,len,outbuf,poutlen);      // rcv2send 
+
+				printf(" prep reply tcp client, len:%d -0x- ",poutlen[0]);
+				for(i=0;i<poutlen[0];i++) printf(" %02x",0x0ff & outbuf[i]);
+				printf(" \n");
+
 				switch(op){
 				case 0:// send back
-					if(send(new_fd, outbuf,outlen, 0) == -1){
+					if(send(new_fd, outbuf,poutlen[0], 0) == -1){
 						perror("   reply to client error , for break \n");
 						retTcpSend = -1;// connect break;
 					}
+					break;
+				case 9:// send back , idx=0x0ff
+					p=outbuf;
+					for(i=0;i<9;i++){
+						if(send(new_fd, p,poutlen[i], 0) == -1){
+							perror("   reply to client error , for break \n");
+							retTcpSend = -1;// connect break;
+							break;
+						}
+						p+=poutlen[i];
+					}
+					break;
+				case 0x51:
+					if(send(new_fd, outbuf,poutlen[0], 0) == -1){
+						perror("   reply to client error , for break \n");
+						retTcpSend = -1;// connect break;
+						break;
+					}
+					setnewip(buf,len);
 					break;
 				default:
 					break;

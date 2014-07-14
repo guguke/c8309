@@ -1,3 +1,7 @@
+20140710
+mrs_v1.c   using , v1.0   28
+mrs.c !!!!!!!!!!!!! do not change 
+
 2013.09.09
 mrs.c 
      gcc mrs.c -pthread

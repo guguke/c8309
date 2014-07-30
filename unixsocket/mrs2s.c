@@ -13,7 +13,7 @@
 #include <signal.h>
 
 /* listen on sock_fd, new connection on new_fd */
-int new_fd;    // to global
+int new_fd=-1;    // to global
 int gUDPfd;
 
 /* the port users will be connecting to */
@@ -111,7 +111,7 @@ void* threadUDPr(void *arg)
 	//buf[len]=0;
 	//printf(" recv from client(%d) : %s \n",n1,buf);
 	udp_broadcast_init("127.255.255.255",9010);
-	for(i=0;i<3; i++){
+	for(;;){
 		len=500;
 		recvlen = recvfrom(gUDPfd, buf, len, 0, (struct sockaddr *)&remaddr, &addrlen);
 		printf("received %d bytes\n", recvlen);
@@ -125,23 +125,20 @@ void* threadUDPr(void *arg)
 			//for(n=0;n<recvlen;n++) printf(" %02x",0x0ff & buf[n]);
 			//printf("\n");
 			op=udp2send(buf,recvlen,outbuf,&outlen);
+			/////////////// same as tcp send back //////////////////////////////////////////////
+			if(new_fd==-1)continue;
 			switch(op){
 			case 0:// sendback
 				if(outlen>0){
 					if(send(new_fd, outbuf,outlen, 0) == -1){
 						perror("Server-send() error 1 lol!");
 					}
+					else printf(" udp ==> tcp client \n");
 				}
 				break;
 			default:
 				break;
 			}
-
-			if(send(new_fd, buf,recvlen, 0) == -1){
-				perror("Server-send() error 1 lol!");
-			}
-
-			i++;
 		}
 	}
 	close(gUDPfd);
@@ -281,7 +278,8 @@ int main(int argc, char *argv[ ])
 	else 		printf("Server-sigaction() is OK...\n");
 
 	/* accept() loop */
-	for(numCli=1;numCli<3;)	{// numCli : for test
+	threadErr=startUDPrecv();
+	for(numCli=1;;)	{// loop for ever,  numCli : for test
 		sin_size = sizeof(struct sockaddr_in);
 		if((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size)) == -1)		{
 			perror("Server-accept() error");
@@ -293,11 +291,18 @@ int main(int argc, char *argv[ ])
 		printf("Server: Got connection from %s\n", inet_ntoa(their_addr.sin_addr));
 
 		/* this is the child process */
+		/////////// child , stop thread 
+		printf("  ===== before  fork , stop thread  ============= \n");
+		pthread_cancel(tid[0]);
+		// kill UDP thread // stop UDPthread
+		if(threadErr!=0) stopUDPrecv();
+
 		if(!fork())		{
 			/* child doesn¡¯t need the listener */
 			close(sockfd);
 
 			// wait ser2net local udp, 
+			printf("      fork child , start udp thread \n");
 			threadErr=startUDPrecv();
 
 			// recv from client , 
@@ -359,16 +364,25 @@ int main(int argc, char *argv[ ])
 			if(threadErr!=0) stopUDPrecv();
 
 			close(new_fd);
+			new_fd=-1;
 			printf(" == fork end \n");
 			return 0;
 		}
-		else 			printf("  fork parent,              \n");
+		else{
+			printf(" fork main , restart udp thread \n");
+			threadErr=startUDPrecv();
+			printf("  fork parent,              \n");
+		}
 
 		/* parent doesn¡¯t need this*/
 		close(new_fd);
+		new_fd=-1;
 		printf("Server-new socket, new_fd closed successfully...    wait new client(%d) \n",numCli);
 	}
 
+	pthread_cancel(tid[0]);
+	// kill UDP thread // stop UDPthread
+	if(threadErr!=0) stopUDPrecv();
 	close(sockfd);
 	printf("  main exit \n");
 	return 0;

@@ -1,0 +1,4 @@
+#!/bin/bash
+cp MPC8308ERDB.h uboot/include/configs/MPC8308ERDB.h
+cp cfi_flash.c uboot/drivers/mtd/cfi_flash.c
+

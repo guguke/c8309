@@ -1,0 +1,3 @@
+#!/bin/bash
+cp mk.sh uboot.cfm/mk.sh
+cp MPC8308ERDB.h uboot.cfm/include/configs/MPC8308ERDB.h

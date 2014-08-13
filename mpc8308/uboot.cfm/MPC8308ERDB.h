@@ -772,7 +772,7 @@
  */
 #define CONFIG_SYS_LONGHELP		/* undef to save memory */
 #define CONFIG_SYS_LOAD_ADDR		0x2000000 /* default load address */
-#define CONFIG_SYS_PROMPT		"=> "	/* Monitor Command Prompt */
+#define CONFIG_SYS_PROMPT		"nor.v1.03> "	/* Monitor Command Prompt */
 
 #if defined(CONFIG_CMD_KGDB)
 	#define CONFIG_SYS_CBSIZE	1024 /* Console I/O Buffer Size */
@@ -942,6 +942,12 @@
    "nandimgsize=400000\0"		\
    "nandrootfsaddr=400000\0"	\
    "nandrootfssize=1000000\0"	\
+   "ramdisk_size=30000\0"	\
+   "ipaddr=192.168.1.88\0"	\
+   "serverip=192.168.1.24\0"	\
+   "cmdtftp=tftp 2000000 mpc8308/cu2;tftp 3000000 mpc8308/fs;bootm 2000000 3000000\0"	\
+   "cmd1=setenv bootargs root=/dev/ram rw ramdisk_size=$ramdisk_size console=$consoledev,$baudrate $othbootargs; "	\
+   "nand read 2000000 100000 300000;nand read 2400000 400000 1000000;bootm 2000000 2400000\0"	\
    ""
 
 #define CONFIG_NFSBOOTCOMMAND						\
@@ -970,9 +976,13 @@
 	"bootm 0x2000000 0x3000000"
 #else
 #define CONFIG_NORMALBOOTCOMMAND		\
+	"run cmd1"
+#if 0
+#define CONFIG_NORMALBOOTCOMMAND		\
 	"setenv bootargs root=/dev/ram rw "	\
 	"console=$consoledev,$baudrate $othbootargs; "	\
 	"bootm 0xfe100000 0xfe500000"
+#endif
 #endif
 
 

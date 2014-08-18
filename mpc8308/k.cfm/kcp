@@ -1,0 +1,2 @@
+#!/bin/sh
+cp mk.sh linux/mk.sh

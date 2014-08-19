@@ -1,3 +1,5 @@
 #!/bin/sh
 cp mk.sh linux/mk.sh
+cp mkmenu.sh linux/mkmenu.sh
 cp mpc8308erdb.dts linux/arch/powerpc/boot/dts/mpc8308erdb.dts
+cp legacy_serial.c linux/arch/powerpc/kernel/legacy_serial.c

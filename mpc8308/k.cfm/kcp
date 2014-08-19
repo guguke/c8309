@@ -1,2 +1,3 @@
 #!/bin/sh
 cp mk.sh linux/mk.sh
+cp mpc8308erdb.dts linux/arch/powerpc/boot/dts/mpc8308erdb.dts

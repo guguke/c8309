@@ -3,3 +3,7 @@ cp mk.sh linux/mk.sh
 cp mkmenu.sh linux/mkmenu.sh
 cp mpc8308erdb.dts linux/arch/powerpc/boot/dts/mpc8308erdb.dts
 cp legacy_serial.c linux/arch/powerpc/kernel/legacy_serial.c
+
+# tmp
+cp 8250org.c linux/drivers/serial/8250.c
+cp serial_core000.c linux/drivers/serial/serial_core.c

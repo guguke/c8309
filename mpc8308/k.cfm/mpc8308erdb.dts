@@ -472,7 +472,6 @@
 			interrupt-parent = <&ipic>;
 		};
 	};
-	};
 
 /*
 	pcie0: pci@e0009000 {

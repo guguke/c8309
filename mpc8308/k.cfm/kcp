@@ -7,3 +7,6 @@ cp legacy_serial.c linux/arch/powerpc/kernel/legacy_serial.c
 # tmp
 cp 8250org.c linux/drivers/serial/8250.c
 cp serial_core000.c linux/drivers/serial/serial_core.c
+
+cp c linux/.config
+cp Makefile linux/Makefile

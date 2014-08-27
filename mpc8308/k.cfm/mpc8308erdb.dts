@@ -98,18 +98,21 @@
 			reg = <0x1 0x0 0x2000>;
 
 			kernel@0 {
-				reg = <0x0 0x400000>;
+				reg = <0x0 0x2000000>;
 				read-only;
 				label = "Kernel-NAND";
 			};
-			ramdisk@400000 {
-				reg = <0x400000 0x1000000>;
-				read-only;
-				label = "Ramdisk-NAND";
+			fs128@2000000 {
+				reg = <0x2000000 0x8000000>;
+				label = "fs128";
 			};
-			jffs2@1000000 {
-				reg = <0x1000000 0x10000000>;
-				label = "JFFS2-NAND";
+			fs64@a000000 {
+				reg = <0xa000000 0x4000000>;
+				label = "fs64";
+			};
+			fs32@e000000 {
+				reg = <0xe000000 0x2000000>;
+				label = "fs32";
 			};
 		};
 

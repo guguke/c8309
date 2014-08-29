@@ -109,9 +109,10 @@ void machine_shutdown(void)
 void machine_restart(char *cmd)
 {
 	machine_shutdown();
-	printk(KERN_EMERG " == mydebug end machine_shutdown \n");
+	udelay(500);
+	//printk(KERN_EMERG " == mydebug end machine_shutdown \n");
 	if (ppc_md.restart){
-	        printk(KERN_EMERG " == mydebug ppc_md.restart   cmd:%s \n",cmd);
+	        //printk(KERN_EMERG " == mydebug ppc_md.restart   cmd:%s \n",cmd);
 		ppc_md.restart(cmd);
         }
 #ifdef CONFIG_SMP

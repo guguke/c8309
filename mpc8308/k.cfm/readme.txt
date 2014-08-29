@@ -1,4 +1,5 @@
 kernel cfm
+4. kernel ver c3a: reboot bug fix
 3. c1: add config uinput
 2. kernel bin : cuImage 
 1. dir kernel cfm

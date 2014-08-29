@@ -772,7 +772,7 @@
  */
 #define CONFIG_SYS_LONGHELP		/* undef to save memory */
 #define CONFIG_SYS_LOAD_ADDR		0x2000000 /* default load address */
-#define CONFIG_SYS_PROMPT		"nor.v1.03> "	/* Monitor Command Prompt */
+#define CONFIG_SYS_PROMPT		"nor.v1.03t> "	/* Monitor Command Prompt */
 
 #if defined(CONFIG_CMD_KGDB)
 	#define CONFIG_SYS_CBSIZE	1024 /* Console I/O Buffer Size */

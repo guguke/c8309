@@ -1,3 +1,4 @@
 #!/bin/bash
 cp mk.sh uboot.cfm/mk.sh
 cp MPC8308ERDB.h uboot.cfm/include/configs/MPC8308ERDB.h
+cp cpu.c uboot.cfm/cpu/mpc83xx/cpu.c

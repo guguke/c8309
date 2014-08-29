@@ -10,3 +10,8 @@ cp serial_core000.c linux/drivers/serial/serial_core.c
 
 cp c linux/.config
 cp Makefile linux/Makefile
+
+# bug reboot fix 
+cp setup-common.c linux/arch/powerpc/kernel/setup-common.c
+
+cp misc.c linux/arch/powerpc/platforms/83xx/misc.c

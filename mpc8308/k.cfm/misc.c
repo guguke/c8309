@@ -42,7 +42,7 @@ void mpc83xx_restart(char *cmd)
 		/* enable software reset "RSTE" */
 		out_be32(restart_reg_base + (RST_PROT_REG >> 2), 0x52535445);
 
-		udelay(200);
+		printk (KERN_EMERG "... \n");
 		/* set software hard reset */
 		out_be32(restart_reg_base + (RST_CTRL_REG >> 2), 0x2);
 	} else {

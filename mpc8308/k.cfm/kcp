@@ -16,3 +16,6 @@ cp setup-common.c linux/arch/powerpc/kernel/setup-common.c
 # cp setup-common000.c linux/arch/powerpc/kernel/setup-common.c
 cp misc.c linux/arch/powerpc/platforms/83xx/misc.c
 cp sys.c linux/kernel/sys.c
+# gpio interface
+cp Mf1 linux/arch/powerpc/platforms/83xx/Makefile
+cp gpio8308.c linux/arch/powerpc/platforms/83xx/gpio8308.c

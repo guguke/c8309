@@ -209,7 +209,7 @@ int init_module()
         Our_Proc_File->mode    = S_IFREG | S_IRUGO;
         Our_Proc_File->uid     = 0;
         Our_Proc_File->gid     = 0;
-        Our_Proc_File->size    = 37;
+        Our_Proc_File->size    = 0;////////////////////////
 
         printk(KERN_INFO "/proc/%s created\n", PROCFS_NAME);    
         return 0;       /* everything is ok */

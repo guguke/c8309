@@ -1,0 +1,4 @@
+#!/bin/sh
+cp mk.sh linux/mk.sh
+cp mkmenu.sh linux/mkmenu.sh
+cp serial.c linux/arch/powerpc/boot/serial.c

@@ -44,6 +44,9 @@ $(TOOLS_DIR)/i2cdump.o: $(TOOLS_DIR)/i2cdump.c $(TOOLS_DIR)/i2cbusses.h $(TOOLS_
 $(TOOLS_DIR)/i2cset.o: $(TOOLS_DIR)/i2cset.c $(TOOLS_DIR)/i2cbusses.h $(TOOLS_DIR)/util.h
 	$(CC) $(CFLAGS) $(TOOLS_CFLAGS) -c $< -o $@
 
+$(TOOLS_DIR)/i2csetpipe.o: $(TOOLS_DIR)/i2csetpipe.c $(TOOLS_DIR)/i2cbusses.h $(TOOLS_DIR)/util.h
+	$(CC) $(CFLAGS) $(TOOLS_CFLAGS) -c $< -o $@
+
 $(TOOLS_DIR)/i2cget.o: $(TOOLS_DIR)/i2cget.c $(TOOLS_DIR)/i2cbusses.h $(TOOLS_DIR)/util.h
 	$(CC) $(CFLAGS) $(TOOLS_CFLAGS) -c $< -o $@
 

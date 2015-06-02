@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
 				maskp = argv[2+flags];
 			flags++;
 			break;
-		case 'r': readback = 1; break;
+		case 'r': readback = 0; break;// rm readback
 		default:
 			fprintf(stderr, "Error: Unsupported option "
 				"\"%s\"!\n", argv[1+flags]);

@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 	char filename[20];
 	int pec = 0;
 	int flags = 0;
-	int force = 0, yes = 0, version = 0, readback = 0;
+	int force = 1, yes = 1, version = 0, readback = 0;
 
 	/* handle (optional) flags first */
 	while (1+flags < argc && argv[1+flags][0] == '-') {
@@ -155,11 +155,6 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 		flags++;
-	}
-
-	if (version) {
-		fprintf(stderr, "i2cset version %s\n", VERSION);
-		exit(0);
 	}
 
 	if (argc < flags + 4)
@@ -214,14 +209,6 @@ int main(int argc, char *argv[])
 		maskp = argv[flags+6];
 	}
 
-	if (maskp) {
-		vmask = strtol(maskp, &end, 0);
-		if (*end || vmask == 0) {
-			fprintf(stderr, "Error: Data value mask invalid!\n");
-			help();
-		}
-	}
-
 	if ((size == I2C_SMBUS_BYTE_DATA && value > 0xff)
 	 || (size == I2C_SMBUS_WORD_DATA && value > 0xffff)) {
 		fprintf(stderr, "Error: Data value out of range!\n");
@@ -237,52 +224,6 @@ int main(int argc, char *argv[])
 	if (!yes && !confirm(filename, address, size, daddress,
 			     value, vmask, pec))
 		exit(0);
-
-	if (vmask) {
-		int oldvalue;
-
-		switch (size) {
-		case I2C_SMBUS_BYTE:
-			oldvalue = i2c_smbus_read_byte(file);
-			break;
-		case I2C_SMBUS_WORD_DATA:
-			oldvalue = i2c_smbus_read_word_data(file, daddress);
-			break;
-		default:
-			oldvalue = i2c_smbus_read_byte_data(file, daddress);
-		}
-
-		if (oldvalue < 0) {
-			fprintf(stderr, "Error: Failed to read old value\n");
-			exit(1);
-		}
-
-		value = (value & vmask) | (oldvalue & ~vmask);
-
-		if (!yes) {
-			fprintf(stderr, "Old value 0x%0*x, write mask "
-				"0x%0*x: Will write 0x%0*x to register "
-				"0x%02x\n",
-				size == I2C_SMBUS_WORD_DATA ? 4 : 2, oldvalue,
-				size == I2C_SMBUS_WORD_DATA ? 4 : 2, vmask,
-				size == I2C_SMBUS_WORD_DATA ? 4 : 2, value,
-				daddress);
-
-			fprintf(stderr, "Continue? [Y/n] ");
-			fflush(stderr);
-			if (!user_ack(1)) {
-				fprintf(stderr, "Aborting on user request.\n");
-				exit(0);
-			}
-		}
-	}
-
-	if (pec && ioctl(file, I2C_PEC, 1) < 0) {
-		fprintf(stderr, "Error: Could not set PEC: %s\n",
-			strerror(errno));
-		close(file);
-		exit(1);
-	}
 
 	switch (size) {
 	case I2C_SMBUS_BYTE:
@@ -300,45 +241,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	if (pec) {
-		if (ioctl(file, I2C_PEC, 0) < 0) {
-			fprintf(stderr, "Error: Could not clear PEC: %s\n",
-				strerror(errno));
-			close(file);
-			exit(1);
-		}
-	}
-
-	if (!readback) { /* We're done */
-		close(file);
-		exit(0);
-	}
-
-	switch (size) {
-	case I2C_SMBUS_BYTE:
-		res = i2c_smbus_read_byte(file);
-		value = daddress;
-		break;
-	case I2C_SMBUS_WORD_DATA:
-		res = i2c_smbus_read_word_data(file, daddress);
-		break;
-	default: /* I2C_SMBUS_BYTE_DATA */
-		res = i2c_smbus_read_byte_data(file, daddress);
-	}
+	// no readback support
 	close(file);
-
-	if (res < 0) {
-		printf("Warning - readback failed\n");
-	} else
-	if (res != value) {
-		printf("Warning - data mismatch - wrote "
-		       "0x%0*x, read back 0x%0*x\n",
-		       size == I2C_SMBUS_WORD_DATA ? 4 : 2, value,
-		       size == I2C_SMBUS_WORD_DATA ? 4 : 2, res);
-	} else {
-		printf("Value 0x%0*x written, readback matched\n",
-		       size == I2C_SMBUS_WORD_DATA ? 4 : 2, value);
-	}
-
 	exit(0);
 }

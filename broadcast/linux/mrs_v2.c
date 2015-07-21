@@ -163,7 +163,7 @@ int getIP(const int domain,char *pif,char *pip)
 }
 
 
-int ms(char *localip,char *mip,int mport,char *databuf,int nLen)
+int msend(char *localip,char *mip,int mport,char *databuf,int nLen)
 {
 	struct in_addr localInterface;
 	struct sockaddr_in groupSock;
@@ -173,10 +173,49 @@ int ms(char *localip,char *mip,int mport,char *databuf,int nLen)
 
 	datalen=nLen;
 	/* Create a datagram socket on which to send. */
-	if(sdmsOpen==0){
-	sdms = socket (AF_INET, SOCK_DGRAM, 0);
-		sdmsOpen=1;
+	if(sdmsOpen==0)
+	{
+		msinit(localip,mip,mport,databuf,nLen)
 	}
+	if(sdmsOpen==0){
+		perror(" open socket send error ");
+		for(;;);
+		return -1;
+	}
+
+	/* Initialize the group sockaddr structure with a */
+	/* group address of 225.1.1.1 and port 5555. */
+	memset ((char *) &groupSock, 0, sizeof (groupSock));
+	groupSock.sin_family = AF_INET;
+	groupSock.sin_addr.s_addr = inet_addr (mip);
+	groupSock.sin_port = htons (mport);
+
+	/* Send a message to the multicast group specified by the*/
+	/* groupSock sockaddr structure. */
+	/*int datalen = 1024;*/
+	if (sendto (sdms, databuf, datalen, 0, (struct sockaddr *) &groupSock,sizeof (groupSock)) < 0) {
+			perror ("Sending datagram message error");
+			//close(sdms);
+			return -3;
+	}
+	else
+		printf ("Sending datagram message...OK\n");
+
+	return 0;
+}
+
+int msinit(char *localip,char *mip,int mport,char *databuf,int nLen)
+{
+	struct in_addr localInterface;
+	struct sockaddr_in groupSock;
+	//int sd;
+	//char databuf[1024] = "Multicast test message lol!";
+
+	/* Create a datagram socket on which to send. */
+	if(sdmsOpen>0) return -11;
+	sdmsOpen = 1;
+
+	sdms = socket (AF_INET, SOCK_DGRAM, 0);
 	if (sdms < 0) {
 		perror ("Opening datagram socket error (ms ");
 		for(;;);
@@ -211,42 +250,19 @@ int ms(char *localip,char *mip,int mport,char *databuf,int nLen)
 	/* The IP address specified must be associated with a local, */
 	/* multicast capable interface. */
 	localInterface.s_addr = inet_addr (localip);
-	if (setsockopt (sdms, IPPROTO_IP, IP_MULTICAST_IF, (char *) &localInterface,
-		sizeof (localInterface)) < 0) {
+	if (setsockopt (sdms, IPPROTO_IP, IP_MULTICAST_IF, (char *) &localInterface,sizeof (localInterface)) < 0) {
 			perror ("Setting local interface error");
-			//close(sdms);
+			close(sdms);
+			sdmsOpen = 0;
 			return -2;
 	}
 	else
 		printf ("Setting the local interface...OK\n");
-	/* Send a message to the multicast group specified by the*/
-	/* groupSock sockaddr structure. */
-	/*int datalen = 1024;*/
-	if (sendto (sdms, databuf, datalen, 0, (struct sockaddr *) &groupSock,
-		sizeof (groupSock)) < 0) {
-			perror ("Sending datagram message error");
-			//close(sdms);
-			return -3;
-	}
-	else
-		printf ("Sending datagram message...OK\n");
 
-	/* Try the re-read from the socket if the loopback is not disable
-	if(read(sd, databuf, datalen) < 0)
-	{
-	perror("Reading datagram message error\n");
-	close(sd);
-	exit(1);
-	}
-	else
-	{
-	printf("Reading datagram message from client...OK\n");
-	printf("The message is: %s\n", databuf);
-	}
-	*/
-	//close(sdms);
 	return 0;
 }
+
+
 // multicast reply  (getip 
 // srcip : client ip, using for check , client ip
 // msip: reply multicast ip : 226.1.1.2
@@ -288,7 +304,7 @@ int ms_ser2net(char *srcip,char *msip,int msport,char *ifname,char *sn)
 	sLen=strlen(msbuf);
 	printf("ms_ser2net : %s\n",msbuf);
 
-	ms(ifip,msip,msport,msbuf,sLen);
+	msend(ifip,msip,msport,msbuf,sLen);
 
 	return 0;
 }
@@ -299,7 +315,7 @@ int ms_ser2net(char *srcip,char *msip,int msport,char *ifname,char *sn)
 // rport: multicast port
 // databuf: rcv buf
 // pnLen: multicast rcv len
-int mr(char *rip,char *mip,int rport,char *databuf,int *pnLen)
+int mrcv(char *rip,char *mip,int rport,char *databuf,int *pnLen)
 {
 	struct sockaddr_in localSock;
 	struct ip_mreq group;
@@ -312,72 +328,19 @@ int mr(char *rip,char *mip,int rport,char *databuf,int *pnLen)
 
 	int rlen=0;
 	*pnLen=0;
+	int ret;
 
 	//strcpy(rip,"192.168.1.223");
 	//strcpy(mip,"226.1.1.1");
 
 	/* Create a datagram socket on which to receive. */
 	if(sdmrOpen==0){
-	sdmr = socket (AF_INET, SOCK_DGRAM, 0);
-	sdmrOpen=1;
+		mrinit(rip,mip,rport,databuf,pnLen)
 	}
-	if (sdmr < 0)
-	{
-		perror ("Opening datagram socket error");
-	sdmrOpen=0;
-		return -1;
+	if( sdmrOpen==0){
+		perror("open socket rcv error !!!!!");
+		for(;;);
 	}
-	else
-		printf ("Opening datagram socket....OK.\n");
-
-	/* Enable SO_REUSEADDR to allow multiple instances of this */
-	/* application to receive copies of the multicast datagrams. */
-	{
-		int reuse = 1;
-		if (setsockopt
-			(sdmr, SOL_SOCKET, SO_REUSEADDR, (char *) &reuse, sizeof (reuse)) < 0)
-		{
-			perror ("Setting SO_REUSEADDR error");
-			//close (sdmr);
-			return -2;
-		}
-		else
-			printf ("Setting SO_REUSEADDR...OK.\n");
-	}
-
-	/* Bind to the proper port number with the IP address */
-	/* specified as INADDR_ANY. */
-	memset ((char *) &localSock, 0, sizeof (localSock));
-	localSock.sin_family = AF_INET;
-	localSock.sin_port = htons (rport);
-	localSock.sin_addr.s_addr = INADDR_ANY;   // rip ??????????????
-	if(sdmrOpen==0){
-	if (bind (sdmr, (struct sockaddr *) &localSock, sizeof (localSock)))
-	{
-		perror ("Binding datagram socket error");
-		close (sdmr);
-		return -3;
-	}
-	else
-		printf ("Binding datagram socket...OK.\n");
-	}
-
-	/* Join the multicast group 226.1.1.1 on the local 203.106.93.94 */
-	/* interface. Note that this IP_ADD_MEMBERSHIP option must be */
-	/* called for each local interface over which the multicast */
-	/* datagrams are to be received. */
-	group.imr_multiaddr.s_addr = inet_addr (mip);
-	group.imr_interface.s_addr = inet_addr (rip);
-	if (setsockopt
-		(sdmr, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *) &group,
-		sizeof (group)) < 0)
-	{
-		perror ("Adding multicast group error");
-		//close (sdmr);
-		return -4;
-	}
-	else
-		printf ("Adding multicast group...OK.\n");
 
 	/* Read from the socket. */
 	datalen = 512;
@@ -399,6 +362,79 @@ int mr(char *rip,char *mip,int rport,char *databuf,int *pnLen)
 	//close(sdmr);
 	return 0;
 }
+// multicast rcv init
+int mrinit(char *rip,char *mip,int rport,char *databuf,int *pnLen)
+{
+	struct sockaddr_in localSock;
+	struct ip_mreq group;
+	//int sd;
+
+	//strcpy(rip,"192.168.1.223");
+	//strcpy(mip,"226.1.1.1");
+
+	/* Create a datagram socket on which to receive. */
+	if(sdmrOpen>0) return -1;
+	sdmrOpen = 1;
+
+	sdmr = socket (AF_INET, SOCK_DGRAM, 0);
+	if (sdmr < 0)
+	{
+		perror ("Opening datagram socket error");
+		sdmrOpen=0;
+		return -2;
+	}
+	else
+		printf ("Opening datagram socket....OK.\n");
+
+	/* Enable SO_REUSEADDR to allow multiple instances of this */
+	/* application to receive copies of the multicast datagrams. */
+	int reuse = 1;
+	if (setsockopt(sdmr, SOL_SOCKET, SO_REUSEADDR, (char *) &reuse, sizeof (reuse)) < 0)
+	{
+		perror ("Setting SO_REUSEADDR error");
+		close (sdmr);
+		sdmrOpen = 0;
+		return -3;
+	}
+	else
+		printf ("Setting SO_REUSEADDR...OK.\n");
+
+	/* Bind to the proper port number with the IP address */
+	/* specified as INADDR_ANY. */
+	memset ((char *) &localSock, 0, sizeof (localSock));
+	localSock.sin_family = AF_INET;
+	localSock.sin_port = htons (rport);
+	localSock.sin_addr.s_addr = INADDR_ANY;   // rip ??????????????
+	if (bind (sdmr, (struct sockaddr *) &localSock, sizeof (localSock)))
+	{
+		perror ("Binding datagram socket error");
+		close (sdmr);
+		sdmrOpen = 0;
+		return -33;
+	}
+	else
+		printf ("Binding datagram socket...OK.\n");
+
+	/* Join the multicast group 226.1.1.1 on the local 203.106.93.94 */
+	/* interface. Note that this IP_ADD_MEMBERSHIP option must be */
+	/* called for each local interface over which the multicast */
+	/* datagrams are to be received. */
+	group.imr_multiaddr.s_addr = inet_addr (mip);
+	group.imr_interface.s_addr = inet_addr (rip);
+	if (setsockopt(sdmr, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *) &group,sizeof (group)) < 0)
+	{
+		perror ("Adding multicast group error");
+		close (sdmr);
+		sdmrOpen = 0;
+		return -4;
+	}
+	else
+		printf ("Adding multicast group...OK.\n");
+
+	return 0;
+}
+
+
 void changeIP(char *ifname,char *newIP,char *newMask,char *hostname)
 {
 	FILE *fp;
@@ -490,7 +526,7 @@ void* thread_rcv (void *arg)
 	printf(" mcast send : %s:%d    if:%s(%s)\n",para_msip,para_sport,para_ifname,para_rip);
 
 	for(;;){
-		ret = mr(para_rip,para_mrip,para_rport,para_rbuf,&para_rlen);
+		ret = mrcv(para_rip,para_mrip,para_rport,para_rbuf,&para_rlen);
 		if( ret>=0){
 			n=sscanf(para_rbuf,"%s",header);
 			if(n!=1)continue;
@@ -498,7 +534,7 @@ void* thread_rcv (void *arg)
 				n=sscanf(para_rbuf,"%s%s%d%s%s",header,pip,&replyPort,clientip,sztime);
 				if(n==5){
 					printf(" header: %s\n",header);
-					ms_ser2net(clientip,pip,replyPort,para_ifname,sztime);
+					//ms_ser2net(clientip,pip,replyPort,para_ifname,sztime);
 				}
 			}
 			else if(0==strcmp(header,"changeip")){   // stricmp ??????????

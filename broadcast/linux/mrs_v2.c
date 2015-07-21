@@ -251,10 +251,10 @@ int msinit(char *localip,char *mip,int mport,char *databuf,int nLen)
 	/* multicast capable interface. */
 	localInterface.s_addr = inet_addr (localip);
 	if (setsockopt (sdms, IPPROTO_IP, IP_MULTICAST_IF, (char *) &localInterface,sizeof (localInterface)) < 0) {
-			perror ("Setting local interface error");
-			close(sdms);
-			sdmsOpen = 0;
-			return -2;
+		perror ("Setting local interface error");
+		close(sdms);
+		sdmsOpen = 0;
+		return -2;
 	}
 	else
 		printf ("Setting the local interface...OK\n");

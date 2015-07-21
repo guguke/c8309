@@ -175,7 +175,7 @@ int msend(char *localip,char *mip,int mport,char *databuf,int nLen)
 	/* Create a datagram socket on which to send. */
 	if(sdmsOpen==0)
 	{
-		msinit(localip,mip,mport,databuf,nLen)
+		msinit(localip,mip,mport,databuf,nLen);
 	}
 	if(sdmsOpen==0){
 		perror(" open socket send error ");
@@ -335,7 +335,7 @@ int mrcv(char *rip,char *mip,int rport,char *databuf,int *pnLen)
 
 	/* Create a datagram socket on which to receive. */
 	if(sdmrOpen==0){
-		mrinit(rip,mip,rport,databuf,pnLen)
+		mrinit(rip,mip,rport,databuf,pnLen);
 	}
 	if( sdmrOpen==0){
 		perror("open socket rcv error !!!!!");

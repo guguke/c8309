@@ -110,6 +110,8 @@ void getMAC(char *ifname,unsigned char *MAC_str,char *maclong)
 	}
 	maclong[17]='\0';
 	MAC_str[12]='\0';
+
+	close(s);
 }
 
 // get if ip : if="eth0" or "eth2"      

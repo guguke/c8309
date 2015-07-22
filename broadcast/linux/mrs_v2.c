@@ -472,7 +472,6 @@ void changeIP(char *ifname,char *newIP,char *newMask,char *hostname)
 void* thread_send(void *arg)
 {
 	int i;
-	int s=1;
 	char sz[100];
 	int s=7;
 

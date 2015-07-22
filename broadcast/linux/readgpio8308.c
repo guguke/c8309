@@ -23,8 +23,9 @@ int main(int argc,char *argv[])
 	fprintf(fp,"a0118");
 	fscanf(fp,"%x",&v);
 	fprintf(fp,"a0118 %08x",v|0xfc000000);
+	fprintf(fp,"a0c08");
 	for(;;){
-		fscanf(fp"%x"&v);
+		fscanf(fp,"%x",&v);
 		if((0x800&v)!=k1){
 			printf(" read addr(0x0118) : %08x\n",v);
 			k1 = v & 0x800;

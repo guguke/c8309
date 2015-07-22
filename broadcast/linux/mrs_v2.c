@@ -10,6 +10,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/reboot.h>
+#include <pthread.h>
+
+pthread_mutex_t lock;
 
 pthread_t tidun;
 int threadun_ret;
@@ -302,11 +305,13 @@ int ms_ser2net(char *srcip,char *msip,int msport,char *ifname,char *sn)
 	// 7. ser2net if ip:
 	// 8. ser2net if MAC: 
 	// 9. hostname
-	sprintf(msbuf,"rgetip %s %s %s %d %s %s %s %s_ver1.00",srcip,sn,msip,msport,ifname,ifip,ifmac,hostname); 
+	sprintf(msbuf,"rgetip %s %s %s %d %s %s %s %s_ver1.01",srcip,sn,msip,msport,ifname,ifip,ifmac,hostname); 
 	sLen=strlen(msbuf);
 	printf("ms_ser2net : %s\n",msbuf);
 
+    pthread_mutex_lock(&lock);
 	msend(ifip,msip,msport,msbuf,sLen);
+    pthread_mutex_unlock(&lock);
 
 	return 0;
 }
@@ -469,15 +474,15 @@ void* thread_send(void *arg)
 	int i;
 	int s=1;
 	char sz[100];
-	//int s=6;
+	int s=7;
 
 	printf("\n send thread start return:200\n");
 	//for(i=0;i<nBootNum;i++){
 	for(i=0;;i++){
-		sprintf(sz,"i%d",i);
-		//ms_ser2net(para_rip,para_msip,para_sport,para_ifname,sztime);
-		ms_ser2net(para_rip,para_msip,para_sport,para_ifname,sz);
-		//sleep(s);
+		//sprintf(sz,"i%d",i);
+		ms_ser2net(para_rip,para_msip,para_sport,para_ifname,sztime);
+		//ms_ser2net(para_rip,para_msip,para_sport,para_ifname,sz);
+		sleep(s);
 	}
 	threads_ret  = 200;
 	pthread_exit(&threads_ret);
@@ -536,7 +541,7 @@ void* thread_rcv (void *arg)
 				n=sscanf(para_rbuf,"%s%s%d%s%s",header,pip,&replyPort,clientip,sztime);
 				if(n==5){
 					printf(" header: %s\n",header);
-					//ms_ser2net(clientip,pip,replyPort,para_ifname,sztime);
+					ms_ser2net(clientip,pip,replyPort,para_ifname,sztime);
 				}
 			}
 			else if(0==strcmp(header,"changeip")){   // stricmp ??????????
@@ -578,6 +583,13 @@ int main (int argc, char *argv[])
 	gethostname(para_hostname,30);  // get hostname
 	printf("current hostname: %s\n",para_hostname);
 
+	
+    if (pthread_mutex_init(&lock, NULL) != 0)
+    {
+        printf("\n mutex init failed\n");
+        return 1;
+    }
+
 	err = pthread_create(&tidr, NULL, &thread_rcv, NULL);
 	if (err != 0){
 		printf("\ncan't create thread multicast rcv:[%s]", strerror(err));
@@ -613,6 +625,8 @@ int main (int argc, char *argv[])
 
     pthread_join(tidun, (void**)&pun);
     printf("\n return value from unix domain socket rcv thread is [%d]\n", *pun);
+
+    pthread_mutex_destroy(&lock);
 
     return 0;
 }

@@ -480,8 +480,8 @@ void* thread_send(void *arg)
 	//for(i=0;i<nBootNum;i++){
 	for(i=0;;i++){
 		//sprintf(sz,"i%d",i);
-		ms_ser2net(para_rip,para_msip,para_sport,para_ifname,sztime);
-		//ms_ser2net(para_rip,para_msip,para_sport,para_ifname,sz);
+		//ms_ser2net(para_rip,para_msip,para_sport,para_ifname,sztime);
+		ms_ser2net(para_rip,para_msip,para_sport,para_ifname,"00:00:00");
 		sleep(s);
 	}
 	threads_ret  = 200;

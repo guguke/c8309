@@ -15,7 +15,6 @@
 int wvgpio(int addr,int v)
 {
 	FILE *fp;
-	int v;
 	fp = fopen("/proc/gpio8308","rt");
 	fprintf(fp,"a%08x %0x8",addr,v);
 	fclose(fp);
@@ -24,7 +23,6 @@ int wvgpio(int addr,int v)
 int wagpio(int addr)
 {
 	FILE *fp;
-	int v;
 	fp = fopen("/proc/gpio8308","rt");
 	fprintf(fp,"a%08x",addr);
 	fclose(fp);
@@ -50,7 +48,10 @@ int main(int argc,char *argv[])
 	wagpio(0x0118);
 	v = readgpio();
 	wvgpio(0x0118,v|0xfc000000);
+	usleep(100000);
+
 	wagpio(0x0c08);
+	usleep(100000);
 
 	v = readgpio();
 	printf(" 1 read addr(0x0c08): %08x\n",v);
@@ -58,7 +59,7 @@ int main(int argc,char *argv[])
 	for(;;){
 		v = readgpio();
 		if((0x800&v)!=k1){
-			printf(" read addr(0x0118) : %08x\n",v);
+			printf(" read addr(0x0c08) : %08x\n",v);
 			k1 = v & 0x800;
 			n++;
 			if(n>5)break;

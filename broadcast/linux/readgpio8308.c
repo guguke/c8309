@@ -21,9 +21,15 @@ int main(int argc,char *argv[])
 	fp=fopen("/proc/gpio8308","w+t");
 	if(fp==NULL) return -1;
 	fprintf(fp,"a0118");
+	usleep(100000);
 	fscanf(fp,"%x",&v);
+	usleep(100000);
 	fprintf(fp,"a0118 %08x",v|0xfc000000);
+	usleep(100000);
 	fprintf(fp,"a0c08");
+	fscanf(fp,"%x",&v);
+	printf(" 1 read addr(0x0c08): %08x\n",v);
+	usleep(100000);
 	for(;;){
 		fscanf(fp,"%x",&v);
 		if((0x800&v)!=k1){

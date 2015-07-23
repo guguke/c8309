@@ -478,9 +478,9 @@ void* thread_send(void *arg)
 	printf("\n send thread start return:200\n");
 	//for(i=0;i<nBootNum;i++){
 	for(i=0;;i++){
-		//sprintf(sz,"i%d",i);
+		sprintf(sz,"00:00:%02d",i%2);
 		//ms_ser2net(para_rip,para_msip,para_sport,para_ifname,sztime);
-		ms_ser2net(para_rip,para_msip,para_sport,para_ifname,"00:00:00");
+		ms_ser2net(para_rip,para_msip,para_sport,para_ifname,sz);
 		sleep(s);
 	}
 	threads_ret  = 200;

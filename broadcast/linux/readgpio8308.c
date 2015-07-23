@@ -15,15 +15,15 @@
 int wvgpio(int addr,int v)
 {
 	FILE *fp;
-	fp = fopen("/proc/gpio8308","rt");
-	fprintf(fp,"a%08x %0x8",addr,v);
+	fp = fopen("/proc/gpio8308","wt");
+	fprintf(fp,"%08x %08x",addr,v);
 	fclose(fp);
 	return 0;
 }
 int wagpio(int addr)
 {
 	FILE *fp;
-	fp = fopen("/proc/gpio8308","rt");
+	fp = fopen("/proc/gpio8308","wt");
 	fprintf(fp,"a%08x",addr);
 	fclose(fp);
 	return 0;

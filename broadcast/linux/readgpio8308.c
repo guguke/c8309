@@ -38,36 +38,42 @@ int readgpio()
 	fclose(fp);
 	return v;
 }
-
+void loaddefault()
+{
+	system("cp -f /root/app/batip0d /root/app/batip0");
+	system("umount /root/app");
+	reboot(RB_AUTOBOOT);
+}
 int main(int argc,char *argv[])
 {
 	int v;
 	int n=0;
 	int k1=0x800,k2=0x800,k3=0x800;
 
+	// init
 	wagpio(0x0118);
 	v = readgpio();
 	wvgpio(0x0118,v|0xfc000000);
-	usleep(100000);
+	//usleep(100000);
 
 	wagpio(0x0c08);
-	usleep(100000);
-
-	v = readgpio();
-	printf(" 1 read addr(0x0c08): %08x\n",v);
-	usleep(100000);
+	//usleep(100000);
 	for(;;){
 		v = readgpio();
-		if((0x800&v)!=k1){
-			printf(" read addr(0x0c08) : %08x\n",v);
-			k1 = v & 0x800;
-			n++;
-			if(n>5)break;
+		if( (v&0x800) > 0 ){
+			n = 0;
+			usleep(100000);
+			continue;
 		}
-		usleep(100000);
+		n++;
+		if(n<2){
+			usleep(100000);
+			continue;
+		}
+		// load default
+		loaddefault();
+		break;
 	}
-
-	//usleep(1000000);// 1s
 
 	return 0;
 }

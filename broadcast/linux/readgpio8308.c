@@ -63,18 +63,18 @@ int main(int argc,char *argv[])
 		if( (v&0x800) > 0 ){
 			n = 0;
 			usleep(100000);
-			printf(" no key\n");
+			//printf(" no key\n");
 			continue;
 		}
 		n++;
-		printf(" key !!\n");
+		//printf(" key !!\n");
 		if(n<2){
 			usleep(100000);
 			continue;
 		}
 		// load default
-		//loaddefault();
 		printf(" load default\n");
+		loaddefault();
 		break;
 	}
 

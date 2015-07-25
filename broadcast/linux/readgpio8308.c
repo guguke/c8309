@@ -40,8 +40,8 @@ int readgpio()
 }
 void loaddefault()
 {
-	system("killall ser2net");
-	system("killall mrs");
+	system("/usr/bin/killall ser2net");
+	system("/usr/bin/killall mrs");
 	system("cp -f /root/app/batip0d /root/app/batip0");
 	system("umount /root/app");
 	reboot(RB_AUTOBOOT);
@@ -51,6 +51,8 @@ int main(int argc,char *argv[])
 	int v;
 	int n=0;
 	int k1=0x800,k2=0x800,k3=0x800;
+
+	printf("readgpio8308 ver 1.00\n");
 
 	// init
 	wagpio(0x0118);

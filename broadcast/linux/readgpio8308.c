@@ -40,6 +40,8 @@ int readgpio()
 }
 void loaddefault()
 {
+	system("killall ser2net");
+	system("killall mrs");
 	system("cp -f /root/app/batip0d /root/app/batip0");
 	system("umount /root/app");
 	reboot(RB_AUTOBOOT);

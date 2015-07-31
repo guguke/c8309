@@ -51,6 +51,7 @@ int main(int argc,char *argv[])
 	int v;
 	int n=0;
 	int k1=0x800,k2=0x800,k3=0x800;
+	int us=300000; // 300 ms
 
 	printf("readgpio8308 ver 1.00\n");
 
@@ -58,22 +59,22 @@ int main(int argc,char *argv[])
 	wagpio(0x0118);
 	v = readgpio();
 	wvgpio(0x0118,v|0xfc000000);
-	//usleep(100000);
+	usleep(us);
 
 	wagpio(0x0c08);
-	//usleep(100000);
+	usleep(us);
 	for(;;){
 		v = readgpio();
 		if( (v&0x800) > 0 ){
 			n = 0;
-			usleep(100000);
+			usleep(us);
 			//printf(" no key\n");
 			continue;
 		}
 		n++;
 		//printf(" key !!\n");
 		if(n<2){
-			usleep(100000);
+			usleep(us);
 			continue;
 		}
 		// load default

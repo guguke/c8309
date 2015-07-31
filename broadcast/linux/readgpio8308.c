@@ -52,11 +52,11 @@ int main(int argc,char *argv[])
 	int n=0;
 	int k1=0x800,k2=0x800,k3=0x800;
 	int us=300000; // 300 ms
-	char szVer="1.01";
+	char szVer[]="1.01";
 	FILE *fp;
 
 	fp=fopen("/root/ver.readgpio8308.txt","wt");
-	if(fp!=null){
+	if(fp!=NULL){
 		fprintf(fp,"ver %s readgpio8308\n",szVer);
 		fclose(fp);
 	}

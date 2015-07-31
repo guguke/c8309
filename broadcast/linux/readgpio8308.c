@@ -52,8 +52,15 @@ int main(int argc,char *argv[])
 	int n=0;
 	int k1=0x800,k2=0x800,k3=0x800;
 	int us=300000; // 300 ms
+	char szVer="1.01";
+	FILE *fp;
 
-	printf("readgpio8308 ver 1.00\n");
+	fp=fopen("/root/ver.readgpio8308.txt","wt");
+	if(fp!=null){
+		fprintf(fp,"ver %s readgpio8308\n",szVer);
+		fclose(fp);
+	}
+	printf("readgpio8308 ver %s\n",szVer);
 
 	// init
 	wagpio(0x0118);
